@@ -1,0 +1,117 @@
+.loginSignupParentCont {
+    display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.loginSignupParentCont .loginSignupChildCont {
+  width: 50%;
+  height: 70vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #EBEBEB;
+  margin: auto;
+  border-radius: 15px;
+}
+
+.loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-right {
+    width: 50%;
+    height: 70vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #133E87;
+    margin-left: auto;
+    text-align: center;
+    padding: 40px;
+    justify-content: center;
+    align-items: center;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+  }
+
+  .loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-right .p1 {
+    font-size: 32px;
+    color:white;
+    font-weight: 600;
+  }
+
+  .loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-right .p2 {
+    font-size: 20px;
+    color:white;
+    font-weight: regular;
+    /* padding-left:30px;
+    padding-right: 30px; */
+  }
+
+  .loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-right .loginSignupChildCont-leftButton {
+    font-size: 20px;
+    color:white;
+    font-weight: 500;
+    background-color: transparent;
+    border: 2px solid white;
+    padding: 10px 25px;
+    margin-top: 50px;
+    text-align: center;
+    padding-bottom: 0;
+    border-radius: 15px;
+  }
+
+  .loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-left {
+    width: 50%;
+    height: 70vh;
+    display: flex;
+    flex-direction: column;
+    background-color: transparent;
+    margin-right: auto;
+    text-align: center;
+    padding: 40px;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+  }
+
+  .loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-left .titleCont {
+    margin-bottom: 30%;
+  }
+
+  .loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-left .titleCont h1 {
+    font-size: 26px;
+    color:black;
+    font-weight: 600;
+  }
+
+  .loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-left .contentCont h1 {
+    font-size: 32px;
+    color:black;
+    font-weight: 600;
+  }
+
+  .loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-left .contentCont p {
+    font-size: 24px;
+    color:black;
+    font-weight: regular;
+  }
+
+  .loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-left .contentCont p {
+    font-size: 24px;
+    color:black;
+    font-weight: regular;
+  }
+
+  .loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-left .contentCont .loginSignupChildCont-rightButton {
+    font-size: 20px;
+    color:white;
+    font-weight: 500;
+    background-color: #133E87;
+    padding: 10px 25px;
+    margin-top: 30px;
+    text-align: center;
+    padding-bottom: 0;
+    border-radius: 15px;
+    border: none;
+  }
+
+  .loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-left .contentCont .loginSignupChildCont-rightButton p {
+    color: white;
+  }
