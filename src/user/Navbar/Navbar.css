@@ -1,0 +1,26 @@
+.navbar-parent {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.navbar-parent .nav-buttons {
+  display: flex;
+  flex-direction: row;
+  column-gap: 30%;
+  margin: 20px;
+  margin-left: 3%;
+}
+
+.nav-buttons p {
+  font-family: "Poppins", sans-serif;
+  font-size: 32px;
+  font-weight: 500;
+  margin: auto;
+}
+
+.form-control {
+  font-style: "Poppins", sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+}
