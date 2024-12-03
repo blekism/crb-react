@@ -14,11 +14,17 @@
   background-color: yellow;
 }
 
+.homepage-parent .for-you-header h3 {
+  font-size: 32px;
+  margin: 0;
+}
+
 .homepage-parent .for-you-content {
   display: flex;
   flex-direction: row;
   column-gap: 20px;
   padding-left: 3%;
+  padding-right: 7%;
   margin: 15px;
   background-color: red;
 }
