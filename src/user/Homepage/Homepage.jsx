@@ -1,15 +1,37 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./Homepage.css";
 import Navbar from "../Navbar/Navbar.jsx";
-import ForyouItem from "./ForyouItemTemplate.jsx";
+import HomepageItem from "./HomepageItemTemplte.jsx";
+import Back from "../../assets/images/back.png";
+import Forward from "../../assets/images/forward.png";
 
 export default function Homepage() {
-  const forYouItems = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  const [Homeitem, setItem] = useState([]);
+  const [CurrentPage, setCurrentPage] = useState(0);
+  const postsPerPage = 2;
+  const item = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+  const startIndex = CurrentPage * postsPerPage;
+  const selectedItems = item.slice(startIndex, startIndex + postsPerPage);
+  const totalPages = Math.ceil(item.length / postsPerPage);
+
+  const handleNext = () => {
+    if (CurrentPage < totalPages - 1) {
+      setCurrentPage(CurrentPage + 1);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (CurrentPage > 0) {
+      setCurrentPage(CurrentPage - 1);
+    }
+  };
+
   return (
     <>
       <Navbar />
       <div className="homepage-parent">
-        <div className="for-you-header">
+        <div className="homepage-header">
           <h3>For You</h3>
           <button
             type="button"
@@ -26,18 +48,44 @@ export default function Homepage() {
           </button>
         </div>
         <div className="for-you-content">
-          {forYouItems.map((item, key) => (
-            <ForyouItem key={key} />
+          {/* {item.map((item, key) => (
+            <HomepageItem key={key} />
+          ))} */}
+
+          <img
+            src={Back}
+            alt="left-arrow"
+            onClick={handlePrevious}
+            style={{
+              cursor: CurrentPage === 0 ? "not-allowed" : "pointer",
+              opacity: CurrentPage === 0 ? 0.5 : 1,
+              height: "50px",
+            }}
+          />
+
+          {selectedItems.map((item, key) => (
+            <HomepageItem key={key} />
           ))}
+
+          <img
+            src={Forward}
+            alt="right-arrow"
+            onClick={handleNext}
+            style={{
+              cursor:
+                CurrentPage === totalPages - 1 ? "not-allowed" : "pointer",
+              opacity: CurrentPage === totalPages - 1 ? 0.5 : 1,
+              height: "50px",
+            }}
+          />
         </div>
-        <div className="new-post-header">
-          <h1>New Post</h1>
+        <div className="homepage-header">
+          <h3>New Post</h3>
         </div>
         <div className="new-post-content">
-          <h1>new post content</h1>
-          <h1>new post content</h1>
-          <h1>new post content</h1>
-          <h1>new post content</h1>
+          {item.map((item, key) => (
+            <HomepageItem key={key} />
+          ))}
         </div>
       </div>
     </>
