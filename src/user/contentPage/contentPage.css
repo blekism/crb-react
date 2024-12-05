@@ -1,0 +1,136 @@
+.flex-content-parent {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.flex-content-parent-left {
+  display: flex;
+  flex-direction: row;
+  padding-top: 50px;
+  padding-right: 40px;
+  padding-bottom: 50px;
+  padding-left: 30px;
+  width: 0px;
+}
+
+.flex-content-left {
+  display: flex;
+  flex-direction: column;
+  /* background-color: violet; */
+  font-size: 20px;
+}
+
+.totalComments {
+  display: flex;
+  flex-direction: row;
+  column-gap: 30px;
+}
+
+.totalBookmarks {
+  display: flex;
+  flex-direction: row;
+  column-gap: 30px;
+}
+
+.totalViews {
+  display: flex;
+  flex-direction: row;
+  column-gap: 30px;
+}
+
+.datePosted {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-content-parent-right {
+  display: flex;
+  flex-direction: column;
+  /* background-color: beige; */
+  width: 80%;
+  margin-right: 20px;
+  margin-top: 15 px;
+}
+
+.title-right {
+  display: flex;
+  flex-direction: row;
+  /* background-color: aqua; */
+  /* padding-left: ; */
+  justify-content: space-between;
+}
+
+.button-right {
+  display: flex;
+  flex-direction: row;
+  padding-left: 90%;
+  padding-top: 20px;
+  /* background-color: blue; */
+}
+
+/* 
+pa {
+  font-size: 20px;
+} */
+
+.flex-content-bottom {
+  display: flex;
+  flex-direction: column;
+  /* background-color: blue; */
+  padding-top: 70px;
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+.commentTitle {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 40px;
+  margin-left: 40px;
+  /* background-color: black; */
+}
+
+.commentName {
+  display: flex;
+  flex-direction: column;
+  /* background-color: aquamarine; */
+  row-gap: 30px;
+  margin-left: 50px;
+  margin-right: 30px;
+}
+
+.button-right-comment {
+  display: flex;
+  flex-direction: row;
+}
+
+.modal-content {
+  margin-top: 200px;
+}
+
+.modal-footer .btn-primary {
+  /* background-color: violet; */
+  margin-right: 35%;
+  width: 30%;
+}
+
+.modal-textbox {
+  width: 100%; /* Full width of the modal-body */
+  height: 150px; /* Set height as needed */
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc; /* Border color */
+  border-radius: 4px; /* Rounded corners */
+  resize: vertical; /* Allow users to resize vertically only */
+  box-sizing: border-box; /* Includes padding and border in width/height */
+}
+
+.modal-textbox:focus {
+  border-color: #007bff; /* Change border color on focus */
+  outline: none; /* Remove default outline */
+}
+
+.modal-body {
+  padding: 10px;
+}
