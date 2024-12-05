@@ -1,5 +1,5 @@
 body{
-    background: #7d93b4;
+    background: #b0bac9;
 }
 .loginSignupParentCont {
     display: flex;
@@ -10,7 +10,6 @@ body{
     width: 800px;
     max-width: 100%;
     margin: 0 auto;
-    
     /* height: 100vh; */
 }
 

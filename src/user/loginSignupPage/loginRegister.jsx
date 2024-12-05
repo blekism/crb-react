@@ -18,7 +18,7 @@ export default function LoginSignup() {
           {/* Right Panel */}
           <div className="loginSignupChildCont-right">
             <h1>Get Started!</h1>
-            <p className="p2">Register your account to get started.</p>
+            <p className="p2">Register in your account to get started.</p>
 
             <div className="loginSignupChildCont-rightTopContent">
               <div className="loginSignupChildCont-rightTopContent1">
