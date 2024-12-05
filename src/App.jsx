@@ -1,15 +1,19 @@
 import React from "react";
+import "./index.css";
 import Homepage from "./user/Homepage/Homepage.jsx";
 import Contentpage from "./user/contentPage/contentPage.jsx";
-import commentUser from "./user/contentPage/commentUser.jsx";
-import sheena from "./assets/images/sheena.jpg";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { Carousel } from "react-responsive-carousel";
+import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 
 function App() {
   return (
     <>
-      <Contentpage />
+      <Router>
+        <Routes>
+          {/* <Route path="/" element={<Login/>} /> */}
+          <Route path="/Homepage" element={<Homepage />} />
+          <Route path="/Contentpage" element={<Contentpage />} />
+        </Routes>
+      </Router>
     </>
   );
 }
