@@ -1,0 +1,13 @@
+body {
+  font-family: "Poppins", sans-serif; /* Set your global font */
+  margin: 0;
+  padding: 0;
+}
+
+.btn-primary {
+  background-color: #133e87 !important;
+}
+
+.btn-primary:hover {
+  background-color: #184ca7 !important;
+}

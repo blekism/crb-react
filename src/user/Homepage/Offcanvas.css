@@ -1,0 +1,59 @@
+.offcanvas-end {
+  background-color: #133e87;
+  border: none;
+}
+
+.offcanvas-end .offcanvas-header .offcanvas-title {
+  color: white;
+}
+
+.offcanvas-end .offcanvas-header .btn-close {
+  background-color: white;
+}
+
+.offcanvas-end .offcanvas-body div {
+  color: white;
+}
+
+.offcanvas-body {
+  padding: 0;
+}
+
+.offcanvas-end .offcanvas-body .offcanvas-parent-content {
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+  padding: 15px;
+  align-items: center;
+}
+
+.offcanvas-parent-content .offcanvas-title,
+.offcanvas-title p {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.offcanvas-parent-content .offcanvas-image {
+  display: flex;
+  justify-content: center;
+  width: 90%;
+  height: 45vh;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.offcanvas-parent-content .offcanvas-image .offcanvas-post-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.offcanvas-parent-content .offcanvas-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  column-gap: 20px;
+  bottom: 0;
+}
