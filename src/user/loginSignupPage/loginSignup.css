@@ -36,6 +36,10 @@
     background-position: center;
     background-repeat: no-repeat; */
   height: fit-content;
+  transition: all 0.6s ease-in-out;
+  opacity: 0;
+  z-index: 1;
+  transform: translateX(100%);
 }
 
 .loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-right .h1 {
@@ -137,6 +141,11 @@
   padding: 40px;
   border-top-left-radius: 15px;
   border-bottom-left-radius: 15px;
+  transition: all 0.6s ease-in-out;
+  z-index: 2;
+  transform: translateX(100%);
+  opacity: 1;
+  z-index: 5;
 }
 
 .loginSignupParentCont
@@ -183,7 +192,7 @@
   .loginSignupChildCont
   .loginSignupChildCont-left
   .contentCont
-  .loginSignupChildCont-rightButton {
+  .loginSignupChildCont-leftButton {
   font-size: 20px;
   color: white;
   font-weight: 500;
@@ -194,6 +203,15 @@
   padding-bottom: 0;
   border-radius: 15px;
   border: none;
+  transition: transform 80ms ease-in;
+}
+
+.loginSignupParentCont
+  .loginSignupChildCont
+  .loginSignupChildCont-left
+  .contentCont
+  .loginSignupChildCont-leftButton:active {
+  transform: scale(0.90);
 }
 
 .loginSignupParentCont
@@ -203,4 +221,36 @@
   .loginSignupChildCont-rightButton
   p {
   color: white;
+}
+
+
+
+
+
+.loginSignupParentCont .loginSignupChildCont .overlay-container {
+  overflow: hidden;
+  transition: all 0.6s ease-in-out;
+  z-index: 100;
+}
+
+.loginSignupParentCont .loginSignupChildCont .overlay-container .loginSignupChildCont-rightOverlay {
+  width: 50%;
+  height: 70vh;
+  display: flex;
+  flex-direction: column;
+  background-color: transparent;
+  margin-left: auto;
+  text-align: center;
+  padding: 40px;
+  justify-content: center;
+  align-items: center;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  background-image: url('../../assets/images/loginImage.png');
+    background-size: cover; 
+    background-position: center;
+    background-repeat: no-repeat;
+  overflow: hidden;
+  transition: all 0.6s ease-in-out;
+  z-index: 100;
 }

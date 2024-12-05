@@ -1,0 +1,271 @@
+body{
+    background: #7d93b4;
+}
+.loginSignupParentCont {
+    display: flex;
+    flex-wrap: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 800px;
+    max-width: 100%;
+    margin: 0 auto;
+    
+    /* height: 100vh; */
+}
+
+.loginSignupParentCont .loginSignupChildCont{
+    position: relative;
+    width: inherit; 
+    /* width: 50%; */
+    height: 70vh;
+    background-color: #ebebeb;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-right, .loginSignupChildCont-left {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    transition: all 0.6s ease-in-out;
+}
+
+.loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-right {
+    width: 50%;
+    opacity: 0;
+    z-index: 1;
+}
+
+.loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-left {
+    width: 50%;
+    z-index: 2;
+}
+
+.loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-left, .loginSignupChildCont-right  {
+    background-color: #ebebeb;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 50px;
+    height: 100%;
+} 
+
+/* right */
+.loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-right h1 {
+    font-size: 32px;
+    color: black;
+    font-weight: bold;
+}
+  
+.loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-right .p1 {
+    font-size: 20px;
+    color: white;
+    font-weight: regular;
+}
+
+.loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-right .loginSignupChildCont-rightTopContent {
+  display: flex;
+  flex-direction: row;
+  column-gap: 10px;
+  line-height: 5px;
+  align-items: start;
+}
+
+.loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-right .loginSignupChildCont-rightTopContent .loginSignupChildCont-rightTopContent1, .loginSignupChildCont-rightTopContent2 {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  column-gap: 10px;
+}
+
+
+.loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-right .loginSignupChildCont-rightBottomContent {
+  display: flex;
+  flex-direction: column;
+  column-gap: 10px;
+  line-height: 5px;
+}
+
+.loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-right .loginSignupChildCont-rightBottomContent {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  column-gap: 10px;
+  align-items: start;
+}
+
+.loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-right .loginSignupChildCont-rightButton {
+  font-size: 20px;
+  color: white;
+  font-weight: 500;
+  background-color: #133e87;
+  border: none;
+  padding: 10px 25px;
+  margin-top: 20px;
+  text-align: center;
+  padding-bottom: 0;
+  border-radius: 15px;
+  transition: transform 80ms ease-in;
+} 
+.loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-right .loginSignupChildCont-rightButton:active {
+  transform: scale(0.90);
+}
+
+.loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-left .contentCont h1 {
+    font-size: 32px;
+    color: black;
+    font-weight: bold;
+}
+
+.loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-left .contentCont .loginSignupChildCont-leftButton {
+  font-size: 20px;
+  color: white;
+  font-weight: 500;
+  background-color: #133e87;
+  padding: 10px 25px;
+  margin-top: 30px;
+  text-align: center;
+  padding-bottom: 0;
+  border-radius: 15px;
+  border: none;
+  transition: transform 80ms ease-in;
+}
+
+.loginSignupParentCont .loginSignupChildCont .loginSignupChildCont-left .contentCont .loginSignupChildCont-leftButton:active {
+  transform: scale(0.90);
+}
+
+/* overlay style start*/
+.loginSignupParentCont .loginSignupChildCont .loginSignUpOverlay-parent .loginSignUpOverlay-child .loginSignupChildCont-rightOverlay .rightOverlayButton, .loginSignupChildCont-leftOverlay .leftOverlayButton{
+    background-color: transparent;
+    border: 2px solid white;
+    color: white;
+    padding: 10px 25px;
+    font-size: 20px;
+    font-weight: 500;
+    border-radius: 15px;
+    padding-bottom: 0;
+    transition: transform 80ms ease-in;
+}
+
+.loginSignupParentCont .loginSignupChildCont .loginSignUpOverlay-parent .loginSignUpOverlay-child .loginSignupChildCont-rightOverlay .rightOverlayButton{
+    margin-top: 10%;
+}
+
+.loginSignupParentCont .loginSignupChildCont .loginSignUpOverlay-parent .loginSignUpOverlay-child .loginSignupChildCont-rightOverlay .rightOverlayButton:active, .loginSignupChildCont-leftOverlay .leftOverlayButton:active{
+    transform: scale(0.90);
+}
+
+.loginSignupParentCont .loginSignupChildCont .loginSignUpOverlay-parent .loginSignUpOverlay-child .loginSignupChildCont-rightOverlay .p1, .loginSignupChildCont-leftOverlay .p1{
+    color: white;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.loginSignupParentCont .loginSignupChildCont .loginSignUpOverlay-parent .loginSignUpOverlay-child .loginSignupChildCont-rightOverlay .p2, .loginSignupChildCont-leftOverlay .p2{
+    color: white;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.loginSignupParentCont .loginSignupChildCont .loginSignUpOverlay-parent .loginSignUpOverlay-child .loginSignupChildCont-leftOverlay .p3{
+    color: white;
+    font-size: 18px;
+    font-weight: regular;
+    margin-top: 10%;
+}
+/* overlay style end */
+
+.loginSignupParentCont.right-panel-active .loginSignupChildCont .loginSignupChildCont-left{
+    transform: translateX(100%);
+}
+
+.loginSignupParentCont.right-panel-active .loginSignupChildCont .loginSignupChildCont-right{
+    transform: translateX(100%);
+    opacity: 1;
+    z-index: 5;
+    animation: show 0.6s;
+}
+
+@keyframes show {
+    0%, 49.99%{
+        opacity: 0;
+        z-index: 1;
+    }
+    50%, 100%{
+        opacity: 1;
+        z-index: 5;
+    }
+}
+
+.loginSignupParentCont .loginSignupChildCont .loginSignUpOverlay-parent{
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    transition: transform 0.6s ease-in-out;
+    z-index: 100;
+}
+
+.loginSignupParentCont.right-panel-active .loginSignupChildCont .loginSignUpOverlay-parent{
+    transform: translateX(-100%);
+}
+
+.loginSignupParentCont .loginSignupChildCont .loginSignUpOverlay-parent .loginSignUpOverlay-child{
+    background-color: #133e87;
+    color: white;
+    left: -100%;
+    height: 100%;
+    width: 200%;
+    position: relative;
+    transform: translateX(0);
+    transition: transform 0.6s ease-in-out;
+    background-image: url('../../assets/images/loginImage.png');
+    background-size: cover; 
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.loginSignupParentCont.right-panel-active .loginSignupChildCont .loginSignUpOverlay-parent .loginSignUpOverlay-child{
+    transform: translateX(50%);
+}
+
+.loginSignupParentCont .loginSignupChildCont .loginSignUpOverlay-parent .loginSignUpOverlay-child .loginSignupChildCont-leftOverlay, .loginSignupChildCont-rightOverlay{
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 40px;
+    top: 0;
+    height: 100%;
+    width: 50%;
+    transform: translateX(0);
+    transition: transform 0.6s ease-in-out;
+}
+
+.loginSignupParentCont .loginSignupChildCont .loginSignUpOverlay-parent .loginSignUpOverlay-child .loginSignupChildCont-leftOverlay{
+    transform: translateX(-20%);
+}
+
+.loginSignupParentCont .loginSignupChildCont .loginSignUpOverlay-parent .loginSignUpOverlay-child .loginSignupChildCont-rightOverlay{
+    right: 0;
+    transform: translateX(0);
+}
+
+.loginSignupParentCont.right-panel-active .loginSignupChildCont .loginSignUpOverlay-parent .loginSignUpOverlay-child .loginSignupChildCont-leftOverlay{
+    transform: translateX(0);
+}
+
+.loginSignupParentCont.right-panel-active .loginSignupChildCont .loginSignUpOverlay-parent .loginSignUpOverlay-child .loginSignupChildCont-rightOverlay{
+    transform: translateX(20%);
+}
+
+
