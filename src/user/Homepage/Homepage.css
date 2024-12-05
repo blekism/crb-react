@@ -1,7 +1,7 @@
 .homepage-parent {
   display: flex;
   flex-direction: column;
-  background-color: aqua;
+  /* background-color: aqua; */
 }
 
 .homepage-parent .homepage-header {
@@ -10,8 +10,9 @@
   justify-content: space-between;
   padding-left: 3%;
   padding-right: 7%;
-  margin: 15px;
-  background-color: yellow;
+  padding-top: 15px;
+  padding-bottom: 10px;
+  /* background-color: yellow; */
 }
 
 .homepage-parent .homepage-header h3 {
@@ -19,24 +20,26 @@
   margin: 0;
 }
 
-.homepage-parent .for-you-content {
-  display: flex;
-  flex-direction: row;
-  column-gap: 20px;
-  padding-left: 3%;
-  padding-right: 7%;
-  margin: 15px;
-  background-color: red;
-}
-
-
-
+.homepage-parent .for-you-content,
 .homepage-parent .new-post-content {
   display: flex;
   flex-direction: row;
-  column-gap: 20px;
+  column-gap: 80px;
+  padding: 20px;
+  padding-top: 0;
   padding-left: 3%;
-  padding-right: 7%;
-  margin: 15px;
-  background-color: green;
+  margin: auto;
+  align-items: center;
+  justify-content: center;
+  /* background-color: red; */
+}
+
+.custom-slider {
+  /* background-color: orange; */
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  padding: 20px;
+  width: 100%;
+  gap: 20px;
 }

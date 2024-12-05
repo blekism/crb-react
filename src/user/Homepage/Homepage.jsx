@@ -1,38 +1,66 @@
 import React, { useState, useEffect } from "react";
 import "./Homepage.css";
 import Navbar from "../Navbar/Navbar.jsx";
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 import HomepageItem from "./HomepageItemTemplte.jsx";
-import Back from "../../assets/images/back.png";
-import Forward from "../../assets/images/forward.png";
+import Offcanvas from "./Offcanvas.jsx";
+import T1 from "../../assets/images/t1.jpg";
+import T2 from "../../assets/images/t2.png";
+import T3 from "../../assets/images/t3.jpg";
 
 export default function Homepage() {
-  const [Homeitem, setItem] = useState([]);
-  const [CurrentPage, setCurrentPage] = useState(0);
-  const postsPerPage = 2;
-  const item = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  const item = [
+    { src: T1, title: "Buhay Ni", author: "carl falcon" },
+    { src: T2 },
+    { src: T3 },
+    { src: T1 },
+    { src: T2 },
+    { src: T1 },
+    { src: T1 },
+    { src: T3 },
+    { src: T3 },
+    { src: T1 },
+    { src: T1 },
+    { src: T1 },
+    { src: T1 },
+    { src: T1 },
+    { src: T3 },
+    { src: T3 },
+    { src: T3 },
+    { src: T3 },
+    { src: T3 },
+    { src: T3 },
+    { src: T2 },
+    { src: T2 },
+    { src: T2 },
+    { src: T2 },
+    { src: T2 },
+    { src: T2 },
+    { src: T2 },
+    { src: T2 },
+    { src: T2 },
+    { src: T2 },
+    { src: T2 },
+  ];
 
-  const startIndex = CurrentPage * postsPerPage;
-  const selectedItems = item.slice(startIndex, startIndex + postsPerPage);
-  const totalPages = Math.ceil(item.length / postsPerPage);
+  const groupItems = (items, groupSize) => {
+    const groups = [];
 
-  const handleNext = () => {
-    if (CurrentPage < totalPages - 1) {
-      setCurrentPage(CurrentPage + 1);
+    for (let i = 0; i < items.length; i += groupSize) {
+      groups.push(items.slice(i, i + groupSize));
     }
+    return groups;
   };
-
-  const handlePrevious = () => {
-    if (CurrentPage > 0) {
-      setCurrentPage(CurrentPage - 1);
-    }
-  };
+  const groupedItems = groupItems(item, 6);
 
   return (
     <>
       <Navbar />
+      <Offcanvas />
       <div className="homepage-parent">
         <div className="homepage-header">
-          <h3>For You</h3>
+          <h3>New Posts</h3>
           <button
             type="button"
             className="btn btn-primary"
@@ -48,44 +76,47 @@ export default function Homepage() {
           </button>
         </div>
         <div className="for-you-content">
-          {/* {item.map((item, key) => (
-            <HomepageItem key={key} />
-          ))} */}
-
-          <img
-            src={Back}
-            alt="left-arrow"
-            onClick={handlePrevious}
-            style={{
-              cursor: CurrentPage === 0 ? "not-allowed" : "pointer",
-              opacity: CurrentPage === 0 ? 0.5 : 1,
-              height: "50px",
-            }}
-          />
-
-          {selectedItems.map((item, key) => (
-            <HomepageItem key={key} />
-          ))}
-
-          <img
-            src={Forward}
-            alt="right-arrow"
-            onClick={handleNext}
-            style={{
-              cursor:
-                CurrentPage === totalPages - 1 ? "not-allowed" : "pointer",
-              opacity: CurrentPage === totalPages - 1 ? 0.5 : 1,
-              height: "50px",
-            }}
-          />
+          <Carousel
+            showArrows={true}
+            infiniteLoop={true}
+            showThumbs={false}
+            showIndicators={false}
+            showStatus={false}
+          >
+            {groupedItems.map((group, index) => (
+              <div key={index} className="custom-slider">
+                {group.map((item, idx) => (
+                  <HomepageItem
+                    key={idx}
+                    image={item.src}
+                    title={item.title}
+                    author={item.author}
+                  />
+                ))}
+              </div>
+            ))}
+          </Carousel>
         </div>
+
         <div className="homepage-header">
-          <h3>New Post</h3>
+          <h3>Continue Reading</h3>
         </div>
         <div className="new-post-content">
-          {item.map((item, key) => (
-            <HomepageItem key={key} />
-          ))}
+          <Carousel
+            showArrows={true}
+            infiniteLoop={true}
+            showThumbs={false}
+            showIndicators={false}
+            showStatus={false}
+          >
+            {groupedItems.map((group, index) => (
+              <div key={index} className="custom-slider">
+                {group.map((item, idx) => (
+                  <HomepageItem key={idx} image={item.src} />
+                ))}
+              </div>
+            ))}
+          </Carousel>
         </div>
       </div>
     </>
