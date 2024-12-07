@@ -11,7 +11,7 @@ import T3 from "../../assets/images/t3.jpg";
 
 export default function Homepage() {
   const item = [
-    { src: T1, title: "Buhay Ni", author: "carl falcon" },
+    { src: T1, title: "Buhay Ni", author: "lrac abunda" },
     { src: T2 },
     { src: T3 },
     { src: T1 },

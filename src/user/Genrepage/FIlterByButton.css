@@ -1,0 +1,11 @@
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  /* background-color: violet; */
+}
+
+.form-select {
+  /* background-color: red; */
+  display: flex;
+  flex-direction: row;
+}

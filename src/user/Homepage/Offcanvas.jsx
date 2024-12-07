@@ -35,8 +35,8 @@ export default function Offcanvas({
             <img className="offcanvas-post-image" src={T1} />
           </div>
           <div className="offcanvas-title">
-            <p>Buhay Ni Yngwie Serrano</p>
-            <p>Carl Aliño</p>
+            <p>Buhay Ni YoungWee</p>
+            <p>lrac onila</p>
           </div>
           <div className="offcanvas-tags">Genre</div>
           <div className="offcanvas-buttons">
