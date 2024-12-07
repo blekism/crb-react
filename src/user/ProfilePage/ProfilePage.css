@@ -1,0 +1,106 @@
+.ProfilePageParent {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: grey;
+}
+
+.ProfilePageParent .ProfilePageTopCont {
+  height: 80vh;
+  display: flex;
+  flex-direction: row;
+  column-gap: 20px;
+  padding: 20px;
+  background-color: yellow;
+}
+
+.ProfilePageParent .ProfilePageTopCont .ProfilePageTopCont-left {
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: green;
+  border-radius: 10px;
+}
+
+.ProfilePageParent .ProfilePageTopCont .ProfilePageTopCont-left img {
+  width: 200px;
+  height: 200px;
+}
+
+.ProfilePageParent .ProfilePageTopCont .ProfilePageTopCont-right {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+  padding: 20px;
+  background-color: rgb(141, 141, 197);
+  border-radius: 10px;
+}
+
+.ProfilePageParent
+  .ProfilePageTopCont
+  .ProfilePageTopCont-right
+  .ProfilePageTopCont-rightTop {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  column-gap: 20px;
+  padding: 20px;
+  background-color: rgb(110, 110, 212);
+  border-radius: 10px;
+}
+
+.ProfilePageParent
+  .ProfilePageTopCont
+  .ProfilePageTopCont-right
+  .ProfilePageTopCont-rightTop
+  .rightTop-Left {
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  column-gap: 20px;
+  background-color: rgb(218, 218, 230);
+}
+
+.ProfilePageParent
+  .ProfilePageTopCont
+  .ProfilePageTopCont-right
+  .ProfilePageTopCont-rightTop
+  .rightTop-Right {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  column-gap: 20px;
+  background-color: rgb(218, 218, 230);
+  border-radius: 10px;
+}
+
+.ProfilePageParent
+  .ProfilePageTopCont
+  .ProfilePageTopCont-right
+  .ProfilePageTopCont-rightBottom {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  column-gap: 20px;
+  padding: 20px;
+  background-color: rgb(73, 73, 151);
+  border-radius: 10px;
+}
+
+.ProfilePageParent
+  .ProfilePageTopCont
+  .ProfilePageTopCont-right
+  .ProfilePageTopCont-rightBottom
+  .bio {
+  width: 95%;
+  display: flex;
+  flex-direction: column;
+  column-gap: 20px;
+  padding: 20px;
+  margin-left: 20px;
+  background-color: rgb(184, 184, 233);
+  border-radius: 10px;
+}
