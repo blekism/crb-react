@@ -55,6 +55,7 @@
 .title-right {
   display: flex;
   flex-direction: row;
+  margin-top: 40px;
   /* background-color: aqua; */
   /* padding-left: ; */
   justify-content: space-between;
