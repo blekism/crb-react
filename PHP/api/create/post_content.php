@@ -51,7 +51,7 @@ if ($requestMethod == "POST") {
                 echo json_encode($data);
                 exit();
             } else {
-                $postContent = postContent($inputData, $account_id);
+                // $postContent = postContent($inputData, $account_id);
             }
             echo $postContent;
             exit();
