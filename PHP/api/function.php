@@ -1,1 +1,343 @@
 <?php
+
+require __DIR__ . '/../inc/dbcon.php';
+require  __DIR__ . '/../vendor/autoload.php';
+require 'creds.php';
+require __DIR__ . '/vendor/cloudmersive/cloudmersive_validate_api_client/vendor/autoload.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+use \Firebase\JWT\JWT;
+use \Firebase\JWT\Key;
+// use Google\Cloud\Storage\StorageClient;
+
+function error422($message)
+{
+    $data = [
+        'status' => 422,
+        'message' => $message,
+    ];
+    header("HTTP/1.0 422 Unprocessable Entity");
+    echo json_encode($data);
+    exit();
+}
+
+function sendMail($verification_code, $email)
+{
+    global $myEmail, $myPassword;
+
+    $mail = new PHPMailer(true);
+    try {
+        //Server settings
+        // $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+        $mail->isSMTP();                                            //Send using SMTP
+        $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
+        $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+        $mail->Username   = $myEmail;                     //SMTP username
+        $mail->Password   = $myPassword;                               //SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
+        $mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+
+        //Recipients
+        $mail->setFrom($myEmail, 'Mailer');
+        $mail->addAddress($email);     //Add a recipient
+
+        //Content
+        $mail->isHTML(true);                                  //Set email format to HTML
+        $mail->Subject = 'Verification code';
+        $mail->Body    = 'Your verification code is: ' . $verification_code;
+        $mail->AltBody = 'Your verification code is: ' . $verification_code;
+
+        $mail->send();
+        return true;
+    } catch (Exception $e) {
+        return false;
+    }
+}
+
+function nlpRead($userContent) {}
+
+function register($userInput)
+{
+    global $con;
+
+    if (isset($userInput['email']) && isset($userInput['password'])) {
+        $user_id = 'USER - ' . date('Y-d') . substr(uniqid(), -5);
+        $email = $userInput['email'];
+        $password = $userInput['password'];
+        $username = $userInput['username'];
+        $firstname = $userInput['firstname'];
+        $lastname = $userInput['lastname'];
+
+        $hashed = md5($password);
+
+        if (empty(trim($email))) {
+            return error422('Email is required');
+        } else if (empty(trim($password))) {
+            return error422('Password is required');
+        } else if (empty(trim($username))) {
+            return error422('Username is required');
+        } else if (empty(trim($firstname))) {
+            return error422('First name is required');
+        } else if (empty(trim($lastname))) {
+            return error422('Last name is required');
+        } else {
+            mysqli_begin_transaction($con);
+            $verification_code = substr(number_format(time() * rand(), 0, '', ''), 0, 6);
+            $verification_expiry = time() + 600;
+
+            $query = "INSERT INTO user_tbl (user_id, email, password, username, first_name, last_name, role, verification_expiry, verification_code, created_at) VALUES (?, ?, ?, ?, ?, ?, 'user', ?, ?, NOW())";
+            $stmt = $con->prepare($query);
+            $stmt->bind_param('ssssssii', $user_id, $email, $hashed, $username, $firstname, $lastname, $verification_expiry, $verification_code);
+            $result = $stmt->execute();
+            $stmt->close();
+
+            if ($result) {
+                $emailSent = sendMail($verification_code, $email);
+
+                if (!$emailSent) {
+                    return json_encode([
+                        'status' => 500,
+                        'message' => 'Error sending email. Please try again.'
+                    ]);
+                } else {
+                    mysqli_commit($con);
+                    return json_encode([
+                        'status' => 200,
+                        'message' => 'User registered successfully'
+                    ]);
+                }
+            } else {
+                mysqli_rollback($con);
+                $data = [
+                    'status' => 422,
+                    'message' => 'Unprocessable entity',
+                ];
+                header("HTTP/1.0 422 Unprocessable Entity");
+                return json_encode($data);
+            }
+        }
+    } else {
+        return error422('Email and Password are required');
+    }
+}
+
+function accountVerify($userInput)
+{
+    global $con;
+
+    if (isset($userInput['verification_code'])) {
+        $verification_code = $userInput['verification_code'];
+
+        if (empty(trim($verification_code))) {
+            return error422('Verification code is required');
+        } else {
+
+            $query = "SELECT email, verification_expiry FROM user_tbl WHERE verification_code = ?";
+            $stmt = $con->prepare($query);
+            $stmt->bind_param('i', $verification_code);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $stmt->close();
+
+            if ($result && $result->num_rows == 1) {
+                $res = $result->fetch_assoc();
+                $email = $res['email'];
+                $verification_expiry = $res['verification_expiry'];
+
+                if (time() > $verification_expiry) {
+                    $newCode = substr(number_format(time() * rand(), 0, '', ''), 0, 6);
+                    $newExpiry = time() + 600;
+
+                    $query2 = "UPDATE user_tbl SET verification_code = ?, verification_expiry = ? WHERE email = ?";
+                    $stmt2 = $con->prepare($query2);
+                    $stmt2->bind_param('iis', $newCode, $newExpiry, $email);
+                    $result2 = $stmt2->execute();
+                    $stmt2->close();
+
+                    sendMail($newCode, $email);
+
+                    if ($result2) {
+                        $data = [
+                            'status' => 401,
+                            'message' => 'Verification code expired, new code sent to email',
+                        ];
+                        header("HTTP/1.0 401 Unauthorized");
+                        return json_encode($data);
+                    } else {
+                        $data = [
+                            'status' => 500,
+                            'message' => 'Internal Server Error',
+                        ];
+                        header("HTTP/1.0 500 Internal Server Error");
+                        return json_encode($data);
+                    }
+                } else {
+                    $query3 = "UPDATE user_tbl SET verified_at = NOW(), verification_code = NULL, verification_expiry = NULL WHERE verification_code = ?";
+                    $stmt3 = $con->prepare($query3);
+                    $stmt3->bind_param('i', $verification_code);
+                    $result3 = $stmt3->execute();
+                    $stmt3->close();
+
+                    if ($result3) {
+                        $data = [
+                            'status' => 200,
+                            'message' => 'Account verified successfully',
+                        ];
+                        header("HTTP/1.0 200 OK");
+                        return json_encode($data);
+                    } else {
+                        $data = [
+                            'status' => 500,
+                            'message' => 'Internal Server Error',
+                        ];
+                        header("HTTP/1.0 500 Internal Server Error");
+                        return json_encode($data);
+                    }
+                }
+            } else {
+                return error422('Invalid verification code');
+            }
+        }
+    } else {
+        return error422('Verification code is required');
+    }
+}
+
+function login($userInput)
+{
+    global $con;
+    $secret_key = "cutiesiserrano";
+
+    if (isset($userInput['email']) && isset($userInput['password'])) {
+
+        $email = $userInput['email'];
+        $password = $userInput['password'];
+
+        $hashed = md5($password);
+
+        if (empty(trim($email))) {
+            return error422('Email is required');
+        } else if (empty(trim($password))) {
+            return error422('Password is required');
+        } else {
+            $query = "SELECT user_id, verified_at, role FROM user_tbl WHERE email = ? AND password = ? AND role = 'user'";
+            $stmt = $con->prepare($query);
+            $stmt->bind_param('ss', $email, $hashed);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $stmt->close();
+
+            if ($result) {
+                if ($result->num_rows == 1) {
+                    $res = $result->fetch_assoc();
+                    if ($res['verified_at'] != null) {
+                        $user_id = $res['user_id'];
+                        $role = $res['role'];
+                        $issuedAt = time();
+                        $expirationTime = $issuedAt + (24 * 60 * 60);
+
+                        $payload = [
+                            'iss' => 'localhost',
+                            'iat' => $issuedAt,
+                            'exp' => $expirationTime,
+                            'user_id' => $user_id,
+                            'role' => $role
+                        ];
+
+                        $jwt = JWT::encode($payload, $secret_key, 'HS256');
+                        setcookie('logged_user', $jwt, [
+                            'expires' => $expirationTime,
+                            'path' => '/',
+                            'httpOnly' => true,
+                            'secure' => true,
+                            'samesite' => 'Strict'
+                        ]);
+
+                        $data = [
+                            'status' => 200,
+                            'message' => 'Login Successful',
+                            'token' => $jwt
+                        ];
+                        header("HTTP/1.0 200 OK");
+                        return json_encode($data);
+                        //dito
+                    } else {
+                        $data = [
+                            'status' => 401,
+                            'message' => 'Account not verified',
+                        ];
+                        header("HTTP/1.0 401 Unauthorized");
+                        return json_encode($data);
+                    }
+                } else {
+                    $data = [
+                        'status' => 401,
+                        'message' => 'Invalid Email or Password',
+                    ];
+                    header("HTTP/1.0 401 Unauthorized");
+                    return json_encode($data);
+                }
+            } else {
+                $data = [
+                    'status' => 500,
+                    'message' => 'Internal Server Error',
+                ];
+                header("HTTP/1.0 500 Internal Server Error");
+                return json_encode($data);
+            }
+        }
+    }
+}
+
+function continueAsGuest()
+{
+    global $secret_key;
+
+    $user_id = 'GUEST - ' . date('Y-d') . substr(uniqid(), -5);
+    $role = 'guest';
+    $issuedAt = time();
+    $expirationTime = $issuedAt + (24 * 60 * 60);
+
+    $payload = [
+        'iss' => 'localhost',
+        'iat' => $issuedAt,
+        'exp' => $expirationTime,
+        'user_id' => $user_id,
+        'role' => $role
+    ];
+    $jwt = JWT::encode($payload, $secret_key, 'HS256');
+    setcookie('logged_user', $jwt, [
+        'expires' => $expirationTime,
+        'path' => '/',
+        'httpOnly' => true,
+        'secure' => true,
+        'samesite' => 'Strict'
+    ]);
+    $data = [
+        'status' => 200,
+        'message' => 'Continue as guest',
+        'token' => $jwt
+    ];
+    header("HTTP/1.0 200 OK");
+    return json_encode($data);
+}
+
+function postContent($userInput, $user_id)
+{
+    $post_id = 'POST - ' . date('Y-d') . substr(uniqid(), -5);
+    $title = $userInput['title'];
+    $content = $userInput['content'];
+
+
+    if (empty(trim($title))) {
+        return error422('Title is required');
+    } else if (empty(trim($content))) {
+        return error422('Content is required');
+    } else {
+        // Your code here
+
+
+    }
+}
