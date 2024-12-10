@@ -3,7 +3,7 @@
 require __DIR__ . '/../inc/dbcon.php';
 require  __DIR__ . '/../vendor/autoload.php';
 require 'creds.php';
-require __DIR__ . '/vendor/cloudmersive/cloudmersive_validate_api_client/vendor/autoload.php';
+// require __DIR__ . '/vendor/cloudmersive/cloudmersive_validate_api_client/vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
@@ -341,3 +341,173 @@ function postContent($userInput, $user_id)
 
     }
 }
+
+function insertComment($data, $userId)
+{
+    global $con;
+
+    $comment_id= 'COMMENT- ' . date('Y-d') . substr(uniqid(), -5);
+    $content = $data['content'];
+
+    if (empty(trim($content))) {
+        $data = [
+            'status' => 400,
+            'message' => 'Comment cannot be empty'
+        ];
+        return json_encode($data);
+        
+    }else{
+      $query = "INSERT INTO comments_tbl (user_id, comment_id, content, created_at) VALUES (?,?, ?, NOW())";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param('sss', $userId, $comment_id, $content);
+        $result = $stmt->execute();
+        $stmt->close();  
+
+        if ($result) {
+            $data = [
+                'status' => 201,
+                'message' => 'Comment created successfully'
+            ];
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 500,
+                'message' => 'An error occurred'
+            ];
+            return json_encode($data);
+        }
+    }
+
+}
+
+function readContent($post_id)
+{
+    global $con;
+
+    $id = $post_id['post_id'];
+
+    $query = "SELECT c.title,u.username , c.content
+              FROM posts_tbl c
+            INNER JOIN user_tbl u ON c.user_id = u.user_id
+            WHERE post_id = ?";
+
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows == 1) {
+        $data = [
+            'status' => 200,
+            'message' => 'Content retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No contents found'
+        ];
+        return json_encode($data);
+    }
+}
+
+function readComment($data)
+{
+    global $con;
+
+    $query = "SELECT u.username, c.created_at, c.content 
+              FROM comments_tbl c
+            INNER JOIN user_tbl u ON c.user_id = u.user_id";
+    $result = $con->query($query);
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Comment retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No comments found'
+        ];
+        return json_encode($data);
+    }
+}
+
+function Bookmark($post_id, $user_id)
+{
+    global $con;
+
+    $bookmark_id = 'BOOKMARK- ' . date('Y-d') . substr(uniqid(), -5);
+
+
+    // Check if the post is already bookmarked by the same user
+    $checkQuery = "SELECT * FROM bookmarks_tbl WHERE user_id = ? AND post_id = ?";
+    $checkStmt = $con->prepare($checkQuery);
+    $checkStmt->bind_param('ss', $user_id, $post_id);
+    $checkStmt->execute();
+    $checkResult = $checkStmt->get_result();
+    $checkStmt->close();
+
+    if ($checkResult->num_rows > 0) {
+        $data = [
+            'status' => 409,
+            'message' => 'Post already bookmarked'
+        ];
+        return json_encode($data);
+    } else {
+        $query = "INSERT INTO bookmarks_tbl (bookmark_id, user_id, post_id, created_at) VALUES (?, ?, ?, NOW())";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param('sss', $bookmark_id, $user_id, $post_id);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        if ($result) {
+            $data = [
+                'status' => 201,
+                'message' => 'Post bookmarked successfully'
+            ];
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 500,
+                'message' => 'An error occurred'
+            ];
+            return json_encode($data);
+        }
+    }
+}
+
+function report_post($post_id, $reason)
+{
+    global $con;
+
+    $report_id = 'REPORT- ' . date('Y-d') . substr(uniqid(), -5);
+
+    $query = "INSERT INTO reports_tbl (report_id, post_id, reason, status, created_at) VALUES (?, ?, ?, 'REPORTED', NOW())";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('sss',$report_id, $post_id, $reason);
+    $result = $stmt->execute();
+    $stmt->close();
+
+    if ($result) {
+        $data = [
+            'status' => 201,
+            'message' => 'Post reported successfully'
+        ];
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 500,
+            'message' => 'An error occurred'
+        ];
+        return json_encode($data);
+
+    }
+
+}
+
