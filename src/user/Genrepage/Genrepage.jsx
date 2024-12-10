@@ -5,6 +5,7 @@ import T1 from "../../assets/images/sheena.jpg";
 import T2 from "../../assets/images/mikha.jpg";
 import T3 from "../../assets/images/maloi.jpg";
 import Genreitem from "../Bookmark/bookmarkItemTemplate.jsx";
+import Offcanvas from "../Homepage/Offcanvas.jsx";
 import FilterButton from "./FilterByButton.jsx";
 
 export default function Genre() {
@@ -54,6 +55,7 @@ export default function Genre() {
   return (
     <>
       <Navbar />
+      <Offcanvas />
 
       <div className="genreTitle">
         <h1>Genre</h1>

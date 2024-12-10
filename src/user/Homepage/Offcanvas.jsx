@@ -1,6 +1,7 @@
 import React from "react";
 import "./Offcanvas.css";
 import T1 from "../../assets/images/t1.jpg";
+import { Link } from "react-router-dom";
 
 export default function Offcanvas({
   author,
@@ -43,6 +44,7 @@ export default function Offcanvas({
             <button
               type="button"
               className="btn"
+              data-bs-dismiss="offcanvas"
               style={{
                 color: "white",
                 fontWeight: "400",
@@ -50,7 +52,12 @@ export default function Offcanvas({
                 backgroundColor: "#658ABD",
               }}
             >
-              Read Now
+              <Link
+                to={"/Contentpage"}
+                style={{ color: "white", textDecorationLine: "none" }}
+              >
+                <p>Read Now</p>
+              </Link>
             </button>
             <button
               type="button"

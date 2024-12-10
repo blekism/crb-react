@@ -10,7 +10,7 @@ import Bookmarkitem from "./bookmarkItemTemplate.jsx";
 import Offcanvas from "../Homepage/Offcanvas.jsx";
 import FilterButton from "../Genrepage/FilterByButton.jsx";
 
-export default function Contentpage() {
+export default function BookmarkPage() {
   const item = [
     { src: T1, title: "BINI", author: "Sheena" },
     { src: T2, title: "BINI", author: "Mikha" },

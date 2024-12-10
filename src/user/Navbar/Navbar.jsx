@@ -1,21 +1,44 @@
 import React from "react";
 import Search from "../../assets/images/search.png";
 import "./Navbar.css";
+import { Link } from "react-router-dom";
+import Pomasin from "../../assets/images/lheopomasin.jpg";
 
 export default function Navbar() {
   return (
-    <>
-      <div className="navbar-parent">
-        <div className="nav-buttons">
-          <p>Home</p>
-          <p>Genre</p>
-          <p>Bookmarks</p>
-        </div>
+    <div className="navbar-parent">
+      <div className="nav-buttons">
+        <p className="navbtn">
+          <Link
+            to={"/Homepage"}
+            style={{ color: "Black", textDecorationLine: "none" }}
+          >
+            <p>Home</p>
+          </Link>
+        </p>
+        <p className="navbtn">
+          <Link
+            to={"/Genre"}
+            style={{ color: "Black", textDecorationLine: "none" }}
+          >
+            <p>Genre</p>
+          </Link>
+        </p>
+        <p className="navbtn">
+          <Link
+            to={"/Bookmark"}
+            style={{ color: "Black", textDecorationLine: "none" }}
+          >
+            <p>Bookmarks</p>
+          </Link>
+        </p>
+      </div>
 
+      <div className="end-group">
         <div
           className="input-group"
           style={{
-            width: "16%",
+            width: "70%",
             height: "5vh",
             marginRight: "7%",
             marginTop: "1%",
@@ -36,7 +59,15 @@ export default function Navbar() {
             aria-describedby="basic-addon1"
           />
         </div>
+        <div className="profileLogo">
+          <Link to={"/Profile"}>
+            <img
+              src={Pomasin}
+              style={{ height: "80px", width: "80px", padding: "10px" }}
+            />
+          </Link>
+        </div>
       </div>
-    </>
+    </div>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./loginRegister.css";
 import InputTemplate from "./InputTemplate";
+import { Link } from "react-router-dom";
 
 export default function LoginSignup() {
   // State to toggle the right-panel-active class
@@ -67,8 +68,15 @@ export default function LoginSignup() {
                 name="password"
               />
 
+              {/* gagawin tong nasa axios pagka may working functions na pero
+              eto muna for now */}
               <button className="loginSignupChildCont-leftButton">
-                <p>Log in</p>
+                <Link
+                  to={"/Homepage"}
+                  style={{ color: "white", textDecorationLine: "none" }}
+                >
+                  <p>Log in</p>
+                </Link>
               </button>
             </div>
           </div>
