@@ -14,16 +14,16 @@ if ($requestMethod == "OPTIONS") {
     exit();
 }
 
-if ($requestMethod == "POST") {
+if ($requestMethod == "GET") {
 
     $inputData = json_decode(file_get_contents("php://input"), true);
 
     if (empty($inputData)) {
-        $register = register($_POST);
+        $readContent = readContent($_POST);
     } else {
-        $register = register($inputData);
+        $readContent = readContent($inputData);
     }
-    echo $register;
+    echo $readContent;
     exit();
 } else {
     $data = [

@@ -105,10 +105,6 @@ pa {
   flex-direction: row;
 }
 
-.modal-content {
-  margin-top: 200px;
-}
-
 .modal-footer .btn-primary {
   /* background-color: violet; */
   margin-right: 35%;

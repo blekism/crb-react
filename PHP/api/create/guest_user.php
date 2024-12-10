@@ -1,4 +1,5 @@
 <?php
+
 header('Access-Control-Allow-Origin:*');
 header('Content-Type: application/json');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
@@ -15,15 +16,7 @@ if ($requestMethod == "OPTIONS") {
 }
 
 if ($requestMethod == "POST") {
-
-    $inputData = json_decode(file_get_contents("php://input"), true);
-
-    if (empty($inputData)) {
-        $register = register($_POST);
-    } else {
-        $register = register($inputData);
-    }
-    echo $register;
+    echo continueAsGuest();
     exit();
 } else {
     $data = [
