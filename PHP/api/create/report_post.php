@@ -6,8 +6,7 @@ header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Request-With');
 
 include('../function.php');
-require(__DIR__ . '/../creds.php');
-require  __DIR__ . '/../../vendor/autoload.php';
+require(__DIR__ . '../../creds.php');
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\ExpiredException;
@@ -28,7 +27,7 @@ if ($requestMethod == "POST") {
 
     try {
         $decoded = JWT::decode($session, new Key($secret_key, 'HS256'));
-        $account_id = $decoded->user_id;
+        $user_id = $decoded->user_id; // Extract the user ID from the token
         $expiry = $decoded->exp;
 
         if (time() > $expiry) {
@@ -40,20 +39,24 @@ if ($requestMethod == "POST") {
             echo json_encode($data);
             exit();
         } else {
+            // Get input data
             $inputData = json_decode(file_get_contents("php://input"), true);
 
-            if (empty($inputData)) {
+            if (empty($inputData) || !isset($inputData['post_id'])) {
                 $data = [
                     'status' => 400,
-                    'message' => 'Bad Request',
+                    'message' => 'Bad Request: Missing post_id',
                 ];
                 header("HTTP/1.0 400 Bad Request");
                 echo json_encode($data);
                 exit();
-            } else {
-                $postContent = postContent($inputData, $account_id);
             }
-            echo $postContent;
+
+            $post_id = $inputData['post_id']; // Extract post_id from input
+            $reason = $inputData['reason'];// Extract report_reason from input
+            $reportPost = report_post($post_id, $reason);
+
+            echo $reportPost;
             exit();
         }
     } catch (ExpiredException $e) {
