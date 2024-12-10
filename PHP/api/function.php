@@ -736,3 +736,292 @@ function report_post($post_id, $reason)
 
 }
 
+
+function updateContent($userInput)
+{
+    global $con;
+
+    $post_id = $userInput['post_id'];
+    $title = $userInput['title'];
+    $content = $userInput['content'];
+
+
+    if (empty(trim($post_id))) {
+        return error422('Post ID is required');
+    } else if (empty(trim($title))) {
+        return error422('Title is required');
+    } else if (empty(trim($content))) {
+        return error422('Content is required');
+    } else {
+        $query = "UPDATE posts_tbl SET title = ?, content = ?, updated_at = NOW() WHERE post_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("sss", $title, $content, $post_id);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        if ($result) {
+            $data = [
+                'status' => 200,
+                'message' => 'Post updated successfully',
+            ];
+            header("HTTP/1.0 200 OK");
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 500,
+                'message' => 'Internal Server Error',
+            ];
+            header("HTTP/1.0 500 Internal Server Error");
+            return json_encode($data);
+        }
+    }
+}
+
+function updateComment($userInput)
+{
+    global $con;
+
+    $comment_id = $userInput['comment_id'];
+    $content = $userInput['content'];
+
+
+    if (empty(trim($comment_id))) {
+        return error422('Post ID is required');
+    } else if (empty(trim($content))) {
+        return error422('Content is required');
+    } else {
+        $query = "UPDATE comments_tbl SET content = ?, updated_at = NOW() WHERE comment_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("ss", $content, $comment_id);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        if ($result) {
+            $data = [
+                'status' => 200,
+                'message' => 'Comment updated successfully',
+            ];
+            header("HTTP/1.0 200 OK");
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 500,
+                'message' => 'Internal Server Error',
+            ];
+            header("HTTP/1.0 500 Internal Server Error");
+            return json_encode($data);
+        }
+    }
+}
+
+function deleteContent($userInput)
+{
+    global $con;
+
+    $post_id = $userInput['post_id'];
+
+    if (empty(trim($post_id))) {
+        return error422('Post ID is required');
+    } else {
+        $query = "DELETE FROM posts_tbl WHERE post_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("s", $post_id);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        if ($result) {
+            $data = [
+                'status' => 200,
+                'message' => 'Post deleted successfully',
+            ];
+            header("HTTP/1.0 200 OK");
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 500,
+                'message' => 'Internal Server Error',
+            ];
+            header("HTTP/1.0 500 Internal Server Error");
+            return json_encode($data);
+        }
+    }
+}
+
+function deleteComment($userInput)
+{
+    global $con;
+
+    $comment_id = $userInput['comment_id'];
+
+    if (empty(trim($comment_id))) {
+        return error422('Comment ID is required');
+    } else {
+        $query = "DELETE FROM comments_tbl WHERE comment_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("s", $comment_id);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        if ($result) {
+            $data = [
+                'status' => 200,
+                'message' => 'Comment deleted successfully',
+            ];
+            header("HTTP/1.0 200 OK");
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 500,
+                'message' => 'Internal Server Error',
+            ];
+            header("HTTP/1.0 500 Internal Server Error");
+            return json_encode($data);
+        }
+    }
+}
+
+function deleteBookmark($userInput)
+{
+    global $con;
+
+    $bookmark_id = $userInput['bookmark_id'];
+
+    if (empty(trim($bookmark_id))) {
+        return error422('Bookmark ID is required');
+    } else {
+        $query = "DELETE FROM bookmarks_tbl WHERE bookmark_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("s", $bookmark_id);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        if ($result) {
+            $data = [
+                'status' => 200,
+                'message' => 'Bookmark deleted successfully',
+            ];
+            header("HTTP/1.0 200 OK");
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 500,
+                'message' => 'Internal Server Error',
+            ];
+            header("HTTP/1.0 500 Internal Server Error");
+            return json_encode($data);
+        }
+    }
+}
+
+function singleReadProfile($user_id)
+{
+
+    global $con;
+
+    $query = "SELECT user_id, username, first_name, last_name, email, password, bio FROM user_tbl WHERE user_id = ?";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result && $result->num_rows == 1) {
+        $res = $result->fetch_assoc();
+        $data = [
+            'status' => 200,
+            'message' => 'Profile fetched successfully',
+            'data' => $res
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 500,
+            'message' => 'Internal Server Error',
+        ];
+        header("HTTP/1.0 500 Internal Server Error");
+        return json_encode($data);
+    }
+}
+
+function updateProfile($userInput, $user_id)
+{
+    global $con;
+
+    $username = $userInput['username'];
+    $first_name = $userInput['first_name'];
+    $last_name = $userInput['last_name'];
+    $email = $userInput['email'];
+    $password = $userInput['password'];
+    $bio = $userInput['bio'];
+
+
+    if (empty(trim($username))) {
+        return error422('User ID is required');
+    } else if (empty(trim($first_name))) {
+        return error422('First name is required');
+    } else if (empty(trim($last_name))) {
+        return error422('Last name is required');
+    } else if (empty(trim($email))) {
+        return error422('Email is required');
+    } else if (empty(trim($password))) {
+        return error422('Password is required');
+    } else if (empty(trim($bio))) {
+        return error422('Bio is required');
+    } else {
+        $query = "UPDATE user_tbl SET username = ?, first_name = ?, last_name = ?, email = ?, password = ?, bio = ?, updated_at = NOW() WHERE user_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("sssssss", $username, $first_name, $last_name, $email, $password, $bio, $user_id);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        if ($result) {
+            $data = [
+                'status' => 200,
+                'message' => 'Profile updated successfully',
+            ];
+            header("HTTP/1.0 200 OK");
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 500,
+                'message' => 'Internal Server Error',
+            ];
+            header("HTTP/1.0 500 Internal Server Error");
+            return json_encode($data);
+        }
+    }
+}
+
+function deleteProfile($userInput)
+{
+    global $con;
+
+    $user_id = $userInput['user_id'];
+
+    if (empty(trim($user_id))) {
+        return error422('User ID is required');
+    } else {
+        $query = "DELETE FROM user_tbl WHERE user_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("s", $user_id);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        if ($result) {
+            $data = [
+                'status' => 200,
+                'message' => 'Profile deleted successfully',
+            ];
+            header("HTTP/1.0 200 OK");
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 500,
+                'message' => 'Internal Server Error',
+            ];
+            header("HTTP/1.0 500 Internal Server Error");
+            return json_encode($data);
+        }
+    }
+}
