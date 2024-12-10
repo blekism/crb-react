@@ -1,0 +1,223 @@
+.ProfilePageParent {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: white;
+}
+
+.ProfilePageParent .ProfilePageTopCont {
+  height: fit-content;
+  display: flex;
+  flex-direction: row;
+  column-gap: 20px;
+  padding: 20px;
+  /* background-color: yellow; */
+}
+
+.ProfilePageParent .ProfilePageTopCont .ProfilePageTopCont-left {
+  width: 30%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: #EBEBEB;
+  border-radius: 10px;
+}
+
+.ProfilePageParent .ProfilePageTopCont .ProfilePageTopCont-left img {
+  width: 200px;
+  height: 200px;
+}
+
+.ProfilePageParent .ProfilePageTopCont .ProfilePageTopCont-right {
+  width: 70%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: rgba(19, 62, 135, 0.21);
+  border-radius: 10px;
+}
+
+.ProfilePageParent
+  .ProfilePageTopCont
+  .ProfilePageTopCont-right
+  .ProfilePageTopCont-rightTop {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  column-gap: 20px;
+  padding: 20px;
+  background-color: transparent;
+  border-radius: 10px;
+}
+
+.ProfilePageParent
+  .ProfilePageTopCont
+  .ProfilePageTopCont-right
+  .ProfilePageTopCont-rightTop
+  .rightTop-Left {
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  column-gap: 20px;
+}
+
+.ProfilePageParent
+  .ProfilePageTopCont
+  .ProfilePageTopCont-right
+  .ProfilePageTopCont-rightTop
+  .rightTop-Left .rightTop-LeftTitle {
+  display: flex;
+  flex-direction: row;
+  column-gap: 20px;
+}
+
+.ProfilePageParent
+  .ProfilePageTopCont
+  .ProfilePageTopCont-right
+  .ProfilePageTopCont-rightTop
+  .rightTop-Left .rightTop-LeftTitle .EditIcon{
+  width: 30px;
+  height: 30px;
+}
+
+.ProfilePageParent
+  .ProfilePageTopCont
+  .ProfilePageTopCont-right
+  .ProfilePageTopCont-rightTop
+  .rightTop-Left .rightTop-LeftTitle .p1{
+  font-size: 20px;
+  font-weight: 600;
+  margin-top: 5px;
+}
+
+.ProfilePageParent
+  .ProfilePageTopCont
+  .ProfilePageTopCont-right
+  .ProfilePageTopCont-rightTop
+  .rightTop-Left .p2, .p4{
+  font-size: 18px;
+  font-weight: 500;
+  margin-left: 10%;
+}
+
+.ProfilePageParent
+  .ProfilePageTopCont
+  .ProfilePageTopCont-right
+  .ProfilePageTopCont-rightTop
+  .rightTop-Left .p3, .p5{
+  width: 80%;
+  font-size: 18px;
+  font-weight: 500;
+  margin-left: 10%;
+  background-color: #EBEBEB;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.ProfilePageParent
+  .ProfilePageTopCont
+  .ProfilePageTopCont-right
+  .ProfilePageTopCont-rightTop
+  .rightTop-Right {
+  width: 60%;
+  height: fit-content;
+  display: flex;
+  flex-direction: row;
+  column-gap: 20px;
+  row-gap: 20px;
+  padding: 15px;
+  background-color: #EBEBEB;
+  border-radius: 10px;
+}
+
+.ProfilePageParent
+  .ProfilePageTopCont
+  .ProfilePageTopCont-right
+  .ProfilePageTopCont-rightTop
+  .rightTop-Right .rightTop-Right1{
+  width: 50%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  column-gap: 20px;
+  row-gap: 20px;
+}
+
+.ProfilePageParent
+  .ProfilePageTopCont
+  .ProfilePageTopCont-right
+  .ProfilePageTopCont-rightTop
+  .rightTop-Right .rightTop-Right2{
+  width: 50%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  column-gap: 20px;
+  row-gap: 20px;
+}
+
+.ProfilePageParent
+  .ProfilePageTopCont
+  .ProfilePageTopCont-right
+  .ProfilePageTopCont-rightBottom {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  column-gap: 20px;
+  padding: 20px;
+  background-color: transparent;
+  border-radius: 10px;
+}
+
+.ProfilePageParent .ProfilePageTopCont .ProfilePageTopCont-right .ProfilePageTopCont-rightBottom .p1{
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.ProfilePageParent
+  .ProfilePageTopCont
+  .ProfilePageTopCont-right
+  .ProfilePageTopCont-rightBottom
+  .bio {
+  width: 95%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  column-gap: 20px;
+  padding: 20px;
+  margin-left: 20px;
+  background-color: #EBEBEB;
+  border-radius: 10px;
+}
+
+
+.ProfilePageParent .ProfilePageBottomCont {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+  padding: 30px;
+  background-color: transparent; font-size: 20px;
+  font-weight: 600;
+}
+
+
+.ProfilePageParent .ProfilePageBottomCont .ProfilePageBottomCont-Content{
+  overflow-y: auto;
+  height: 800px;
+  background-color: white;
+  /* border-radius: 10px; */
+}
+
+.ProfilePageParent  hr{
+  width: 95%;
+  margin: 20px auto;
+}
+
+
+

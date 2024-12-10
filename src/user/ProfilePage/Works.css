@@ -1,0 +1,54 @@
+.WorksTemplateParent{
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    column-gap: 30px;
+    padding: 20px;
+}
+
+.WorksTemplateParent .WorksTemplateContent{
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    line-height: 10px;
+}
+
+.WorksTemplateParent .WorksTemplateContent .p1{
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.WorksTemplateParent .WorksTemplateContent .p2{
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+.WorksTemplateParent .WorksTemplateContent .p3{
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.WorksTemplateParent .WorksTemplateButton {
+    height: fit-content;
+    padding: 10px 30px;
+    background-color: #133E87;
+    color: white;
+    font-weight: 500;
+    border: none;
+    border-radius: 10px;
+}
+.WorksTemplateParent .WorksTemplateButton:active {
+    transform: scale(0.90);
+}
+
+
+.WorksTemplateParent .EditIcon {
+    cursor: pointer;
+}
+
+.WorksTemplateParent .WorkImage {
+    height: 200px;
+    width: 150px;
+    border-radius: 15px;
+}
