@@ -7,8 +7,6 @@ import Profile from "./user/ProfilePage/ProfilePage.jsx";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import Bookmark from "./user/Bookmark/bookmarkPage.jsx";
 import Genre from "./user/Genrepage/Genrepage.jsx";
-import Profile from "./user/ProfilePage/ProfilePage.jsx";
-
 
 function App() {
   return (
