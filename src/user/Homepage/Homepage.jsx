@@ -8,10 +8,11 @@ import Offcanvas from "./Offcanvas.jsx";
 import T1 from "../../assets/images/t1.jpg";
 import T2 from "../../assets/images/t2.png";
 import T3 from "../../assets/images/t3.jpg";
+import UploadModal from "./UploadModal.jsx";
 
 export default function Homepage() {
   const item = [
-    { src: T1, title: "Buhay Ni", author: "carl falcon" },
+    { src: T1, title: "Buhay Ni", author: "lrac abunda" },
     { src: T2 },
     { src: T3 },
     { src: T1 },
@@ -58,12 +59,15 @@ export default function Homepage() {
     <>
       <Navbar />
       <Offcanvas />
+      <UploadModal />
       <div className="homepage-parent">
         <div className="homepage-header">
           <h3>New Posts</h3>
           <button
             type="button"
             className="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#UploadModal"
             style={{
               color: "white",
               paddingLeft: "20px",

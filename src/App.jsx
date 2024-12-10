@@ -9,12 +9,12 @@ import Bookmark from "./user/Bookmark/bookmarkPage.jsx";
 import Genre from "./user/Genrepage/Genrepage.jsx";
 import Profile from "./user/ProfilePage/ProfilePage.jsx";
 
+
 function App() {
   return (
     <>
       <Router>
         <Routes>
-          {/* <Route path="/" element={<Login/>} /> */}
           <Route path="/" element={<Login />} />
           <Route path="/Homepage" element={<Homepage />} />
           <Route path="/Contentpage" element={<Contentpage />} />
