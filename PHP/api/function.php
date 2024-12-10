@@ -3,13 +3,15 @@
 require __DIR__ . '/../inc/dbcon.php';
 require  __DIR__ . '/../vendor/autoload.php';
 require 'creds.php';
-require __DIR__ . '/vendor/cloudmersive/cloudmersive_validate_api_client/vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 use \Firebase\JWT\JWT;
 use \Firebase\JWT\Key;
+use GeminiAPI\Client;
+use GeminiAPI\Resources\ModelName;
+use GeminiAPI\Resources\Parts\TextPart;
 // use Google\Cloud\Storage\StorageClient;
 
 function error422($message)
@@ -56,7 +58,21 @@ function sendMail($verification_code, $email)
     }
 }
 
-function nlpRead($userContent) {}
+function nlpRead($userContent)
+{
+
+    $queryText = "Analyze if the following text sounds positive, neutral, negative, or problematic. The output should only contain one of the three choices: \"$userContent\"";
+    $client = new Client('AIzaSyD54wt_Pp1Jb3Jrc-bXxi5UXk17ZsF1w6Q');
+    $response = $client->generativeModel(ModelName::GEMINI_1_5_FLASH)->generateContent(
+        new TextPart($queryText),
+    );
+
+    $data = [
+        'status' => 200,
+        'message' => $response->text()
+    ];
+    return json_encode($data);
+}
 
 function register($userInput)
 {
@@ -326,18 +342,227 @@ function continueAsGuest()
 
 function postContent($userInput, $user_id)
 {
+    global $con;
+
     $post_id = 'POST - ' . date('Y-d') . substr(uniqid(), -5);
     $title = $userInput['title'];
     $content = $userInput['content'];
-
+    $type = $userInput['type'];
+    $genreLoop = $userInput['genre'];
 
     if (empty(trim($title))) {
         return error422('Title is required');
     } else if (empty(trim($content))) {
         return error422('Content is required');
     } else {
-        // Your code here
+        $nlpResult = json_decode((nlpRead($content)), true);
+        $sentiment = trim(strtolower($nlpResult['message']));
+        mysqli_begin_transaction($con);
 
+        try {
+            if ($sentiment == 'positive' || $sentiment == 'neutral') {
+                $query = "INSERT INTO posts_tbl (post_id, user_id, title, content, status, analysis_score, published_at, created_at) VALUES (?, ?, ?, ?, 'posted', ?, NOW(), NOW())";
+                $stmt = $con->prepare($query);
+                $stmt->bind_param('sssss', $post_id, $user_id, $title, $content, $sentiment);
+                $result = $stmt->execute();
+                $stmt->close();
 
+                if ($result) {
+                    try {
+                        $insertedgp = 0;
+                        foreach ($genreLoop as $genre) {
+                            $gp_id = 'GP - ' . date('Y-d') . substr(uniqid(), -5);
+                            $tag_id = $genre['genre_id'];
+                            $query5 = "INSERT INTO genre_post_tbl (gp_id, post_id, tag_id, category_id) VALUES (?, ?, ?, ?)";
+                            $stmt5 = $con->prepare($query5);
+                            $stmt5->bind_param('ssss', $gp_id, $post_id, $tag_id, $type);
+                            $result5 = $stmt5->execute();
+                            $stmt5->close();
+
+                            if ($result5) {
+                                $insertedgp++;
+                            } else {
+                                throw new Exception('Failed to insert item');
+                            }
+                        }
+                        mysqli_commit($con);
+                        if ($insertedgp == count($genreLoop)) {
+                            $data = [
+                                'status' => 200,
+                                'message' => 'Posted',
+                                'sentiment' => $sentiment,
+                                'genre_inserted' => $insertedgp
+                            ];
+                            header("HTTP/1.0 200 OK");
+                            return json_encode($data);
+                        } else {
+                            $data = [
+                                'status' => 500,
+                                'message' => 'Internal Server Error'
+                            ];
+                            header("HTTP/1.0 500 Internal Server Error");
+                            return json_encode($data);
+                        }
+                    } catch (Exception $e) {
+                        throw new Exception('Failed to insert item');
+                    }
+                } else {
+                    $data = [
+                        'status' => 500,
+                        'message' => 'Internal Server Error'
+                    ];
+                    header("HTTP/1.0 500 Internal Server Error");
+                    return json_encode($data);
+                }
+            } else if ($sentiment == 'problematic') {
+                $query1 = "INSERT INTO posts_tbl (post_id, user_id, title, content, status, analysis_score, created_at) VALUES (?, ?, ?, ?, 'for_review', ?, NOW())";
+                $stmt1 = $con->prepare($query1);
+                $stmt1->bind_param('sssss', $post_id, $user_id, $title, $content, $sentiment);
+                $result1 = $stmt1->execute();
+                $stmt1->close();
+
+                if ($result1) {
+                    $review_id = 'REVIEW - ' . date('Y-d') . substr(uniqid(), -5);
+                    $query2 = "INSERT INTO review_tbl (review_id, post_id, analysis_score, status, created_at) VALUES (?, ?, ?, 'for_review', NOW())";
+                    $stmt2 = $con->prepare($query2);
+                    $stmt2->bind_param('sss', $review_id, $post_id, $sentiment);
+                    $result2 = $stmt2->execute();
+                    $stmt2->close();
+
+                    if ($result2) {
+                        try {
+                            $insertedgp = 0;
+                            foreach ($genreLoop as $genre) {
+                                $gp_id = 'GP - ' . date('Y-d') . substr(uniqid(), -5);
+                                $tag_id = $genre['genre_id'];
+                                $query5 = "INSERT INTO genre_post_tbl (gp_id, post_id, tag_id, category_id) VALUES (?, ?, ?, ?)";
+                                $stmt5 = $con->prepare($query5);
+                                $stmt5->bind_param('ssss', $gp_id, $post_id, $tag_id, $type);
+                                $result5 = $stmt5->execute();
+                                $stmt5->close();
+
+                                if ($result5) {
+                                    $insertedgp++;
+                                } else {
+                                    throw new Exception('Failed to insert item');
+                                }
+                            }
+                            mysqli_commit($con);
+                            if ($insertedgp == count($genreLoop)) {
+                                $data = [
+                                    'status' => 200,
+                                    'message' => 'Flagged',
+                                    'sentiment' => $sentiment,
+                                    'genre_inserted' => $insertedgp
+                                ];
+                                header("HTTP/1.0 200 OK");
+                                return json_encode($data);
+                            } else {
+                                $data = [
+                                    'status' => 500,
+                                    'message' => 'Internal Server Error'
+                                ];
+                                header("HTTP/1.0 500 Internal Server Error");
+                                return json_encode($data);
+                            }
+                        } catch (Exception $e) {
+                            throw new Exception('Failed to insert item');
+                        }
+                    } else {
+                        $data = [
+                            'status' => 500,
+                            'message' => 'Internal Server Error'
+                        ];
+                        header("HTTP/1.0 500 Internal Server Error");
+                        return json_encode($data);
+                    }
+                } else {
+                    $data = [
+                        'status' => 500,
+                        'message' => 'Internal Server Error'
+                    ];
+                    header("HTTP/1.0 500 Internal Server Error");
+                    return json_encode($data);
+                }
+            } else if ($sentiment == 'negative') {
+                $query3 = "INSERT INTO posts_tbl (post_id, user_id, title, content, status, analysis_score, created_at) VALUES (?, ?, ?, ?, 'for_review', ?, NOW())";
+                $stmt3 = $con->prepare($query3);
+                $stmt3->bind_param('sssss', $post_id, $user_id, $title, $content, $sentiment);
+                $result3 = $stmt3->execute();
+                $stmt3->close();
+
+                if ($result3) {
+                    $reject_id = 'REJECT - ' . date('Y-d') . substr(uniqid(), -5);
+                    $query4 = "INSERT INTO review_tbl (review_id, post_id, analysis_score, status, created_at) VALUES (?, ?, ?, 'rejected', NOW())";
+                    $stmt4 = $con->prepare($query4);
+                    $stmt4->bind_param('sss', $reject_id, $post_id, $sentiment);
+                    $result4 = $stmt4->execute();
+                    $stmt4->close();
+
+                    if ($result4) {
+                        try {
+                            $insertedgp = 0;
+                            foreach ($genreLoop as $genre) {
+                                $gp_id = 'GP - ' . date('Y-d') . substr(uniqid(), -5);
+                                $tag_id = $genre['genre_id'];
+                                $query5 = "INSERT INTO genre_post_tbl (gp_id, post_id, tag_id, category_id) VALUES (?, ?, ?, ?)";
+                                $stmt5 = $con->prepare($query5);
+                                $stmt5->bind_param('ssss', $gp_id, $post_id, $tag_id, $type);
+                                $result5 = $stmt5->execute();
+                                $stmt5->close();
+
+                                if ($result5) {
+                                    $insertedgp++;
+                                } else {
+                                    throw new Exception('Failed to insert item');
+                                }
+                            }
+                            mysqli_commit($con);
+                            if ($insertedgp == count($genreLoop)) {
+                                $data = [
+                                    'status' => 200,
+                                    'message' => 'Rejected',
+                                    'sentiment' => $sentiment,
+                                    'genre_inserted' => $insertedgp
+                                ];
+                                header("HTTP/1.0 200 OK");
+                                return json_encode($data);
+                            } else {
+                                $data = [
+                                    'status' => 500,
+                                    'message' => 'Internal Server Error'
+                                ];
+                                header("HTTP/1.0 500 Internal Server Error");
+                                return json_encode($data);
+                            }
+                        } catch (Exception $e) {
+                            throw new Exception('Failed to insert item');
+                        }
+                    } else {
+                        $data = [
+                            'status' => 500,
+                            'message' => 'Internal Server Error'
+                        ];
+                        header("HTTP/1.0 500 Internal Server Error");
+                        return json_encode($data);
+                    }
+                } else {
+                    $data = [
+                        'status' => 500,
+                        'message' => 'Internal Server Error'
+                    ];
+                    header("HTTP/1.0 500 Internal Server Error");
+                    return json_encode($data);
+                }
+            }
+        } catch (Exception $e) {
+            mysqli_rollback($con);
+            $data = [
+                'status' => 500,
+                'message' => 'Internal Server Error'
+            ];
+            header("HTTP/1.0 500 Internal Server Error");
+            return json_encode($data);
+        }
     }
 }

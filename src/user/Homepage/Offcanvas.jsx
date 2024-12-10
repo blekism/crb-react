@@ -12,24 +12,24 @@ export default function Offcanvas({
 }) {
   return (
     <div
-      class="offcanvas offcanvas-end"
+      className="offcanvas offcanvas-end"
       data-bs-scroll="true"
-      tabindex="-1"
+      tabIndex="-1"
       id="offcanvasWithBothOptions"
       aria-labelledby="offcanvasWithBothOptionsLabel"
     >
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">
+      <div className="offcanvas-header">
+        <h5 className="offcanvas-title" id="offcanvasWithBothOptionsLabel">
           About this Post
         </h5>
         <button
           type="button"
-          class="btn-close"
+          className="btn-close"
           data-bs-dismiss="offcanvas"
           aria-label="Close"
         ></button>
       </div>
-      <div class="offcanvas-body">
+      <div className="offcanvas-body">
         <div className="offcanvas-parent-content">
           <div className="offcanvas-image">
             <img className="offcanvas-post-image" src={T1} />

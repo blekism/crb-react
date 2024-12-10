@@ -1,0 +1,38 @@
+.custom-footer {
+  justify-content: flex-start;
+}
+
+.custom-header {
+  border-bottom: 0;
+}
+
+.modalContentParent {
+  display: flex;
+  flex-direction: row;
+  height: 40vh;
+  width: 100%;
+}
+
+.upload-text-area {
+  width: 70%;
+  max-height: 40vh;
+  /* background-color: blue; */
+}
+
+.upload-options {
+  display: flex;
+  flex-direction: column;
+  row-gap: 3%;
+  margin: 10px;
+  margin-top: 0;
+  max-height: 40vh;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.upload-options .upper-options {
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+  /* background-color: blue; */
+}
