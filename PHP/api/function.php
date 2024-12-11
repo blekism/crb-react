@@ -642,8 +642,14 @@ function readComment($data)
 
     $query = "SELECT u.username, c.created_at, c.content 
               FROM comments_tbl c
-            INNER JOIN user_tbl u ON c.user_id = u.user_id";
-    $result = $con->query($query);
+            INNER JOIN user_tbl u ON c.user_id = u.user_id
+            WHERE post_id = ?";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $data['post_id']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // $result = $con->query($query);
 
     if ($result->num_rows > 0) {
         $data = [
