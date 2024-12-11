@@ -1,11 +1,113 @@
 import React, { useState } from "react";
 import "./loginRegister.css";
 import InputTemplate from "./InputTemplate";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useCookies } from "react-cookie";
 
 export default function LoginSignup() {
-  // State to toggle the right-panel-active class
+  const navigate = useNavigate();
+  const [cookies, setCookie] = useCookies(["logged_user"]);
   const [isRightPanelActive, setIsRightPanelActive] = useState(false);
+  const [userReg, setUserReg] = useState({
+    firstName: "",
+    lastName: "",
+    username: "",
+    email: "",
+    password: "",
+  });
+  const [userLog, setUserLog] = useState({
+    email: "",
+    password: "",
+  });
+
+  const getJwtExpiry = (token) => {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload.exp ? new Date(payload.exp * 1000) : null;
+  };
+
+  const handleChangeReg = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+
+    setUserReg((values) => ({ ...values, [name]: value }));
+  };
+  const handleChangeLog = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+
+    setUserLog((values) => ({ ...values, [name]: value }));
+  };
+
+  const handleSubmitReg = (event) => {
+    event.preventDefault();
+
+    axios
+      .post("http://localhost/crb-react/PHP/api/create/register.php", userReg)
+      .then((response) => {
+        console.log(response.data);
+        if (response.data.status === 200) {
+          alert("check ur email bruh");
+          // mag open ng popup na may message na check mo email mo
+        } else {
+          alert("error");
+          //error bobo baka wala kang internet kase
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleSubmitLog = (event) => {
+    event.preventDefault();
+
+    axios
+      .post("http://localhost/crb-react/PHP/api/read/login.php", userLog, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+        if (response.data.status === 200) {
+          console.log(response.data);
+          setCookie("logged_user", response.data.token, {
+            path: "/",
+            expires: getJwtExpiry(response.data.token),
+            secure: true,
+            sameSite: "strict",
+            // httpOnly: true,
+          });
+          navigate("/Homepage");
+          setUserLog({
+            email: "",
+            password: "",
+          });
+        } else if (response.data.status === 401) {
+          alert("Invalid credentials");
+          setUserLog({
+            email: "",
+            password: "",
+          });
+        } else if (response.data.status === 403) {
+          alert("Account unverified");
+          setUserLog({
+            email: "",
+            password: "",
+          });
+        } else {
+          alert("server error");
+          setUserLog({
+            email: "",
+            password: "",
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     <>
@@ -31,8 +133,6 @@ export default function LoginSignup() {
               <div className="loginSignupChildCont-rightTopContent2">
                 <p>Last Name:</p>
                 <InputTemplate placeholder="Last Name" name="lastName" />
-                <p>Date of Birth: </p>
-                <InputTemplate placeholder="yyyy-mm-dd" name="dob" />
               </div>
             </div>
 
@@ -60,24 +160,26 @@ export default function LoginSignup() {
                 Sign in your account <br />
                 to continue.
               </p>
+              <form onSubmit={handleSubmitLog}>
+                <InputTemplate
+                  placeholder="Enter your email"
+                  name="email"
+                  onChange={handleChangeLog}
+                />
+                <InputTemplate
+                  type="password"
+                  placeholder="Enter your password"
+                  name="password"
+                  onChange={handleChangeLog}
+                />
 
-              <InputTemplate placeholder="Enter your email" name="email" />
-              <InputTemplate
-                type="password"
-                placeholder="Enter your password"
-                name="password"
-              />
-
-              {/* gagawin tong nasa axios pagka may working functions na pero
-              eto muna for now */}
-              <button className="loginSignupChildCont-leftButton">
-                <Link
-                  to={"/Homepage"}
-                  style={{ color: "white", textDecorationLine: "none" }}
+                <button
+                  className="loginSignupChildCont-leftButton"
+                  type="submit"
                 >
                   <p>Log in</p>
-                </Link>
-              </button>
+                </button>
+              </form>
             </div>
           </div>
 

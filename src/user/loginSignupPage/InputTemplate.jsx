@@ -9,13 +9,10 @@ export default function InputTemplate({
   name,
 }) {
   return (
-    <div class="input-group mb-3">
-      {/* <span class="input-group-text" id="basic-addon1">
-        {icon}
-      </span> */}
+    <div className="input-group mb-3">
       <input
         type={type}
-        class="form-control"
+        className="form-control"
         placeholder={placeholder}
         aria-label="Username"
         aria-describedby="basic-addon1"

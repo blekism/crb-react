@@ -13,7 +13,7 @@ export default function Navbar() {
             to={"/Homepage"}
             style={{ color: "Black", textDecorationLine: "none" }}
           >
-            <p>Home</p>
+            Home
           </Link>
         </p>
         <p className="navbtn">
@@ -21,7 +21,7 @@ export default function Navbar() {
             to={"/Genre"}
             style={{ color: "Black", textDecorationLine: "none" }}
           >
-            <p>Genre</p>
+            Genre
           </Link>
         </p>
         <p className="navbtn">
@@ -29,7 +29,7 @@ export default function Navbar() {
             to={"/Bookmark"}
             style={{ color: "Black", textDecorationLine: "none" }}
           >
-            <p>Bookmarks</p>
+            Bookmarks
           </Link>
         </p>
       </div>

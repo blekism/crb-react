@@ -9,6 +9,7 @@ import T1 from "../../assets/images/t1.jpg";
 import T2 from "../../assets/images/t2.png";
 import T3 from "../../assets/images/t3.jpg";
 import UploadModal from "./UploadModal.jsx";
+import axios from "axios";
 
 export default function Homepage() {
   const item = [

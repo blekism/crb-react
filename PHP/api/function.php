@@ -12,7 +12,7 @@ use \Firebase\JWT\Key;
 use GeminiAPI\Client;
 use GeminiAPI\Resources\ModelName;
 use GeminiAPI\Resources\Parts\TextPart;
-// use Google\Cloud\Storage\StorageClient;
+use Google\Cloud\Storage\StorageClient;
 
 function error422($message)
 {
@@ -121,7 +121,7 @@ function register($userInput)
                     mysqli_commit($con);
                     return json_encode([
                         'status' => 200,
-                        'message' => 'User registered successfully'
+                        'message' => 'User registered successfully. Please check your email for verification code.'
                     ]);
                 }
             } else {
@@ -281,8 +281,8 @@ function login($userInput)
                         //dito
                     } else {
                         $data = [
-                            'status' => 401,
-                            'message' => 'Account not verified',
+                            'status' => 403,
+                            'message' => 'unverified',
                         ];
                         header("HTTP/1.0 401 Unauthorized");
                         return json_encode($data);
@@ -571,7 +571,7 @@ function insertComment($data, $userId)
 {
     global $con;
 
-    $comment_id= 'COMMENT- ' . date('Y-d') . substr(uniqid(), -5);
+    $comment_id = 'COMMENT- ' . date('Y-d') . substr(uniqid(), -5);
     $content = $data['content'];
 
     if (empty(trim($content))) {
@@ -580,13 +580,12 @@ function insertComment($data, $userId)
             'message' => 'Comment cannot be empty'
         ];
         return json_encode($data);
-        
-    }else{
-      $query = "INSERT INTO comments_tbl (user_id, comment_id, content, created_at) VALUES (?,?, ?, NOW())";
+    } else {
+        $query = "INSERT INTO comments_tbl (user_id, comment_id, content, created_at) VALUES (?,?, ?, NOW())";
         $stmt = $con->prepare($query);
         $stmt->bind_param('sss', $userId, $comment_id, $content);
         $result = $stmt->execute();
-        $stmt->close();  
+        $stmt->close();
 
         if ($result) {
             $data = [
@@ -602,7 +601,6 @@ function insertComment($data, $userId)
             return json_encode($data);
         }
     }
-
 }
 
 function readContent($post_id)
@@ -715,7 +713,7 @@ function report_post($post_id, $reason)
 
     $query = "INSERT INTO reports_tbl (report_id, post_id, reason, status, created_at) VALUES (?, ?, ?, 'REPORTED', NOW())";
     $stmt = $con->prepare($query);
-    $stmt->bind_param('sss',$report_id, $post_id, $reason);
+    $stmt->bind_param('sss', $report_id, $post_id, $reason);
     $result = $stmt->execute();
     $stmt->close();
 
@@ -731,9 +729,7 @@ function report_post($post_id, $reason)
             'message' => 'An error occurred'
         ];
         return json_encode($data);
-
     }
-
 }
 
 
