@@ -1,10 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Search from "../../assets/images/search.png";
 import "./Navbar.css";
 import { Link } from "react-router-dom";
 import Pomasin from "../../assets/images/lheopomasin.jpg";
+import { useCookies } from "react-cookie";
+import { jwtDecode } from "jwt-decode";
 
 export default function Navbar() {
+  const [cookies, setCookie, removeCookie] = useCookies(["logged_user"]);
+  const jwt = cookies.logged_user;
+
+  useEffect(() => {
+    if (!jwt) {
+      window.location.href = "/";
+    } else {
+      console.log("user is logged in");
+    }
+  }, []);
+
   return (
     <div className="navbar-parent">
       <div className="nav-buttons">
