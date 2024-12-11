@@ -5,46 +5,29 @@ import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import HomepageItem from "./HomepageItemTemplte.jsx";
 import Offcanvas from "./Offcanvas.jsx";
-import T1 from "../../assets/images/t1.jpg";
-import T2 from "../../assets/images/t2.png";
-import T3 from "../../assets/images/t3.jpg";
 import UploadModal from "./UploadModal.jsx";
 import axios from "axios";
 
 export default function Homepage() {
-  const item = [
-    { src: T1, title: "Buhay Ni", author: "lrac abunda" },
-    { src: T2 },
-    { src: T3 },
-    { src: T1 },
-    { src: T2 },
-    { src: T1 },
-    { src: T1 },
-    { src: T3 },
-    { src: T3 },
-    { src: T1 },
-    { src: T1 },
-    { src: T1 },
-    { src: T1 },
-    { src: T1 },
-    { src: T3 },
-    { src: T3 },
-    { src: T3 },
-    { src: T3 },
-    { src: T3 },
-    { src: T3 },
-    { src: T2 },
-    { src: T2 },
-    { src: T2 },
-    { src: T2 },
-    { src: T2 },
-    { src: T2 },
-    { src: T2 },
-    { src: T2 },
-    { src: T2 },
-    { src: T2 },
-    { src: T2 },
-  ];
+  const [selectedItem, setSelectedItem] = useState(1);
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    if (selectedItem === null) {
+      console.log("No item selected si carl");
+    }
+    axios
+      .get("http://localhost/crb-react/PHP/api/read/readAllContent.php")
+      .then((response) => {
+        if (response.data.status === 200) {
+          console.log(response.data.data);
+          setItems(response.data.data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   const groupItems = (items, groupSize) => {
     const groups = [];
@@ -54,12 +37,16 @@ export default function Homepage() {
     }
     return groups;
   };
-  const groupedItems = groupItems(item, 6);
+  const groupedItems = groupItems(items, 6);
+
+  const handleItemClick = (item) => {
+    setSelectedItem(item);
+  };
 
   return (
     <>
       <Navbar />
-      <Offcanvas />
+      <Offcanvas item={selectedItem} />
       <UploadModal />
       <div className="homepage-parent">
         <div className="homepage-header">
@@ -93,9 +80,10 @@ export default function Homepage() {
                 {group.map((item, idx) => (
                   <HomepageItem
                     key={idx}
-                    image={item.src}
+                    image={item.image}
                     title={item.title}
                     author={item.author}
+                    onClick={() => handleItemClick(item)}
                   />
                 ))}
               </div>
@@ -117,7 +105,13 @@ export default function Homepage() {
             {groupedItems.map((group, index) => (
               <div key={index} className="custom-slider">
                 {group.map((item, idx) => (
-                  <HomepageItem key={idx} image={item.src} />
+                  <HomepageItem
+                    image={item.image}
+                    key={idx}
+                    title={item.title}
+                    author={item.author}
+                    onClick={() => handleItemClick(item)}
+                  />
                 ))}
               </div>
             ))}

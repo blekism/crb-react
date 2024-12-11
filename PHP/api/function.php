@@ -1021,3 +1021,29 @@ function deleteProfile($userInput)
         }
     }
 }
+
+function readAllContent()
+{
+    global $con;
+
+    $query = "SELECT user_tbl.username, posts_tbl.* FROM posts_tbl INNER JOIN user_tbl ON posts_tbl.user_id = user_tbl.user_id WHERE published_at IS NOT NULL";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result && $result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Contents retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No contents found'
+        ];
+        return json_encode($data);
+    }
+}

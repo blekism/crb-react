@@ -1,16 +1,43 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./Offcanvas.css";
-import T1 from "../../assets/images/t1.jpg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
-export default function Offcanvas({
-  author,
-  title,
-  genre1,
-  genre2,
-  genre3,
-  image,
-}) {
+export default function Offcanvas({ item }) {
+  const [selectedPost, setSelectedPost] = useState({});
+  const navigate = useNavigate();
+  console.log(item.post_id);
+
+  // useEffect(() => {
+  //   if (item && item.post_id) {
+  //     axios
+  //       .post(
+  //         "http://localhost/crb-react/PHP/api/read/read_content.php",
+  //         { post_id: item.post_id },
+  //         {
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //         }
+  //       )
+  //       .then((response) => {
+  //         if (response.data.status === 200) {
+  //           console.log(response.data);
+  //           setSelectedPost(response.data.data);
+  //         } else {
+  //           console.log("No data found hehe");
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //       });
+  //   }
+  // }, [item]);
+
+  const handleReadNow = () => {
+    navigate("/Contentpage", { state: { post_id: item.post_id } });
+  };
+
   return (
     <div
       className="offcanvas offcanvas-end"
@@ -33,11 +60,15 @@ export default function Offcanvas({
       <div className="offcanvas-body">
         <div className="offcanvas-parent-content">
           <div className="offcanvas-image">
-            <img className="offcanvas-post-image" src={T1} />
+            <img
+              className="offcanvas-post-image"
+              src={item.image}
+              alt={item.title}
+            />
           </div>
           <div className="offcanvas-title">
-            <p>Buhay Ni YoungWee</p>
-            <p>lrac onila</p>
+            <p>{item.title}</p>
+            <p>{item.author}</p>
           </div>
           <div className="offcanvas-tags">Genre</div>
           <div className="offcanvas-buttons">
@@ -51,13 +82,9 @@ export default function Offcanvas({
                 height: "45px",
                 backgroundColor: "#658ABD",
               }}
+              onClick={handleReadNow}
             >
-              <Link
-                to={"/Contentpage"}
-                style={{ color: "white", textDecorationLine: "none" }}
-              >
-                <p>Read Now</p>
-              </Link>
+              <p>Read Now</p>
             </button>
             <button
               type="button"

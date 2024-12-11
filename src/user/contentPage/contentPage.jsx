@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./contentPage.css";
 import Navbar from "../Navbar/Navbar";
 import bookmark from "../../assets/images/bookmark.png";
@@ -7,8 +7,16 @@ import view from "../../assets/images/view.png";
 import Commentuser from "./commentUser";
 import Commentbutton from "./commentButton";
 import ReportButton from "./reportButton";
+import { useLocation } from "react-router-dom";
+import axios from "axios";
 
 export default function Contentpage() {
+  const location = useLocation();
+  const { post_id } = location.state || {};
+  const [postContent, setPostContent] = useState({});
+
+  console.log(post_id);
+
   const comments = [
     { name: "V2day", date: "November 20,2024", comment: "lalalalalal" },
     { name: "user2", date: "date2", comment: "comment2" },
@@ -132,8 +140,9 @@ export default function Contentpage() {
           <Commentbutton />
         </div>
         <div className="commentName">
-          {comments.map((comment) => (
+          {comments.map((comment, index) => (
             <Commentuser
+              key={index}
               name={comment.name}
               date={comment.date}
               comment={comment.comment}
