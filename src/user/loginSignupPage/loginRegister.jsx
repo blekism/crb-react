@@ -4,6 +4,7 @@ import InputTemplate from "./InputTemplate";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useCookies } from "react-cookie";
+import VerificationModal from "./verificationModal.jsx";
 
 export default function LoginSignup() {
   const navigate = useNavigate();
@@ -147,7 +148,12 @@ export default function LoginSignup() {
               />
             </div>
 
-            <button className="loginSignupChildCont-rightButton">
+            <button
+              type="button"
+              className="loginSignupChildCont-rightButton"
+              data-bs-toggle="modal"
+              data-bs-target="#staticBackdrop"
+            >
               <p>Sign Up</p>
             </button>
           </div>
@@ -216,6 +222,7 @@ export default function LoginSignup() {
             </div>
           </div>
         </div>
+        <VerificationModal />
       </div>
     </>
   );

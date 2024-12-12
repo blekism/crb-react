@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from "react";
-import "./UploadModal.css";
-import HomepageDropdown from "./HomepageDropdown.jsx";
+import "./editUploadModal.css";
+import HomepageDropdown from "../Homepage/HomepageDropdown.jsx";
+import axios from "axios";
 
-export default function UploadModal() {
+export default function editUploadModal({
+  placeholder,
+  postContent,
+  onChange,
+  postID,
+}) {
   const test = [
     { id: 1, name: "Action" },
     { id: 2, name: "Adventure" },
@@ -41,14 +47,31 @@ export default function UploadModal() {
     setItems(newItems);
   };
 
+  const [postContents, setPostContents] = useState([]);
+
+  useEffect(() => {
+    axios
+      .post(
+        "http://localhost/crb-react/PHP/api/read/read_content.php",
+        { post_id: postID },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then(function (response) {
+        console.log(response.data);
+        setPostContents(response.data.data);
+      });
+  }, [postID]);
+
   return (
     <>
       <div
         className="modal fade"
         id="UploadModal"
         tabIndex="-1"
-        data-bs-backdrop="static"
-        data-bs-keyboard="false"
         aria-labelledby="exampleModalLabel"
         aria-hidden="true"
       >
@@ -60,7 +83,7 @@ export default function UploadModal() {
                 id="exampleModalLabel"
                 style={{ fontWeight: "700", margin: "auto" }}
               >
-                Post Your Story
+                Edit Your Post
               </h1>
               <button
                 type="button"
@@ -77,13 +100,15 @@ export default function UploadModal() {
                     className="form-control"
                     id="exampleFormControlTextarea1"
                     rows="3"
-                    placeholder="Tell me how your story goes..."
+                    placeholder={placeholder}
                     style={{
                       height: "40vh",
                       maxHeight: "40vh",
                       resize: "none",
                       fontSize: "16px",
                     }}
+                    value={postContents.content || ""}
+                    onChange={onChange}
                   ></textarea>
                 </div>
                 <div className="upload-options">

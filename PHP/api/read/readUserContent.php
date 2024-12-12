@@ -2,7 +2,7 @@
 header('Access-Control-Allow-Origin: http://localhost:5173');
 header('Access-Control-Allow-Credentials: true');
 header('Content-Type: application/json');
-header('Access-Control-Allow-Methods: PUT, OPTIONS');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Request-With');
 
 include('../function.php');
@@ -23,7 +23,7 @@ if ($requestMethod == "OPTIONS") {
     exit();
 }
 
-if ($requestMethod == "PUT") {
+if ($requestMethod == "POST") {
     $session = $_COOKIE['logged_user'] ?? '';
 
     try {
@@ -40,20 +40,9 @@ if ($requestMethod == "PUT") {
             echo json_encode($data);
             exit();
         } else {
-            $inputData = json_decode(file_get_contents("php://input"), true);
+            $readUserContent = readUserContent($account_id);
 
-            if (empty($inputData)) {
-                $data = [
-                    'status' => 400,
-                    'message' => 'Bad Request',
-                ];
-                header("HTTP/1.0 400 Bad Request");
-                echo json_encode($data);
-                exit();
-            } else {
-                $updateComment = updateComment($inputData);
-            }
-            echo $updateComment;
+            echo $readUserContent;
             exit();
         }
     } catch (ExpiredException $e) {

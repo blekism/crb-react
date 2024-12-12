@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Works.css";
 import Edit from "../../assets/images/Edit.svg";
-import Rectangle from "../../assets/images/Rectangle.svg";
+import Delete from "../../assets/images/Delete.svg";
+import EditUploadModal from "./editUploadModal";
 
 export default function Works({
   workImage,
@@ -10,15 +11,16 @@ export default function Works({
   datePosted,
   totalComments,
   totalBookmarks,
+  work,
 }) {
   return (
     <>
       <div className="WorksTemplateParent">
-        <img src={Rectangle} alt="Work" className="WorkImage" />
+        <img src={workImage} alt="Work" className="WorkImage" />
         <div className="WorksTemplateContent">
           <p className="p1">{title}</p>
           <p className="p2">{genre}</p>
-          <p className="p3">Date Posted: {datePosted}</p>
+          <p className="p3">Published At: {datePosted}</p>
           <p className="p3">Total Comments: {totalComments}</p>
           <p className="p3">Total Bookmarks: {totalBookmarks}</p>
         </div>
@@ -26,8 +28,16 @@ export default function Works({
         <button type="button" className="WorksTemplateButton">
           View
         </button>
-        <img src={Edit} alt="Edit" className="EditIcon" />
+        <img
+          src={Edit}
+          alt="Edit"
+          className="EditIcon"
+          data-bs-toggle="modal"
+          data-bs-target="#UploadModal"
+        />
+        <img src={Delete} alt="Edit" className="DeleteIcon" />
       </div>
+      <EditUploadModal postID={work} />
       <hr />
     </>
   );

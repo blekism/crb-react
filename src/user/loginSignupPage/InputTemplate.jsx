@@ -1,4 +1,5 @@
 import React from "react";
+import "./InputTemplate.css";
 
 export default function InputTemplate({
   //   icon,
@@ -20,7 +21,11 @@ export default function InputTemplate({
         value={value}
         name={name}
         required
-        style={{ backgroundColor: "rgba(19, 62, 135, 0.21)", border: "none" }}
+        style={{
+          backgroundColor: "rgba(19, 62, 135, 0.21)",
+          border: "none",
+          height: "40px",
+        }}
       />
     </div>
   );

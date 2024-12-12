@@ -624,7 +624,7 @@ function readContent($post_id)
         $data = [
             'status' => 200,
             'message' => 'Content retrieved successfully',
-            'data' => $result->fetch_all(MYSQLI_ASSOC)
+            'data' => $result->fetch_assoc()
         ];
         return json_encode($data);
     } else {
@@ -1019,5 +1019,43 @@ function deleteProfile($userInput)
             header("HTTP/1.0 500 Internal Server Error");
             return json_encode($data);
         }
+    }
+}
+
+function readUserContent($user_id)
+{
+    global $con;
+
+    $query = "SELECT 
+            posts_tbl.post_id,
+            posts_tbl.title,
+            posts_tbl.image,
+            posts_tbl.published_at,
+            COUNT(comments_tbl.post_id) AS total_comments, 
+            COUNT(bookmarks_tbl.post_id) AS total_bookmarks 
+            FROM posts_tbl 
+            INNER JOIN comments_tbl ON posts_tbl.post_id = comments_tbl.post_id
+            INNER JOIN bookmarks_tbl ON posts_tbl.post_id = bookmarks_tbl.post_id
+            WHERE posts_tbl.user_id = ? AND posts_tbl.status != 'for_review' AND posts_tbl.status != 'rejected'
+            GROUP BY posts_tbl.post_id";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Content retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No contents found'
+        ];
+        return json_encode($data);
     }
 }
