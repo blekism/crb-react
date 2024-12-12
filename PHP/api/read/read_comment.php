@@ -14,7 +14,7 @@ if ($requestMethod == "OPTIONS") {
     exit();
 }
 
-if ($requestMethod == "GET") {
+if ($requestMethod == "POST") {
 
     $inputData = json_decode(file_get_contents("php://input"), true);
 

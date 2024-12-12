@@ -14,16 +14,63 @@ export default function Contentpage() {
   const location = useLocation();
   const { post_id } = location.state || {};
   const [postContent, setPostContent] = useState({});
+  const [postComment, setPostComment] = useState([]);
 
   console.log(post_id);
 
-  const comments = [
-    { name: "V2day", date: "November 20,2024", comment: "lalalalalal" },
-    { name: "user2", date: "date2", comment: "comment2" },
-    { name: "user3", date: "date3", comment: "comment3" },
-    { name: "user4", date: "date4", comment: "comment4" },
-    { name: "user5", date: "date5", comment: "comment5" },
-  ];
+  useEffect(() => {
+    if (post_id) {
+      axios
+        .post(
+          "http://localhost/crb-react/PHP/api/read/read_content.php",
+          { post_id: post_id },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        .then((response) => {
+          if (response.data.status === 200) {
+            console.log(response.data.data);
+            setPostContent(response.data.data);
+          } else {
+            console.log("No data found hehe");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (post_id) {
+      axios
+        .post(
+          "http://localhost/crb-react/PHP/api/read/read_comment.php",
+          { post_id: post_id },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        .then((response) => {
+          console.log(response.data);
+          if (response.data.status === 200) {
+            console.log(response.data.data);
+            setPostComment(response.data.data);
+          } else {
+            console.log("No data found hehe");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }, [post_id]);
+
   return (
     <>
       <Navbar />
@@ -63,9 +110,11 @@ export default function Contentpage() {
           </div>
         </div>
 
+        {/* DITO UNG MGA CONTENTS */}
+
         <div className="flex-content-parent-right">
           <div className="title-right">
-            <h1>TITLE</h1>
+            <h1>{postContent.title}</h1>
             <img
               src={bookmark}
               className="search-icon"
@@ -73,61 +122,10 @@ export default function Contentpage() {
             />
           </div>
           <div>
-            <p>by user blabla</p>
+            <p>by {postContent.username}</p>
           </div>
 
-          <div>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
-            at faucibus lectus, at pretium magna. Sed viverra aliquet dolor ac
-            mollis. Curabitur feugiat orci vel lorem semper, eu ultrices purus
-            gravida. Quisque in velit non ipsum tincidunt efficitur. Mauris
-            euismod, ante nec interdum efficitur, nisl ipsum ultrices enim, in
-            luctus orci nisl eget felis. Mauris eu ex feugiat, euismod nisi
-            quis, interdum nunc. Vivamus ornare tincidunt lectus eu faucibus.
-            Nullam in convallis justo. Donec sollicitudin, est nec egestas
-            maximus, odio felis tincidunt neque, semper venenatis lorem mi in
-            quam. Phasellus eleifend at risus sed tristique. In hac habitasse
-            platea dictumst. Vestibulum eget posuere diam, at dictum metus.
-            Aenean vehicula leo mattis augue consequat maximus. Cras non ante
-            non libero tempus sollicitudin vel at odio. Pellentesque quis
-            elementum elit. Donec sit amet nisi ipsum. Pellentesque vitae
-            finibus dolor. Aenean varius quis justo sit amet gravida. Nunc
-            hendrerit scelerisque dui, sed pulvinar ante elementum eu. Cras
-            pulvinar nisi non leo tempor, quis imperdiet lectus condimentum.
-            Praesent blandit ullamcorper commodo. In ultricies orci a felis
-            fringilla, a aliquam justo dapibus. Donec ut vehicula est. Mauris
-            blandit, nibh quis rutrum imperdiet, mauris quam fermentum lacus,
-            sed rutrum orci ante sit amet ligula. Donec aliquet risus dolor,
-            quis dapibus diam vulputate quis. sollicitudin, est nec egestas
-            maximus, odio felis tincidunt neque, semper venenatis lorem mi in
-            quam. Phasellus eleifend at risus sed tristique. In hac habitasse
-            platea dictumst. Vestibulum eget posuere diam, at dictum metus.
-            Aenean vehicula leo mattis augue consequat maximus. Cras non ante
-            non libero tempus sollicitudin vel at odio. Pellentesque quis
-            elementum elit. Donec sit amet nisi ipsum. Pellentesque vitae
-            finibus dolor. Aenean varius quis justo sit amet gravida. Nunc
-            hendrerit scelerisque dui, sed pulvinar ante elementum eu. Cras
-            pulvinar nisi non leo tempor, quis imperdiet lectus condimentum.
-            Praesent blandit ullamcorper commodo. In ultricies orci a felis
-            fringilla, a aliquam justo dapibus. Donec ut vehicula est. Mauris
-            blandit, nibh quis rutrum imperdiet, mauris quam fermentum lacus,
-            sed rutrum orci ante sit amet ligula. Donec aliquet risus dolor,
-            quis dapibus diam vulputate quis.sollicitudin, est nec egestas
-            maximus, odio felis tincidunt neque, semper venenatis lorem mi in
-            quam. Phasellus eleifend at risus sed tristique. In hac habitasse
-            platea dictumst. Vestibulum eget posuere diam, at dictum metus.
-            Aenean vehicula leo mattis augue consequat maximus. Cras non ante
-            non libero tempus sollicitudin vel at odio. Pellentesque quis
-            elementum elit. Donec sit amet nisi ipsum. Pellentesque vitae
-            finibus dolor. Aenean varius quis justo sit amet gravida. Nunc
-            hendrerit scelerisque dui, sed pulvinar ante elementum eu. Cras
-            pulvinar nisi non leo tempor, quis imperdiet lectus condimentum.
-            Praesent blandit ullamcorper commodo. In ultricies orci a felis
-            fringilla, a aliquam justo dapibus. Donec ut vehicula est. Mauris
-            blandit, nibh quis rutrum imperdiet, mauris quam fermentum lacus,
-            sed rutrum orci ante sit amet ligula. Donec aliquet risus dolor,
-            quis dapibus diam vulputate quis.
-          </div>
+          <div>{postContent.content}</div>
           <div className="button-right">
             <ReportButton />
           </div>
@@ -140,12 +138,12 @@ export default function Contentpage() {
           <Commentbutton />
         </div>
         <div className="commentName">
-          {comments.map((comment, index) => (
+          {postComment.map((postComment, index) => (
             <Commentuser
               key={index}
-              name={comment.name}
-              date={comment.date}
-              comment={comment.comment}
+              name={postComment.username}
+              date={postComment.created_at}
+              comment={postComment.content}
             />
           ))}
         </div>

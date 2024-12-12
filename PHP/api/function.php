@@ -573,6 +573,7 @@ function insertComment($data, $userId)
 
     $comment_id = 'COMMENT- ' . date('Y-d') . substr(uniqid(), -5);
     $content = $data['content'];
+    $post_id = $data['post_id']; //THIS
 
     if (empty(trim($content))) {
         $data = [
@@ -581,21 +582,21 @@ function insertComment($data, $userId)
         ];
         return json_encode($data);
     } else {
-        $query = "INSERT INTO comments_tbl (user_id, comment_id, content, created_at) VALUES (?,?, ?, NOW())";
-        $stmt = $con->prepare($query);
-        $stmt->bind_param('sss', $userId, $comment_id, $content);
-        $result = $stmt->execute();
-        $stmt->close();
+            $query = "INSERT INTO comments_tbl (user_id, comment_id, content, post_id, created_at) VALUES (?, ?, ?, ?, NOW())";
+            $stmt = $con->prepare($query);
+            $stmt->bind_param('ssss', $userId, $comment_id, $content, $post_id); //here
+            $result = $stmt->execute();
+            $stmt->close();
 
-        if ($result) {
-            $data = [
-                'status' => 201,
-                'message' => 'Comment created successfully'
-            ];
-            return json_encode($data);
-        } else {
-            $data = [
-                'status' => 500,
+            if ($result) {
+                $data = [
+                    'status' => 201,
+                    'message' => 'Comment created successfully'
+                ];
+                return json_encode($data);
+            } else {
+                $data = [
+                    'status' => 500,
                 'message' => 'An error occurred'
             ];
             return json_encode($data);
@@ -624,7 +625,7 @@ function readContent($post_id)
         $data = [
             'status' => 200,
             'message' => 'Content retrieved successfully',
-            'data' => $result->fetch_all(MYSQLI_ASSOC)
+            'data' => $result->fetch_assoc()
         ];
         return json_encode($data);
     } else {
