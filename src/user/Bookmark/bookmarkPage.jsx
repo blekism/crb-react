@@ -1,49 +1,30 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../Navbar/Navbar";
 import "./bookmarkPage.css";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import T1 from "../../assets/images/sheena.jpg";
-import T2 from "../../assets/images/mikha.jpg";
-import T3 from "../../assets/images/maloi.jpg";
 import Bookmarkitem from "./bookmarkItemTemplate.jsx";
-import Offcanvas from "../Homepage/Offcanvas.jsx";
+import OffcanvasBookmark from "../Homepage/Offcanvas.jsx";
 import FilterButton from "../Genrepage/FilterByButton.jsx";
+import axios from "axios";
 
 export default function BookmarkPage() {
-  const item = [
-    { src: T1, title: "BINI", author: "Sheena" },
-    { src: T2, title: "BINI", author: "Mikha" },
-    { src: T3, title: "BINI", author: "Maloi" },
-    { src: T1 },
-    { src: T2 },
-    { src: T1 },
-    { src: T1 },
-    { src: T3 },
-    { src: T3 },
-    { src: T1 },
-    { src: T1 },
-    { src: T1 },
-    { src: T1 },
-    { src: T1 },
-    { src: T3 },
-    { src: T3 },
-    { src: T3 },
-    { src: T3 },
-    { src: T3 },
-    { src: T3 },
-    { src: T2 },
-    { src: T2 },
-    { src: T2 },
-    { src: T2 },
-    { src: T2 },
-    { src: T2 },
-    { src: T2 },
-    { src: T2 },
-    { src: T2 },
-    { src: T2 },
-    { src: T2 },
-  ];
+  const [selectedItem, setSelectedItem] = useState(1);
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost/crb-react/PHP/api/read/readAllContent.php")
+      .then((response) => {
+        if (response.data.status === 200) {
+          console.log(response.data.data);
+          setItems(response.data.data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   const groupItems = (items, groupSize) => {
     const groups = [];
@@ -53,12 +34,16 @@ export default function BookmarkPage() {
     }
     return groups;
   };
-  const groupedItems = groupItems(item, 12);
+  const groupedItems = groupItems(items, 12);
+
+  const handleItemClick = (item) => {
+    setSelectedItem(item);
+  };
 
   return (
     <>
       <Navbar />
-      <Offcanvas />
+      <OffcanvasBookmark item={selectedItem} />
       <div className="Titlecontent">
         <h1>Saved Post</h1>
         <FilterButton />
@@ -77,9 +62,10 @@ export default function BookmarkPage() {
               {group.map((item, idx) => (
                 <Bookmarkitem
                   key={idx}
-                  image={item.src}
+                  image={item.image}
                   title={item.title}
                   author={item.author}
+                  onClick={() => handleItemClick(item)}
                 />
               ))}
             </div>

@@ -340,15 +340,19 @@ function continueAsGuest()
     return json_encode($data);
 }
 
-function postContent($userInput, $user_id)
+function postContent($userInputRaw, $user_id, $imageUrlRaw)
 {
     global $con;
+
+    $userInput = json_decode($userInputRaw['postContent'], true);
+    $imageUrl = json_decode($imageUrlRaw, true);
 
     $post_id = 'POST - ' . date('Y-d') . substr(uniqid(), -5);
     $title = $userInput['title'];
     $content = $userInput['content'];
     $type = $userInput['type'];
     $genreLoop = $userInput['genre'];
+
 
     if (empty(trim($title))) {
         return error422('Title is required');
@@ -361,9 +365,9 @@ function postContent($userInput, $user_id)
 
         try {
             if ($sentiment == 'positive' || $sentiment == 'neutral') {
-                $query = "INSERT INTO posts_tbl (post_id, user_id, title, content, status, analysis_score, published_at, created_at) VALUES (?, ?, ?, ?, 'posted', ?, NOW(), NOW())";
+                $query = "INSERT INTO posts_tbl (post_id, user_id, title, content, status, analysis_score, published_at, created_at, image) VALUES (?, ?, ?, ?, 'posted', ?, NOW(), NOW(), ?)";
                 $stmt = $con->prepare($query);
-                $stmt->bind_param('sssss', $post_id, $user_id, $title, $content, $sentiment);
+                $stmt->bind_param('ssssss', $post_id, $user_id, $title, $content, $sentiment, $imageUrl);
                 $result = $stmt->execute();
                 $stmt->close();
 
@@ -1051,5 +1055,87 @@ function readAllContent()
             'message' => 'No contents found'
         ];
         return json_encode($data);
+    }
+}
+
+function readGenre()
+{
+    global $con;
+
+    $query = "SELECT tag_id AS id, name FROM genre_tbl";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result && $result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Genres retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No genres found'
+        ];
+        return json_encode($data);
+    }
+}
+
+function readType()
+{
+    global $con;
+
+    $query = "SELECT category_id AS id, name FROM category_id";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result && $result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Genres retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No genres found'
+        ];
+        return json_encode($data);
+    }
+}
+
+function imageUpload($userImage)
+{
+    global $filepath, $bucketName;
+    if (!isset($userImage['file'])) {
+        return error422("Image is required");
+    } else {
+        $file = $userImage['file'];
+        $storage = new StorageClient((['keyFilePath' => $filepath]));
+        $bucket = $storage->bucket($bucketName);
+
+        $fileName = $file['name'];
+        $tmpName = $file['tmp_name'];
+        $mimeType = mime_content_type($tmpName);
+
+        $object = $bucket->upload(
+            fopen($tmpName, 'r'),
+            [
+                'name' => $fileName,
+                'metadata' => [
+                    'contentType' => $mimeType
+                ]
+            ]
+        );
+        $object->update(['acl' => []], ['predefinedAcl' => 'PUBLICREAD']);
+        $url = "https://storage.googleapis.com/$bucketName/$fileName";
+
+        return json_encode($url, JSON_UNESCAPED_SLASHES);
     }
 }

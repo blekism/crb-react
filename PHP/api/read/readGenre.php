@@ -17,8 +17,8 @@ if ($requestMethod == "OPTIONS") {
 }
 
 if ($requestMethod == "GET") {
-    $readAllContent = readAllContent();
-    echo $readAllContent;
+    $readGenre = readGenre();
+    echo $readGenre;
     exit();
 } else {
     $data = [

@@ -8,32 +8,6 @@ export default function Offcanvas({ item }) {
   const navigate = useNavigate();
   console.log(item.post_id);
 
-  // useEffect(() => {
-  //   if (item && item.post_id) {
-  //     axios
-  //       .post(
-  //         "http://localhost/crb-react/PHP/api/read/read_content.php",
-  //         { post_id: item.post_id },
-  //         {
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //           },
-  //         }
-  //       )
-  //       .then((response) => {
-  //         if (response.data.status === 200) {
-  //           console.log(response.data);
-  //           setSelectedPost(response.data.data);
-  //         } else {
-  //           console.log("No data found hehe");
-  //         }
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //       });
-  //   }
-  // }, [item]);
-
   const handleReadNow = () => {
     navigate("/Contentpage", { state: { post_id: item.post_id } });
   };

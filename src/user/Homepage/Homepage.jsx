@@ -4,7 +4,7 @@ import Navbar from "../Navbar/Navbar.jsx";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import HomepageItem from "./HomepageItemTemplte.jsx";
-import Offcanvas from "./Offcanvas.jsx";
+import OffcanvasHome from "./Offcanvas.jsx";
 import UploadModal from "./UploadModal.jsx";
 import axios from "axios";
 
@@ -13,9 +13,6 @@ export default function Homepage() {
   const [items, setItems] = useState([]);
 
   useEffect(() => {
-    if (selectedItem === null) {
-      console.log("No item selected si carl");
-    }
     axios
       .get("http://localhost/crb-react/PHP/api/read/readAllContent.php")
       .then((response) => {
@@ -46,7 +43,7 @@ export default function Homepage() {
   return (
     <>
       <Navbar />
-      <Offcanvas item={selectedItem} />
+      <OffcanvasHome item={selectedItem} />
       <UploadModal />
       <div className="homepage-parent">
         <div className="homepage-header">

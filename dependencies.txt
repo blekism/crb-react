@@ -1,3 +1,4 @@
 npm install react-responsive-carousel
 composer require gemini-api-php/client
 composer require google/cloud-storage
+composer require convertapi/convertapi-php
