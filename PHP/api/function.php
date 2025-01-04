@@ -60,9 +60,10 @@ function sendMail($verification_code, $email)
 
 function nlpRead($userContent)
 {
+    global $google_key;
 
     $queryText = "Analyze if the following text sounds positive, neutral, negative, or problematic. The output should only contain one of the three choices: \"$userContent\"";
-    $client = new Client('AIzaSyD54wt_Pp1Jb3Jrc-bXxi5UXk17ZsF1w6Q');
+    $client = new Client($google_key);
     $response = $client->generativeModel(ModelName::GEMINI_1_5_FLASH)->generateContent(
         new TextPart($queryText),
     );
@@ -340,15 +341,19 @@ function continueAsGuest()
     return json_encode($data);
 }
 
-function postContent($userInput, $user_id)
+function postContent($userInputRaw, $user_id, $imageUrlRaw)
 {
     global $con;
+
+    $userInput = json_decode($userInputRaw['postContent'], true);
+    $imageUrl = json_decode($imageUrlRaw, true);
 
     $post_id = 'POST - ' . date('Y-d') . substr(uniqid(), -5);
     $title = $userInput['title'];
     $content = $userInput['content'];
     $type = $userInput['type'];
     $genreLoop = $userInput['genre'];
+
 
     if (empty(trim($title))) {
         return error422('Title is required');
@@ -361,9 +366,9 @@ function postContent($userInput, $user_id)
 
         try {
             if ($sentiment == 'positive' || $sentiment == 'neutral') {
-                $query = "INSERT INTO posts_tbl (post_id, user_id, title, content, status, analysis_score, published_at, created_at) VALUES (?, ?, ?, ?, 'posted', ?, NOW(), NOW())";
+                $query = "INSERT INTO posts_tbl (post_id, user_id, title, content, status, analysis_score, published_at, created_at, image) VALUES (?, ?, ?, ?, 'posted', ?, NOW(), NOW(), ?)";
                 $stmt = $con->prepare($query);
-                $stmt->bind_param('sssss', $post_id, $user_id, $title, $content, $sentiment);
+                $stmt->bind_param('ssssss', $post_id, $user_id, $title, $content, $sentiment, $imageUrl);
                 $result = $stmt->execute();
                 $stmt->close();
 
@@ -573,6 +578,7 @@ function insertComment($data, $userId)
 
     $comment_id = 'COMMENT- ' . date('Y-d') . substr(uniqid(), -5);
     $content = $data['content'];
+    $post_id = $data['post_id']; //THIS
 
     if (empty(trim($content))) {
         $data = [
@@ -581,9 +587,9 @@ function insertComment($data, $userId)
         ];
         return json_encode($data);
     } else {
-        $query = "INSERT INTO comments_tbl (user_id, comment_id, content, created_at) VALUES (?,?, ?, NOW())";
+        $query = "INSERT INTO comments_tbl (user_id, comment_id, content, post_id, created_at) VALUES (?, ?, ?, ?, NOW())";
         $stmt = $con->prepare($query);
-        $stmt->bind_param('sss', $userId, $comment_id, $content);
+        $stmt->bind_param('ssss', $userId, $comment_id, $content, $post_id); //here
         $result = $stmt->execute();
         $stmt->close();
 
@@ -642,8 +648,14 @@ function readComment($data)
 
     $query = "SELECT u.username, c.created_at, c.content 
               FROM comments_tbl c
-            INNER JOIN user_tbl u ON c.user_id = u.user_id";
-    $result = $con->query($query);
+            INNER JOIN user_tbl u ON c.user_id = u.user_id
+            WHERE post_id = ?";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $data['post_id']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // $result = $con->query($query);
 
     if ($result->num_rows > 0) {
         $data = [
@@ -1040,14 +1052,36 @@ function readUserContent($user_id)
             GROUP BY posts_tbl.post_id";
     $stmt = $con->prepare($query);
     $stmt->bind_param('s', $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $stmt->close();
-
-    if ($result->num_rows > 0) {
+  
+  if ($result->num_rows > 0) {
         $data = [
             'status' => 200,
             'message' => 'Content retrieved successfully',
+  } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No contents found'
+        ];
+        return json_encode($data);
+    }
+}
+  
+  
+  
+function readAllContent()
+{
+    global $con;
+
+    $query = "SELECT user_tbl.username, posts_tbl.* FROM posts_tbl INNER JOIN user_tbl ON posts_tbl.user_id = user_tbl.user_id WHERE published_at IS NOT NULL";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+  
+     if ($result && $result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Contents retrieved successfully',
             'data' => $result->fetch_all(MYSQLI_ASSOC)
         ];
         return json_encode($data);
@@ -1057,5 +1091,88 @@ function readUserContent($user_id)
             'message' => 'No contents found'
         ];
         return json_encode($data);
+    }
+}
+   
+
+function readGenre()
+{
+    global $con;
+
+    $query = "SELECT tag_id AS id, name FROM genre_tbl";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result && $result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Genres retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No genres found'
+        ];
+        return json_encode($data);
+    }
+}
+
+function readType()
+{
+    global $con;
+
+    $query = "SELECT category_id AS id, name FROM category_id";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result && $result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Genres retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No genres found'
+        ];
+        return json_encode($data);
+    }
+}
+
+function imageUpload($userImage)
+{
+    global $filepath, $bucketName;
+    if (!isset($userImage['file'])) {
+        return error422("Image is required");
+    } else {
+        $file = $userImage['file'];
+        $storage = new StorageClient((['keyFilePath' => $filepath]));
+        $bucket = $storage->bucket($bucketName);
+
+        $fileName = $file['name'];
+        $tmpName = $file['tmp_name'];
+        $mimeType = mime_content_type($tmpName);
+
+        $object = $bucket->upload(
+            fopen($tmpName, 'r'),
+            [
+                'name' => $fileName,
+                'metadata' => [
+                    'contentType' => $mimeType
+                ]
+            ]
+        );
+        $object->update(['acl' => []], ['predefinedAcl' => 'PUBLICREAD']);
+        $url = "https://storage.googleapis.com/$bucketName/$fileName";
+
+        return json_encode($url, JSON_UNESCAPED_SLASHES);
     }
 }

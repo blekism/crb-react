@@ -1,0 +1,29 @@
+Individual Reflection Paper
+
+
+Student Name: Laviano, Cristian  Team: NUD-Hub
+Role: Developer
+
+
+Introduction
+My role within the group is a developer. I contributed both in backend and frontend of the system. I also contributed many parts for the documentation.
+
+
+Challenges Faced
+-  I had no issues working on this project with this group because and I didn’t really face any new challenges as I am already familiar with what I am doing because I am also acting as a lead developer in a different project
+Contributions and Achievements
+-  My key contributions are as follows:
+
+Integration Efforts
+I made sure that all parts that I made worked properly on its own and with the other systems present. I learned that system integration as a concept is interesting and that the real life scenario of managing such work is big job. And because of that, there’s so much possibilities as to what can be done.
+
+Lessons Learned and Personal Growth
+Because of this project I was able to understand how to work with github, and along with that is how I can manage my own projects going forward using github. I also learned many things regarding react, and the most efficient ways to do some functions. I realized that on some functions, I don’t need to reinvent the wheel if they are well documented. I also learned how I can work better with php as a my backend. Overall I learned a lot, and realized that if needed, I can take on the role of a fullstack lead developer in my school projects.
+
+Conclusion
+In conclusion, my experience in this project has reinforced my understanding of both the technical and collaborative aspects of software development. Working on both the backend and frontend, while also contributing to documentation, allowed me to apply and refine my skills across the development process. Although I didn’t face any new challenges due to my prior experience, this project offered me valuable insights into system integration and its complexities in real-world scenarios. Managing integration efforts showed me the significance of seamless collaboration between different parts of a system, and it opened my perspective on the possibilities for improvement within software ecosystems.
+
+Furthermore, I strengthened my knowledge of GitHub, React, and PHP, which enhanced my confidence in handling future projects, particularly in managing code and avoiding redundant work. This project has deepened my confidence in my capabilities, showing me that I can successfully take on a full-stack lead developer role if required, and has been instrumental in shaping my approach to building cohesive and efficient systems.
+
+Appendix (Optional)
+Include any relevant artifacts, such as code snippets, design documents, or presentation slides, that showcase your contributions to the project.

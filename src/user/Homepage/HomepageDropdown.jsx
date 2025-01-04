@@ -1,12 +1,20 @@
 import React, { useState } from "react";
 import DeleteItem from "../../assets/images/deleteItem.png";
 
-export default function HomepageDropdown({ type, items, remove, isGenre }) {
+export default function HomepageDropdown({
+  type,
+  items,
+  remove,
+  isGenre,
+  onSelect,
+}) {
   const [selectedType, setSelectedType] = useState(type);
 
-  const handleSelect = (name) => {
-    setSelectedType(name);
-    console.log(name);
+  const handleSelect = (event, name) => {
+    event.preventDefault();
+    setSelectedType(name.name);
+    console.log(name, "selected");
+    onSelect(name.id);
   };
 
   return (
@@ -22,11 +30,11 @@ export default function HomepageDropdown({ type, items, remove, isGenre }) {
         {selectedType}
       </button>
       <ul className="dropdown-menu">
-        {items.map((item) => (
-          <li key={item.id}>
+        {items.map((item, index) => (
+          <li key={index}>
             <button
               className="dropdown-item"
-              onClick={() => handleSelect(item.name)}
+              onClick={(event) => handleSelect(event, item)}
             >
               {item.name}
             </button>

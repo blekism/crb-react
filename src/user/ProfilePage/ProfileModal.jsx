@@ -112,7 +112,7 @@ export default function ProfileModal() {
                       required
                     />
                   </div>
-                </div>
+
 
                 <div className="modalBody-rightBottomContent">
                   <p>Username: </p>
@@ -159,6 +159,19 @@ export default function ProfileModal() {
                 </button>
               </div>
             </form>
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button type="button" className="btn btn-primary">
+                Save changes
+              </button>
+            </div>
           </div>
         </div>
       </div>
