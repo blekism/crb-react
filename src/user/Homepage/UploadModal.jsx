@@ -147,6 +147,8 @@ export default function UploadModal() {
         className="modal fade"
         id="UploadModal"
         tabIndex="-1"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
         aria-labelledby="exampleModalLabel"
         aria-hidden="true"
       >

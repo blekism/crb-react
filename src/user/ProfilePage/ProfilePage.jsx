@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./ProfilePage.css";
 import Navbar from "../Navbar/Navbar";
 import StatsTemplate from "./StatisticsTemplate.jsx";
@@ -6,8 +6,56 @@ import Works from "./Works.jsx";
 import Edit from "../../assets/images/Edit.svg";
 import Circle from "../../assets/images/Circle.svg";
 import ProfileModal from "./ProfileModal";
+import axios from "axios";
+import { useCookies } from "react-cookie";
 
 export default function ProfilePage() {
+  const [profileDetails, setProfileDetails] = useState({});
+  const [postContents, setPostContents] = useState([]);
+  const [cookies] = useCookies(["logged_user"]);
+
+  console.log(profileDetails);
+
+  // console.log(cookies.logged_user);
+
+  useEffect(() => {
+    axios
+      .post(
+        "http://localhost/crb-react/PHP/api/read/singleRead_profile.php",
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + cookies.logged_user,
+          },
+          withCredentials: true,
+        }
+      )
+      .then(function (response) {
+        console.log(response.data);
+        setProfileDetails(response.data.data);
+      });
+  }, []);
+
+  useEffect(() => {
+    axios
+      .post(
+        "http://localhost/crb-react/PHP/api/read/readUserContent.php",
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + cookies.logged_user,
+          },
+          withCredentials: true,
+        }
+      )
+      .then(function (response) {
+        console.log(response.data);
+        setPostContents(response.data.data);
+      });
+  }, []);
+
   return (
     <>
       <div className="ProfilePageParent">
@@ -15,7 +63,7 @@ export default function ProfilePage() {
         <div className="ProfilePageTopCont">
           <div className="ProfilePageTopCont-left">
             <img src={Circle} alt="Profile" />
-            <h1>Username</h1>
+            <h1>@{profileDetails.username}</h1>
           </div>
           <div className="ProfilePageTopCont-right">
             <div className="ProfilePageTopCont-rightTop">
@@ -32,10 +80,10 @@ export default function ProfilePage() {
                   />
                   <ProfileModal />
                 </div>
-                <p className="p2">Name:</p>
-                <p className="p3">Hannah Duplon</p>
-                <p className="p4">Date of Birth:</p>
-                <p className="p5">August 4, 2003</p>
+                <p className="p2">First Name:</p>
+                <p className="p3">{profileDetails.first_name}</p>
+                <p className="p4">Last Name:</p>
+                <p className="p5">{profileDetails.last_name}</p>
               </div>
               <div className="rightTop-Right">
                 <div className="rightTop-Right1">
@@ -51,14 +99,7 @@ export default function ProfilePage() {
             <div className="ProfilePageTopCont-rightBottom">
               <p className="p1">Bio:</p>
               <div className="bio">
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Vestibulum at faucibus lectus, at pretium magna. Sed viverra
-                  aliquet dolor ac mollis. Curabitur feugiat orci vel lorem
-                  semper, eu ultrices purus gravida. Quisque in velit non ipsum
-                  tincidunt efficitur. Mauris euismod, ante nec interdum
-                  efficitur.
-                </p>
+                <p>{profileDetails.bio}</p>
               </div>
             </div>
           </div>
@@ -69,41 +110,23 @@ export default function ProfilePage() {
             <h2>Writings/Works</h2>
           </div>
           <div className="ProfilePageBottomCont-Content">
-            <Works
-              title="Book ni Yngwie"
-              genre="fiction"
-              datePosted="august 4, 2003"
-              totalComments="200"
-              totalBookmarks="400"
-            />
-            <Works
-              title="Book ni Yngwie"
-              genre="fiction"
-              datePosted="august 4, 2003"
-              totalComments="200"
-              totalBookmarks="400"
-            />
-            <Works
-              title="Book ni Yngwie"
-              genre="fiction"
-              datePosted="august 4, 2003"
-              totalComments="200"
-              totalBookmarks="400"
-            />
-            <Works
-              title="Book ni Yngwie"
-              genre="fiction"
-              datePosted="august 4, 2003"
-              totalComments="200"
-              totalBookmarks="400"
-            />
-            <Works
-              title="Book ni Yngwie"
-              genre="fiction"
-              datePosted="august 4, 2003"
-              totalComments="200"
-              totalBookmarks="400"
-            />
+            {postContents.map((postContent, key) => {
+              const formattedDate = new Date(postContent.published_at)
+                .toISOString()
+                .split("T")[0];
+
+              return (
+                <Works
+                  work={postContent.post_id}
+                  key={key}
+                  title={postContent.title}
+                  datePosted={formattedDate}
+                  workImage={postContent.image}
+                  totalComments={postContent.total_comments}
+                  totalBookmarks={postContent.total_bookmarks}
+                />
+              );
+            })}
           </div>
         </div>
       </div>

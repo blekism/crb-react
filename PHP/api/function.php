@@ -1034,6 +1034,40 @@ function deleteProfile($userInput)
     }
 }
 
+function readUserContent($user_id)
+{
+    global $con;
+
+    $query = "SELECT 
+            posts_tbl.post_id,
+            posts_tbl.title,
+            posts_tbl.image,
+            posts_tbl.published_at,
+            COUNT(comments_tbl.post_id) AS total_comments, 
+            COUNT(bookmarks_tbl.post_id) AS total_bookmarks 
+            FROM posts_tbl 
+            INNER JOIN comments_tbl ON posts_tbl.post_id = comments_tbl.post_id
+            INNER JOIN bookmarks_tbl ON posts_tbl.post_id = bookmarks_tbl.post_id
+            WHERE posts_tbl.user_id = ? AND posts_tbl.status != 'for_review' AND posts_tbl.status != 'rejected'
+            GROUP BY posts_tbl.post_id";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $user_id);
+  
+  if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Content retrieved successfully',
+  } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No contents found'
+        ];
+        return json_encode($data);
+    }
+}
+  
+  
+  
 function readAllContent()
 {
     global $con;
@@ -1043,8 +1077,8 @@ function readAllContent()
     $stmt->execute();
     $result = $stmt->get_result();
     $stmt->close();
-
-    if ($result && $result->num_rows > 0) {
+  
+     if ($result && $result->num_rows > 0) {
         $data = [
             'status' => 200,
             'message' => 'Contents retrieved successfully',
@@ -1059,6 +1093,7 @@ function readAllContent()
         return json_encode($data);
     }
 }
+   
 
 function readGenre()
 {
