@@ -113,33 +113,33 @@ export default function ProfileModal() {
                     />
                   </div>
 
-
-                <div className="modalBody-rightBottomContent">
-                  <p>Username: </p>
-                  <InputTemplate
-                    placeholder="Username"
-                    name="username"
-                    value={profileModalDetails.username}
-                    onChange={handleInputChange}
-                    required
-                  />
-                  <p>Email:</p>
-                  <InputTemplate
-                    placeholder="Email"
-                    name="email"
-                    value={profileModalDetails.email}
-                    onChange={handleInputChange}
-                    required
-                  />
-                  <p>Bio: </p>
-                  <InputTemplate
-                    type="text"
-                    placeholder="Bio"
-                    name="bio"
-                    value={profileModalDetails.bio}
-                    onChange={handleInputChange}
-                    required
-                  />
+                  <div className="modalBody-rightBottomContent">
+                    <p>Username: </p>
+                    <InputTemplate
+                      placeholder="Username"
+                      name="username"
+                      value={profileModalDetails.username}
+                      onChange={handleInputChange}
+                      required
+                    />
+                    <p>Email:</p>
+                    <InputTemplate
+                      placeholder="Email"
+                      name="email"
+                      value={profileModalDetails.email}
+                      onChange={handleInputChange}
+                      required
+                    />
+                    <p>Bio: </p>
+                    <InputTemplate
+                      type="text"
+                      placeholder="Bio"
+                      name="bio"
+                      value={profileModalDetails.bio}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
                 </div>
               </div>
               <div className="modal-footer">
@@ -159,19 +159,6 @@ export default function ProfileModal() {
                 </button>
               </div>
             </form>
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Cancel
-              </button>
-              <button type="button" className="btn btn-primary">
-                Save changes
-              </button>
-            </div>
           </div>
         </div>
       </div>

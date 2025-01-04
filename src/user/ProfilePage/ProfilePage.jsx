@@ -53,6 +53,9 @@ export default function ProfilePage() {
       .then(function (response) {
         console.log(response.data);
         setPostContents(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
       });
   }, []);
 

@@ -1046,8 +1046,8 @@ function readUserContent($user_id)
             COUNT(comments_tbl.post_id) AS total_comments, 
             COUNT(bookmarks_tbl.post_id) AS total_bookmarks 
             FROM posts_tbl 
-            INNER JOIN comments_tbl ON posts_tbl.post_id = comments_tbl.post_id
-            INNER JOIN bookmarks_tbl ON posts_tbl.post_id = bookmarks_tbl.post_id
+            LEFT JOIN comments_tbl ON posts_tbl.post_id = comments_tbl.post_id
+            LEFT JOIN bookmarks_tbl ON posts_tbl.post_id = bookmarks_tbl.post_id
             WHERE posts_tbl.user_id = ? AND posts_tbl.status != 'for_review' AND posts_tbl.status != 'rejected'
             GROUP BY posts_tbl.post_id";
     $stmt = $con->prepare($query);
@@ -1060,12 +1060,16 @@ function readUserContent($user_id)
         $data = [
             'status' => 200,
             'message' => 'Content retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
         ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
     } else {
         $data = [
             'status' => 404,
             'message' => 'No contents found'
         ];
+        header("HTTP/1.0 404 Not Found");
         return json_encode($data);
     }
 }
