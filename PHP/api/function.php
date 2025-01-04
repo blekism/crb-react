@@ -60,9 +60,10 @@ function sendMail($verification_code, $email)
 
 function nlpRead($userContent)
 {
+    global $google_key;
 
     $queryText = "Analyze if the following text sounds positive, neutral, negative, or problematic. The output should only contain one of the three choices: \"$userContent\"";
-    $client = new Client('AIzaSyD54wt_Pp1Jb3Jrc-bXxi5UXk17ZsF1w6Q');
+    $client = new Client($google_key);
     $response = $client->generativeModel(ModelName::GEMINI_1_5_FLASH)->generateContent(
         new TextPart($queryText),
     );
@@ -586,21 +587,21 @@ function insertComment($data, $userId)
         ];
         return json_encode($data);
     } else {
-            $query = "INSERT INTO comments_tbl (user_id, comment_id, content, post_id, created_at) VALUES (?, ?, ?, ?, NOW())";
-            $stmt = $con->prepare($query);
-            $stmt->bind_param('ssss', $userId, $comment_id, $content, $post_id); //here
-            $result = $stmt->execute();
-            $stmt->close();
+        $query = "INSERT INTO comments_tbl (user_id, comment_id, content, post_id, created_at) VALUES (?, ?, ?, ?, NOW())";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param('ssss', $userId, $comment_id, $content, $post_id); //here
+        $result = $stmt->execute();
+        $stmt->close();
 
-            if ($result) {
-                $data = [
-                    'status' => 201,
-                    'message' => 'Comment created successfully'
-                ];
-                return json_encode($data);
-            } else {
-                $data = [
-                    'status' => 500,
+        if ($result) {
+            $data = [
+                'status' => 201,
+                'message' => 'Comment created successfully'
+            ];
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 500,
                 'message' => 'An error occurred'
             ];
             return json_encode($data);
