@@ -13,20 +13,20 @@ export default function ProfileModal() {
         aria-hidden="true"
         data-bs-backdrop="static"
       >
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel">
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h1 className="modal-title fs-5" id="exampleModalLabel">
                 Edit Profile
               </h1>
               <button
                 type="button"
-                class="btn-close"
+                className="btn-close"
                 data-bs-dismiss="modal"
                 aria-label="Close"
               ></button>
             </div>
-            <div class="modal-body">
+            <div className="modal-body">
               <div className="modalBody-rightTopContent">
                 <div className="modalBody-rightTopContent1">
                   <p>First Name:</p>
@@ -61,15 +61,15 @@ export default function ProfileModal() {
                 <InputTemplate type="text" placeholder="Bio" name="password" />
               </div>
             </div>
-            <div class="modal-footer">
+            <div className="modal-footer">
               <button
                 type="button"
-                class="btn btn-secondary"
+                className="btn btn-secondary"
                 data-bs-dismiss="modal"
               >
                 Cancel
               </button>
-              <button type="button" class="btn btn-primary">
+              <button type="button" className="btn btn-primary">
                 Save changes
               </button>
             </div>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./HomepageItemTemplate.css";
 
-export default function ForyouItemTemplate({ image, title, author, open }) {
+export default function ForyouItemTemplate({ image, title, author, onClick }) {
   return (
     <>
       <div
@@ -9,6 +9,7 @@ export default function ForyouItemTemplate({ image, title, author, open }) {
         data-bs-toggle="offcanvas"
         data-bs-target="#offcanvasWithBothOptions"
         aria-controls="offcanvasWithBothOptions"
+        onClick={onClick}
       >
         <img src={image} className="card-img" />
         <div className="card-content">
