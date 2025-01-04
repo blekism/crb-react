@@ -1052,12 +1052,16 @@ function readUserContent($user_id)
             GROUP BY posts_tbl.post_id";
     $stmt = $con->prepare($query);
     $stmt->bind_param('s', $user_id);
-  
-  if ($result->num_rows > 0) {
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
         $data = [
             'status' => 200,
             'message' => 'Content retrieved successfully',
-  } else {
+        ];
+    } else {
         $data = [
             'status' => 404,
             'message' => 'No contents found'
@@ -1065,9 +1069,9 @@ function readUserContent($user_id)
         return json_encode($data);
     }
 }
-  
-  
-  
+
+
+
 function readAllContent()
 {
     global $con;
@@ -1077,8 +1081,8 @@ function readAllContent()
     $stmt->execute();
     $result = $stmt->get_result();
     $stmt->close();
-  
-     if ($result && $result->num_rows > 0) {
+
+    if ($result && $result->num_rows > 0) {
         $data = [
             'status' => 200,
             'message' => 'Contents retrieved successfully',
@@ -1093,7 +1097,7 @@ function readAllContent()
         return json_encode($data);
     }
 }
-   
+
 
 function readGenre()
 {
