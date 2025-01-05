@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DeleteItem from "../../assets/images/deleteItem.png";
 
 export default function HomepageDropdown({
@@ -7,8 +7,18 @@ export default function HomepageDropdown({
   remove,
   isGenre,
   onSelect,
+  selectedValue,
 }) {
   const [selectedType, setSelectedType] = useState(type);
+
+  useEffect(() => {
+    if (selectedValue) {
+      const selectedItem = items.find((item) => item.id === selectedValue);
+      if (selectedItem) {
+        setSelectedType(selectedItem.name);
+      }
+    }
+  }, [selectedValue, items]);
 
   const handleSelect = (event, name) => {
     event.preventDefault();

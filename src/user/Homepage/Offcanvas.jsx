@@ -3,15 +3,29 @@ import "./Offcanvas.css";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useCookies } from "react-cookie";
+import { jwtDecode } from "jwt-decode";
 
 export default function Offcanvas({ item }) {
   const [IsPostBMK, setIsPostBMK] = useState({});
   const [cookies] = useCookies(["logged_user"]);
+  const jwt = cookies.logged_user;
+  const [readerIsOwner, setIsReaderOwner] = useState("");
   const navigate = useNavigate();
   console.log(item.post_id);
 
+  useEffect(() => {
+    try {
+      const decoded = jwtDecode(jwt);
+      setIsReaderOwner(decoded.user_id);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
   const handleReadNow = () => {
-    navigate("/Contentpage", { state: { post_id: item.post_id } });
+    navigate("/Contentpage", {
+      state: { post_id: item.post_id, owner: readerIsOwner },
+    });
   };
   useEffect(() => {
     axios

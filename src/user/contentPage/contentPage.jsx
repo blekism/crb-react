@@ -7,16 +7,25 @@ import view from "../../assets/images/view.png";
 import Commentuser from "./commentUser";
 import Commentbutton from "./commentButton";
 import ReportButton from "./reportButton";
+import LaunchModal from "./launchModal";
+import EditUploadModal from "../Homepage/UploadModal";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
+import { useCookies } from "react-cookie";
+import { jwtDecode } from "jwt-decode";
+import Edit from "../../assets/images/Edit.svg";
 
 export default function Contentpage() {
   const location = useLocation();
   const { post_id } = location.state || {};
+  const { owner } = location.state || {};
   const [postContent, setPostContent] = useState({});
   const [postComment, setPostComment] = useState([]);
+  const [cookies] = useCookies(["logged_user"]);
+  const jwt = cookies.logged_user;
+  const [viewerIsOwner, setViewerIsOwner] = useState(false);
 
-  console.log(post_id);
+  console.log("owner", owner || "no owner");
 
   useEffect(() => {
     if (post_id) {
@@ -41,6 +50,23 @@ export default function Contentpage() {
         .catch((error) => {
           console.log(error);
         });
+
+      if (owner) {
+        //checks if the viewer is the owner of the post
+        try {
+          const decoded = jwtDecode(jwt);
+          if (decoded.user_id === owner) {
+            setViewerIsOwner(true);
+          } else {
+            setViewerIsOwner(false);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        //if no owner is passed, viewer is not owner
+        setViewerIsOwner(false);
+      }
     }
   }, []);
 
@@ -115,11 +141,24 @@ export default function Contentpage() {
         <div className="flex-content-parent-right">
           <div className="title-right">
             <h1>{postContent.title}</h1>
-            <img
-              src={bookmark}
-              className="search-icon"
-              style={{ height: "50px", width: "50px" }}
-            />
+            <div>
+              <img
+                src={bookmark}
+                className="search-icon"
+                style={{
+                  height: "50px",
+                  width: "50px",
+                  marginRight: "20px",
+                  cursor: "pointer",
+                }}
+              />
+              {viewerIsOwner && (
+                <>
+                  <LaunchModal Edit={Edit} />
+                  <EditUploadModal postID={post_id} />
+                </>
+              )}
+            </div>
           </div>
           <div>
             <p>by {postContent.username}</p>
@@ -128,11 +167,15 @@ export default function Contentpage() {
           <div>{postContent.content}</div>
           <div>{postContent.category_id}</div>
           <div>{postContent.tag_id}</div>
+
+          <hr />
           <div className="button-right">
             <ReportButton />
           </div>
         </div>
       </div>
+
+      <hr style={{ marginLeft: "100px", marginRight: "100px" }} />
 
       <div className="flex-content-bottom">
         <div className="commentTitle">
