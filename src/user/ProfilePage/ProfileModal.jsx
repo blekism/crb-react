@@ -93,25 +93,27 @@ export default function ProfileModal() {
             <form onSubmit={handleSubmit}>
               <div className="modal-body">
                 <div className="modalBody-rightTopContent">
-                  <div className="modalBody-rightTopContent1">
-                    <p>First Name:</p>
-                    <InputTemplate
-                      placeholder="First Name"
-                      name="first_name"
-                      value={profileModalDetails.first_name}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                  <div className="modalBody-rightTopContent2">
-                    <p>Last Name:</p>
-                    <InputTemplate
-                      placeholder="Last Name"
-                      name="last_name"
-                      value={profileModalDetails.last_name}
-                      onChange={handleInputChange}
-                      required
-                    />
+                  <div className="modalBody-rightTopCont">
+                    <div className="modalBody-rightTopContent1">
+                      <p>First Name:</p>
+                      <InputTemplate
+                        placeholder="First Name"
+                        name="first_name"
+                        value={profileModalDetails.first_name}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+                    <div className="modalBody-rightTopContent2">
+                      <p>Last Name:</p>
+                      <InputTemplate
+                        placeholder="Last Name"
+                        name="last_name"
+                        value={profileModalDetails.last_name}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
                   </div>
 
                   <div className="modalBody-rightBottomContent">

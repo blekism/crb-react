@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./Works.css";
 import Edit from "../../assets/images/Edit.svg";
 import Delete from "../../assets/images/Delete.svg";
-import EditUploadModal from "./editUploadModal";
+import EditUploadModal from "../Homepage/UploadModal";
 
 export default function Works({
   workImage,
@@ -13,6 +13,15 @@ export default function Works({
   totalBookmarks,
   work,
 }) {
+  const handleButtonClick = (id) => {
+    setModalId(id);
+  };
+  const [modalId, setModalId] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+  console.log(work, "crappy");
   return (
     <>
       <div className="WorksTemplateParent">
@@ -34,10 +43,15 @@ export default function Works({
           className="EditIcon"
           data-bs-toggle="modal"
           data-bs-target="#UploadModal"
+          // onClick={() => handleButtonClick(work)}
         />
         <img src={Delete} alt="Edit" className="DeleteIcon" />
       </div>
+      {/* {isModalOpen && (
+        <EditUploadModal postID={work} onClose={handleCloseModal} />
+      )} */}
       <EditUploadModal postID={work} />
+
       <hr />
     </>
   );

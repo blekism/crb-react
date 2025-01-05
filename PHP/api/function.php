@@ -615,10 +615,19 @@ function readContent($post_id)
 
     $id = $post_id['post_id'];
 
-    $query = "SELECT c.title,u.username , c.content
-              FROM posts_tbl c
-            INNER JOIN user_tbl u ON c.user_id = u.user_id
-            WHERE post_id = ?";
+    $query = "SELECT 
+                posts_tbl.title,
+                posts_tbl.post_id,
+                user_tbl.username, 
+                posts_tbl.content,
+                category_id.name AS Category,
+                GROUP_CONCAT(genre_tbl.name SEPARATOR ', ') AS genres
+              FROM genre_post_tbl
+              INNER JOIN posts_tbl ON genre_post_tbl.post_id = posts_tbl.post_id
+              INNER JOIN user_tbl ON posts_tbl.user_id = user_tbl.user_id
+              INNER JOIN category_id ON genre_post_tbl.category_id = category_id.category_id
+              INNER JOIN genre_tbl ON genre_post_tbl.tag_id = genre_tbl.tag_id
+            WHERE posts_tbl.post_id = ?";
 
     $stmt = $con->prepare($query);
     $stmt->bind_param('s', $id);

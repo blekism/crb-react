@@ -4,7 +4,13 @@ import HomepageDropdown from "./HomepageDropdown.jsx";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 
-export default function UploadModal() {
+export default function UploadModal({
+  placeholder,
+  postContent,
+  onChange,
+  postID,
+  onClose,
+}) {
   const [genre, setGenre] = useState([]);
   const [type, setType] = useState([]);
   const [cookies] = useCookies(["logged_user"]);
@@ -141,6 +147,38 @@ export default function UploadModal() {
     setItems(newItems);
   };
 
+  const [EditPostContents, setEditPostContents] = useState([]);
+  const [genresString, setGenreString] = useState("");
+
+  console.log(postID, "booger");
+
+  useEffect(() => {
+    if (postID) {
+      axios
+        .post(
+          "http://localhost/crb-react/PHP/api/read/read_content.php",
+          { post_id: postID },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        .then(function (response) {
+          console.log(response.data.data, "response");
+          setEditPostContents(response.data.data);
+          setGenreString(response.data.data.genres);
+        });
+    }
+  }, [postID]);
+  // const genresString = EditPostContents.genres;
+  console.log(genresString);
+  // const genresArray = genresString.split(", ");
+  // console.log(genresArray);
+  // genresArray.forEach((genre) => {
+  //   console.log(genre);
+  // });
+
   return (
     <>
       <div
@@ -168,6 +206,7 @@ export default function UploadModal() {
                 data-bs-dismiss="modal"
                 aria-label="Close"
                 style={{ margin: "0" }}
+                // onClick={onClose}
               ></button>
             </div>
             <form onSubmit={handleContentSubmit}>
@@ -184,7 +223,7 @@ export default function UploadModal() {
                     aria-describedby="basic-addon1"
                     name="title"
                     onChange={handleContentChange}
-                    value={Postcontent.title}
+                    value={Postcontent.title || EditPostContents.title}
                     required
                   />
                 </div>
@@ -203,7 +242,7 @@ export default function UploadModal() {
                       }}
                       onChange={handleContentChange}
                       name="content"
-                      value={Postcontent.content}
+                      value={Postcontent.content || EditPostContents.content}
                       required
                     ></textarea>
                   </div>
