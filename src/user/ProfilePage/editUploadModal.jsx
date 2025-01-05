@@ -3,12 +3,13 @@ import "./editUploadModal.css";
 import HomepageDropdown from "../Homepage/HomepageDropdown.jsx";
 import axios from "axios";
 
-export default function editUploadModal({
+export default function EditUploadModal({
   placeholder,
   postContent,
   onChange,
   postID,
 }) {
+  console.log(postContent);
   const test = [
     { id: 1, name: "Action" },
     { id: 2, name: "Adventure" },

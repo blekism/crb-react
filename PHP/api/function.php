@@ -706,12 +706,14 @@ function Bookmark($post_id, $user_id)
                 'status' => 201,
                 'message' => 'Post bookmarked successfully'
             ];
+            header("HTTP/1.0 200 OK");
             return json_encode($data);
         } else {
             $data = [
                 'status' => 500,
                 'message' => 'An error occurred'
             ];
+            header("HTTP/1.0 500 Internal Server Error");
             return json_encode($data);
         }
     }
@@ -734,12 +736,14 @@ function report_post($post_id, $reason)
             'status' => 201,
             'message' => 'Post reported successfully'
         ];
+        header("HTTP/1.0 200 OK");
         return json_encode($data);
     } else {
         $data = [
             'status' => 500,
             'message' => 'An error occurred'
         ];
+        header("HTTP/1.0 500 Internal Server Error");
         return json_encode($data);
     }
 }
@@ -1182,5 +1186,78 @@ function imageUpload($userImage)
         $url = "https://storage.googleapis.com/$bucketName/$fileName";
 
         return json_encode($url, JSON_UNESCAPED_SLASHES);
+    }
+}
+
+function readAllBookmark($user_id)
+{
+    global $con;
+
+    $query = "SELECT
+        bookmarks_tbl.bookmark_id,
+        posts_tbl.*,
+        user_tbl.username
+            FROM 
+        bookmarks_tbl 
+        	INNER JOIN posts_tbl ON bookmarks_tbl.post_id = posts_tbl.post_id
+            INNER JOIN user_tbl ON posts_tbl.user_id = user_tbl.user_id 
+            WHERE bookmarks_tbl.user_id = ? AND posts_tbl.published_at IS NOT NULL";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result && $result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Contents retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No contents found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+
+function readIfBookmarked($post_id)
+{
+    global $con;
+
+    $userPost = $post_id['post_id'];
+
+    if (empty(trim($userPost))) {
+        return error422('Post ID is required');
+    } else {
+        $query = "SELECT * FROM bookmarks_tbl WHERE post_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param('s', $userPost);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+
+        if ($result && $result->num_rows == 1) {
+            $data = [
+                'status' => 200,
+                'message' => 'Post is bookmarked',
+                'data' => true
+            ];
+            header("HTTP/1.0 200 OK");
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 200,
+                'message' => 'Post is not bookmarked',
+                'data' => false
+            ];
+            header("HTTP/1.0 200 No Bookmark");
+            return json_encode($data);
+        }
     }
 }

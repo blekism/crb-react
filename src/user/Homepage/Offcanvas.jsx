@@ -2,14 +2,63 @@ import React, { useState, useEffect } from "react";
 import "./Offcanvas.css";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useCookies } from "react-cookie";
 
 export default function Offcanvas({ item }) {
-  const [selectedPost, setSelectedPost] = useState({});
+  const [IsPostBMK, setIsPostBMK] = useState({});
+  const [cookies] = useCookies(["logged_user"]);
   const navigate = useNavigate();
   console.log(item.post_id);
 
   const handleReadNow = () => {
     navigate("/Contentpage", { state: { post_id: item.post_id } });
+  };
+  useEffect(() => {
+    axios
+      .post(
+        "http://localhost/crb-react/PHP/api/read/readIfBookmarked.php",
+        { post_id: item.post_id },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((response) => {
+        if (response.data.status === 200) {
+          console.log(response.data.data);
+          setIsPostBMK(response.data.data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [item.post_id]);
+
+  const handleBookmark = (id) => {
+    axios
+      .post(
+        "http://localhost/crb-react/PHP/api/create/bookmark.php",
+        { post_id: id },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + cookies.logged_user,
+          },
+          withCredentials: true,
+        }
+      )
+      .then((response) => {
+        if (response.data.status === 201) {
+          console.log(response.data);
+          setIsPostBMK(true);
+        } else if (response.data.status === 409) {
+          console.log(response.data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -60,18 +109,21 @@ export default function Offcanvas({ item }) {
             >
               <p>Read Now</p>
             </button>
-            <button
-              type="button"
-              className="btn"
-              style={{
-                color: "white",
-                fontWeight: "400",
-                height: "45px",
-                backgroundColor: "#658ABD",
-              }}
-            >
-              Save this Post
-            </button>
+            {!IsPostBMK && (
+              <button
+                type="button"
+                className="btn"
+                style={{
+                  color: "white",
+                  fontWeight: "400",
+                  height: "45px",
+                  backgroundColor: "#658ABD",
+                }}
+                onClick={() => handleBookmark(item.post_id)}
+              >
+                Save this Post
+              </button>
+            )}
           </div>
         </div>
       </div>
