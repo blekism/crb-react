@@ -8,11 +8,90 @@ import Circle from "../../assets/images/Circle.svg";
 import ProfileModal from "./ProfileModal";
 import axios from "axios";
 import { useCookies } from "react-cookie";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+} from "recharts";
 
 export default function ProfilePage() {
   const [profileDetails, setProfileDetails] = useState({});
   const [postContents, setPostContents] = useState([]);
   const [cookies] = useCookies(["logged_user"]);
+  const [postsData, setPostsData] = useState([]);
+  const [totalCommentsData, setTotalCommentsData] = useState([]);
+  const [totalBookmarksData, setTotalBookmarksData] = useState([]);
+
+  useEffect(() => {
+    axios
+      .post(
+        "http://localhost/crb-react/PHP/api/read/readYourTotalPosts.php",
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + cookies.logged_user,
+          },
+          withCredentials: true,
+        }
+      )
+      .then(function (response) {
+        console.log(response.data);
+        setPostsData(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    axios
+      .post(
+        "http://localhost/crb-react/PHP/api/read/readYourPostsTotalComment.php",
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + cookies.logged_user,
+          },
+          withCredentials: true,
+        }
+      )
+      .then(function (response) {
+        console.log(response.data);
+        setTotalCommentsData(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    axios
+      .post(
+        "http://localhost/crb-react/PHP/api/read/readYourPostsTotalBookmarks.php",
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + cookies.logged_user,
+          },
+          withCredentials: true,
+        }
+      )
+      .then(function (response) {
+        console.log(response.data);
+        setTotalBookmarksData(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   console.log(profileDetails);
 
@@ -59,6 +138,102 @@ export default function ProfilePage() {
       });
   }, []);
 
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div
+          className="custom-tooltip"
+          style={{
+            backgroundColor: "rgba(0, 0, 0, 0.75)",
+            padding: "10px",
+            borderRadius: "5px",
+            color: "white",
+          }}
+        >
+          <p
+            className="label"
+            style={{
+              fontWeight: "bold",
+              color: "white",
+            }}
+          >
+            Title: {`${payload[0].payload.title}`}
+          </p>
+          <p className="intro">
+            <span>{`Total Comments: `}</span>
+            <span>{`${payload[0].value}`}</span>
+          </p>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  const CustomTooltip1 = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div
+          className="custom-tooltip"
+          style={{
+            backgroundColor: "rgba(0, 0, 0, 0.75)",
+            padding: "10px",
+            borderRadius: "5px",
+            color: "white",
+          }}
+        >
+          <p
+            className="label"
+            style={{
+              fontWeight: "bold",
+              color: "white",
+            }}
+          >
+            Date: {`${payload[0].payload.Month}`}
+          </p>
+          <p className="intro">
+            <span>{`Total Posts: `}</span>
+            <span>{`${payload[0].value}`}</span>
+          </p>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  const CustomTooltip2 = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div
+          className="custom-tooltip"
+          style={{
+            backgroundColor: "rgba(0, 0, 0, 0.75)",
+            padding: "10px",
+            borderRadius: "5px",
+            color: "white",
+          }}
+        >
+          <p
+            className="label"
+            style={{
+              fontWeight: "bold",
+              color: "white",
+            }}
+          >
+            Title: {`${payload[0].payload.title}`}
+          </p>
+          <p className="intro">
+            <span>{`Total Bookmarks: `}</span>
+            <span>{`${payload[0].value}`}</span>
+          </p>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   return (
     <>
       <div className="ProfilePageParent">
@@ -90,12 +265,73 @@ export default function ProfilePage() {
               </div>
               <div className="rightTop-Right">
                 <div className="rightTop-Right1">
-                  <StatsTemplate statsTitle="Lorem ipsum dolor sit amet," />
-                  <StatsTemplate statsTitle="Statistics" />
+                  <StatsTemplate statsTitle="Total No. of Posts">
+                    <ResponsiveContainer>
+                      <AreaChart width={300} height={150} data={postsData}>
+                        {/* <CartesianGrid strokeDasharray="3 3" /> */}
+                        <XAxis
+                          dataKey="Month"
+                          tick={{ fill: "#ffffff", fontSize: 14 }}
+                        />
+                        <Tooltip content={<CustomTooltip1 />} />
+                        {/* <Legend /> */}
+                        <Area
+                          type="monotone"
+                          dataKey="Posts"
+                          fill="rgb(128, 167, 223)"
+                          stroke="rgb(240, 240, 240)"
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </StatsTemplate>
+
+                  <StatsTemplate statsTitle="Total No. of Comments">
+                    <ResponsiveContainer>
+                      <BarChart
+                        width={300}
+                        height={150}
+                        data={totalCommentsData}
+                      >
+                        {/* <CartesianGrid strokeDasharray="3 3" /> */}
+                        <XAxis
+                          dataKey="TotalComments"
+                          tick={{ fill: "#ffffff", fontSize: 14 }}
+                        />
+                        {/* <YAxis tick={{ fill: "#ffffff", fontSize: 14 }} /> */}
+                        <Tooltip content={<CustomTooltip />} />
+                        {/* <Legend /> */}
+                        <Bar
+                          dataKey="TotalComments"
+                          fill="rgb(128, 223, 223)"
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </StatsTemplate>
                 </div>
                 <div className="rightTop-Right2">
-                  <StatsTemplate statsTitle="Lorem ipsum dolor sit amet," />
-                  <StatsTemplate statsTitle="Statistics" />
+                  <StatsTemplate statsTitle="Total No. of Bookmarks">
+                    <ResponsiveContainer>
+                      <BarChart
+                        width={300}
+                        height={150}
+                        data={totalBookmarksData}
+                      >
+                        {/* <CartesianGrid strokeDasharray="3 3" /> */}
+                        <XAxis
+                          dataKey="total_bookmarks"
+                          tick={{ fill: "#ffffff", fontSize: 14 }}
+                        />
+                        {/* <YAxis tick={{ fill: "#ffffff", fontSize: 14 }} /> */}
+                        <Tooltip content={<CustomTooltip2 />} />
+                        {/* <Legend /> */}
+                        <Bar
+                          dataKey="total_bookmarks"
+                          fill="rgb(223, 206, 128)"
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </StatsTemplate>
+                  <StatsTemplate statsTitle="Empty" />
                 </div>
               </div>
             </div>
