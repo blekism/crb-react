@@ -126,6 +126,8 @@ export default function Contentpage() {
           </div>
 
           <div>{postContent.content}</div>
+          <div>{postContent.category_id}</div>
+          <div>{postContent.tag_id}</div>
           <div className="button-right">
             <ReportButton />
           </div>

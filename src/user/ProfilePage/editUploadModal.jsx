@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./editUploadModal.css";
+import "./EditUploadModal.css";
 import HomepageDropdown from "../Homepage/HomepageDropdown.jsx";
 import axios from "axios";
 
@@ -70,7 +70,7 @@ export default function editUploadModal({
     <>
       <div
         className="modal fade"
-        id="UploadModal"
+        id="UploadModalll"
         tabIndex="-1"
         aria-labelledby="exampleModalLabel"
         aria-hidden="true"
