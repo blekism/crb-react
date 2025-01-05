@@ -11,6 +11,7 @@ import axios from "axios";
 export default function Homepage() {
   const [selectedItem, setSelectedItem] = useState(1);
   const [items, setItems] = useState([]);
+  const [bookmarkedItems, setBookmarkedItems] = useState([]);
 
   useEffect(() => {
     axios
@@ -25,6 +26,8 @@ export default function Homepage() {
         console.log(error);
       });
   }, []);
+
+  console.log("items are", bookmarkedItems);
 
   const groupItems = (items, groupSize) => {
     const groups = [];
@@ -79,7 +82,7 @@ export default function Homepage() {
                     key={idx}
                     image={item.image}
                     title={item.title}
-                    author={item.author}
+                    author={item.username}
                     onClick={() => handleItemClick(item)}
                   />
                 ))}

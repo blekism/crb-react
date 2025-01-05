@@ -13,6 +13,7 @@ export default function ProfileModal() {
     // password: "",
     bio: "",
   });
+
   const [cookies] = useCookies(["logged_user"]);
 
   useEffect(() => {

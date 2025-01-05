@@ -7,14 +7,26 @@ import Bookmarkitem from "./bookmarkItemTemplate.jsx";
 import OffcanvasBookmark from "../Homepage/Offcanvas.jsx";
 import FilterButton from "../Genrepage/FilterByButton.jsx";
 import axios from "axios";
+import { useCookies } from "react-cookie";
 
 export default function BookmarkPage() {
   const [selectedItem, setSelectedItem] = useState(1);
   const [items, setItems] = useState([]);
+  const [cookies] = useCookies(["logged_user"]);
 
   useEffect(() => {
     axios
-      .get("http://localhost/crb-react/PHP/api/read/readAllContent.php")
+      .post(
+        "http://localhost/crb-react/PHP/api/read/readAllBookmark.php",
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + cookies.logged_user,
+          },
+          withCredentials: true,
+        }
+      )
       .then((response) => {
         if (response.data.status === 200) {
           console.log(response.data.data);
@@ -64,7 +76,7 @@ export default function BookmarkPage() {
                   key={idx}
                   image={item.image}
                   title={item.title}
-                  author={item.author}
+                  author={item.username}
                   onClick={() => handleItemClick(item)}
                 />
               ))}
