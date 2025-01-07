@@ -21,6 +21,8 @@ export default function UploadModal({ postID }) {
     },
   ]);
 
+  console.log(postID);
+
   const handleContentChange = (event) => {
     const { name, value } = event.target;
     setPostContent((prevContent) => ({
@@ -63,7 +65,7 @@ export default function UploadModal({ postID }) {
     console.log(file);
   };
 
-  const handleContentSubmit = async (event) => {
+  const handleContentSubmit = (event) => {
     event.preventDefault();
     const formData = new FormData();
 
@@ -71,15 +73,14 @@ export default function UploadModal({ postID }) {
     formData.append("postContent", JSON.stringify(Postcontent));
     formData.append("post_id", postID);
 
-    // for (const [key, value] of formData.entries()) {
-    //   console.log(`${key}:`, value);
-    // }
-
     if (!postID) {
+      for (const [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
       console.log("creating post");
       //do this if theres no post id (for creating a post)
       try {
-        const response = await axios
+        axios
           .post(
             "http://localhost/crb-react/PHP/api/create/post_content.php",
             formData,
@@ -93,16 +94,14 @@ export default function UploadModal({ postID }) {
           )
           .then((response) => {
             if (response.data.status === 200) {
-              alert("Post updated successfully!");
-              window.location.reload();
+              console.log(response.data);
             } else {
-              alert("Post update failed.");
+              console.log(response.data);
             }
           })
           .catch((error) => {
             console.log(error);
           });
-        console.log(response.data);
       } catch (error) {
         console.log(error);
       }
@@ -295,7 +294,6 @@ export default function UploadModal({ postID }) {
                         items={type}
                         isGenre={false}
                         onSelect={handleTypeChange}
-                        selectedValue={Postcontent.type}
                         required
                       />
                       {items.map((item, index) => (
@@ -330,10 +328,14 @@ export default function UploadModal({ postID }) {
                         alignItems: "end",
                       }}
                     >
-                      <p>
-                        Current optionsz will remain unchanged if this field is
-                        left blank.
-                      </p>
+                      {!postID ? (
+                        <></>
+                      ) : (
+                        <p>
+                          Current optionsz will remain unchanged if this field
+                          is left blank.
+                        </p>
+                      )}
                       <button
                         type="button"
                         className="btn btn-primary"

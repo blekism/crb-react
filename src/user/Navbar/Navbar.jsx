@@ -34,7 +34,7 @@ export default function Navbar() {
             to={"/Genre"}
             style={{ color: "Black", textDecorationLine: "none" }}
           >
-            Genre
+            Archive
           </Link>
         </p>
         <p className="navbtn">

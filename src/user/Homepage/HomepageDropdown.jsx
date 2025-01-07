@@ -7,18 +7,8 @@ export default function HomepageDropdown({
   remove,
   isGenre,
   onSelect,
-  selectedValue,
 }) {
   const [selectedType, setSelectedType] = useState(type);
-
-  useEffect(() => {
-    if (selectedValue) {
-      const selectedItem = items.find((item) => item.id === selectedValue);
-      if (selectedItem) {
-        setSelectedType(selectedItem.name);
-      }
-    }
-  }, [selectedValue, items]);
 
   const handleSelect = (event, name) => {
     event.preventDefault();

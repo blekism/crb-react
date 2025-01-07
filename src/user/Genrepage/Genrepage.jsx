@@ -44,7 +44,7 @@ export default function Genre() {
       <OffcanvasGenre item={selectedItem} />
 
       <div className="genreTitle">
-        <h1>Genre</h1>
+        <h1>Full Archive</h1>
         <FilterButton />
       </div>
 
