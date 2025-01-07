@@ -7,6 +7,8 @@ import Profile from "./user/ProfilePage/ProfilePage.jsx";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import Bookmark from "./user/Bookmark/bookmarkPage.jsx";
 import Genre from "./user/Genrepage/Genrepage.jsx";
+import Admin from "./admin/Sidebar.jsx";
+import AdminDashboard from "./admin/Dashboard/AdminDashboard.jsx";
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
           <Route path="/Bookmark" element={<Bookmark />} />
           <Route path="/Genre" element={<Genre />} />
           <Route path="/Profile" element={<Profile />} />
+          <Route path="/Admin" element={<Admin />} />
+          <Route path="/AdminDashboard" element={<AdminDashboard />} />
         </Routes>
       </Router>
     </>
