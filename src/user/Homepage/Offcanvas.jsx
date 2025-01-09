@@ -6,7 +6,7 @@ import { useCookies } from "react-cookie";
 import { jwtDecode } from "jwt-decode";
 
 export default function Offcanvas({ item }) {
-  const [IsPostBMK, setIsPostBMK] = useState({});
+  const [IsPostBMK, setIsPostBMK] = useState(false);
   const [cookies] = useCookies(["logged_user"]);
   const jwt = cookies.logged_user;
   const [readerIsOwner, setIsReaderOwner] = useState("");
@@ -42,6 +42,9 @@ export default function Offcanvas({ item }) {
       .then((response) => {
         if (response.data.status === 200) {
           console.log(response.data.data);
+          setIsPostBMK(response.data.data);
+        } else if (response.data.status === 201) {
+          console.log(response.data);
           setIsPostBMK(response.data.data);
         }
       })
