@@ -24,14 +24,15 @@ export default function Offcanvas({ item }) {
 
   const handleReadNow = () => {
     navigate("/Contentpage", {
-      state: { post_id: item.post_id, owner: readerIsOwner },
+      state: { post_id: item.post_id, owner: item.user_id },
     });
   };
   useEffect(() => {
+    console.log("checking for bookmark");
     axios
       .post(
         "http://localhost/crb-react/PHP/api/read/readIfBookmarked.php",
-        { post_id: item.post_id },
+        { post_id: item.post_id, user_id: readerIsOwner },
         {
           headers: {
             "Content-Type": "application/json",

@@ -84,8 +84,8 @@ function register($userInput)
         $email = $userInput['email'];
         $password = $userInput['password'];
         $username = $userInput['username'];
-        $firstname = $userInput['firstname'];
-        $lastname = $userInput['lastname'];
+        $firstname = $userInput['firstName'];
+        $lastname = $userInput['lastName'];
 
         $hashed = md5($password);
 
@@ -1485,13 +1485,14 @@ function readIfBookmarked($post_id)
     global $con;
 
     $userPost = $post_id['post_id'];
+    $user_id = $post_id['user_id'];
 
     if (empty(trim($userPost))) {
         return error422('Post ID is required');
     } else {
-        $query = "SELECT * FROM bookmarks_tbl WHERE post_id = ?";
+        $query = "SELECT * FROM bookmarks_tbl WHERE post_id = ? AND user_id = ?";
         $stmt = $con->prepare($query);
-        $stmt->bind_param('s', $userPost);
+        $stmt->bind_param('ss', $userPost, $user_id);
         $stmt->execute();
         $result = $stmt->get_result();
         $stmt->close();
@@ -1506,11 +1507,11 @@ function readIfBookmarked($post_id)
             return json_encode($data);
         } else {
             $data = [
-                'status' => 200,
+                'status' => 201,
                 'message' => 'Post is not bookmarked',
                 'data' => false
             ];
-            header("HTTP/1.0 200 No Bookmark");
+            header("HTTP/1.0 201 No Bookmark");
             return json_encode($data);
         }
     }
