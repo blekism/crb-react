@@ -1516,3 +1516,123 @@ function readIfBookmarked($post_id)
         }
     }
 }
+
+function readYourTotalPosts($user_id)
+{
+    global $con;
+
+    $query = "SELECT 
+    DATE_FORMAT(created_at, '%M %Y') AS Month, 
+    COUNT(*) AS Posts
+FROM 
+    posts_tbl
+WHERE 
+    user_id = ?
+GROUP BY 
+    DATE_FORMAT(created_at, '%Y-%m') 
+ORDER BY 
+    DATE_FORMAT(created_at, '%Y-%m') ASC;";
+
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Content retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No contents found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+
+function readYourPostsTotalComment($user_id)
+{
+    global $con;
+
+    $query = "SELECT 
+                posts_tbl.title, 
+                COUNT(comments_tbl.comment_id) AS TotalComments
+                FROM 
+                    comments_tbl
+                LEFT JOIN 
+                    posts_tbl ON comments_tbl.post_id = posts_tbl.post_id
+                WHERE 
+                    comments_tbl.user_id = ?
+                GROUP BY 
+                    posts_tbl.post_id;";
+
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Content retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No contents found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+
+function readYourPostsTotalBookmarks($user_id)
+{
+    global $con;
+
+    $query = "SELECT 
+                    posts_tbl.title, 
+                    COUNT(bookmarks_tbl.bookmark_id) AS total_bookmarks
+                FROM 
+                    bookmarks_tbl
+                LEFT JOIN 
+                    posts_tbl ON bookmarks_tbl.post_id = posts_tbl.post_id
+                WHERE 
+                    bookmarks_tbl.user_id = ?
+                GROUP BY 
+                    posts_tbl.post_id;";
+
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Content retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No contents found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
