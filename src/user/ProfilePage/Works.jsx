@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Works.css";
-import Edit from "../../assets/images/Edit.svg";
 import Delete from "../../assets/images/Delete.svg";
-import EditUploadModal from "../Homepage/UploadModal";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Works({
   workImage,
@@ -12,16 +11,13 @@ export default function Works({
   totalComments,
   totalBookmarks,
   work,
+  owner,
 }) {
-  const handleButtonClick = (id) => {
-    setModalId(id);
+  const navigate = useNavigate();
+
+  const handleReadNow = () => {
+    navigate("/Contentpage", { state: { post_id: work, owner: owner } });
   };
-  const [modalId, setModalId] = useState(1);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-  console.log(work, "crappy");
   return (
     <>
       <div className="WorksTemplateParent">
@@ -34,23 +30,15 @@ export default function Works({
           <p className="p3">Total Bookmarks: {totalBookmarks}</p>
         </div>
 
-        <button type="button" className="WorksTemplateButton">
+        <button
+          type="button"
+          onClick={handleReadNow}
+          className="WorksTemplateButton"
+        >
           View
         </button>
-        <img
-          src={Edit}
-          alt="Edit"
-          className="EditIcon"
-          data-bs-toggle="modal"
-          data-bs-target="#UploadModal"
-          // onClick={() => handleButtonClick(work)}
-        />
         <img src={Delete} alt="Edit" className="DeleteIcon" />
       </div>
-      {/* {isModalOpen && (
-        <EditUploadModal postID={work} onClose={handleCloseModal} />
-      )} */}
-      <EditUploadModal postID={work} />
 
       <hr />
     </>

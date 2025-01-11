@@ -93,10 +93,6 @@ export default function ProfilePage() {
       });
   }, []);
 
-  console.log(profileDetails);
-
-  // console.log(cookies.logged_user);
-
   useEffect(() => {
     axios
       .post(
@@ -238,6 +234,7 @@ export default function ProfilePage() {
     <>
       <div className="ProfilePageParent">
         <Navbar />
+
         <div className="ProfilePageTopCont">
           <div className="ProfilePageTopCont-left">
             <img src={Circle} alt="Profile" />
@@ -363,6 +360,7 @@ export default function ProfilePage() {
                   workImage={postContent.image}
                   totalComments={postContent.total_comments}
                   totalBookmarks={postContent.total_bookmarks}
+                  owner={postContent.user_id}
                 />
               );
             })}

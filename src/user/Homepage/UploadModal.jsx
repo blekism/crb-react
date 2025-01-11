@@ -4,17 +4,10 @@ import HomepageDropdown from "./HomepageDropdown.jsx";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 
-export default function UploadModal({
-  placeholder,
-  postContent,
-  onChange,
-  postID,
-  onClose,
-}) {
+export default function UploadModal({ postID }) {
   const [genre, setGenre] = useState([]);
   const [type, setType] = useState([]);
   const [cookies] = useCookies(["logged_user"]);
-  const [isFormValid, setIsFormValid] = useState(false);
   const [SelectedFile, setSelectedFile] = useState(null);
   const [Postcontent, setPostContent] = useState({
     title: "",
@@ -27,6 +20,8 @@ export default function UploadModal({
       name: "Genre",
     },
   ]);
+
+  console.log(postID);
 
   const handleContentChange = (event) => {
     const { name, value } = event.target;
@@ -70,35 +65,80 @@ export default function UploadModal({
     console.log(file);
   };
 
-  const handleContentSubmit = async (event) => {
+  const handleContentSubmit = (event) => {
     event.preventDefault();
     const formData = new FormData();
 
     formData.append("file", SelectedFile);
     formData.append("postContent", JSON.stringify(Postcontent));
+    formData.append("post_id", postID);
 
-    console.log(Postcontent);
-    // console.log(SelectedFile + " selected file");
-
-    for (const [key, value] of formData.entries()) {
-      console.log(`${key}:`, value);
-    }
-
-    try {
-      const response = await axios.post(
-        "http://localhost/crb-react/PHP/api/create/post_content.php",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: "Bearer " + cookies.logged_user,
-          },
-          withCredentials: true,
-        }
-      );
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
+    if (!postID) {
+      for (const [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
+      console.log("creating post");
+      //do this if theres no post id (for creating a post)
+      try {
+        axios
+          .post(
+            "http://localhost/crb-react/PHP/api/create/post_content.php",
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                Authorization: "Bearer " + cookies.logged_user,
+              },
+              withCredentials: true,
+            }
+          )
+          .then((response) => {
+            if (response.data.status === 200) {
+              console.log(response.data);
+            } else {
+              console.log(response.data);
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      console.log("updating post");
+      for (const [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
+      //do this if theres a post id (for updating a post)
+      try {
+        axios
+          .post(
+            "http://localhost/crb-react/PHP/api/update/update_content.php",
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                Authorization: "Bearer " + cookies.logged_user,
+              },
+              withCredentials: true,
+            }
+          )
+          .then((response) => {
+            if (response.data.status === 200) {
+              console.log(response.data);
+              // alert("Post updated successfully!");
+            } else {
+              // alert("Post update failed.");
+              console.log(response.data);
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -147,11 +187,6 @@ export default function UploadModal({
     setItems(newItems);
   };
 
-  const [EditPostContents, setEditPostContents] = useState([]);
-  const [genresString, setGenreString] = useState("");
-
-  console.log(postID, "booger");
-
   useEffect(() => {
     if (postID) {
       axios
@@ -164,20 +199,26 @@ export default function UploadModal({
             },
           }
         )
-        .then(function (response) {
-          console.log(response.data.data, "response");
-          setEditPostContents(response.data.data);
-          setGenreString(response.data.data.genres);
+        .then((response) => {
+          if (response.data.status === 200) {
+            console.log(response.data);
+            setPostContent(response.data.data);
+          } else {
+            console.log("No data found hehe");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
         });
+    } else {
+      setPostContent({
+        title: "",
+        content: "",
+        type: "",
+        genre: [],
+      });
     }
-  }, [postID]);
-  // const genresString = EditPostContents.genres;
-  console.log(genresString);
-  // const genresArray = genresString.split(", ");
-  // console.log(genresArray);
-  // genresArray.forEach((genre) => {
-  //   console.log(genre);
-  // });
+  }, []);
 
   return (
     <>
@@ -199,6 +240,7 @@ export default function UploadModal({
                 style={{ fontWeight: "700", margin: "auto" }}
               >
                 Post Your Story
+                {/* {postID} */}
               </h1>
               <button
                 type="button"
@@ -206,7 +248,6 @@ export default function UploadModal({
                 data-bs-dismiss="modal"
                 aria-label="Close"
                 style={{ margin: "0" }}
-                // onClick={onClose}
               ></button>
             </div>
             <form onSubmit={handleContentSubmit}>
@@ -223,7 +264,7 @@ export default function UploadModal({
                     aria-describedby="basic-addon1"
                     name="title"
                     onChange={handleContentChange}
-                    value={Postcontent.title || EditPostContents.title}
+                    value={Postcontent.title}
                     required
                   />
                 </div>
@@ -242,7 +283,7 @@ export default function UploadModal({
                       }}
                       onChange={handleContentChange}
                       name="content"
-                      value={Postcontent.content || EditPostContents.content}
+                      value={Postcontent.content}
                       required
                     ></textarea>
                   </div>
@@ -259,11 +300,13 @@ export default function UploadModal({
                         <HomepageDropdown
                           key={index}
                           type={
-                            Postcontent.genre[index]
-                              ? genre.find(
+                            Postcontent.genre[index] &&
+                            Postcontent.genre[index].genre_id
+                              ? "Genre" ||
+                                genre.find(
                                   (g) =>
                                     g.id === Postcontent.genre[index].genre_id
-                                ).name
+                                )?.name
                               : "Genre"
                           }
                           required
@@ -278,8 +321,21 @@ export default function UploadModal({
                     </div>
                     <div
                       className="lower-options"
-                      style={{ display: "flex", justifyContent: "end" }}
+                      style={{
+                        display: "flex",
+                        justifyContent: "end",
+                        flexDirection: "column",
+                        alignItems: "end",
+                      }}
                     >
+                      {!postID ? (
+                        <></>
+                      ) : (
+                        <p>
+                          Current optionsz will remain unchanged if this field
+                          is left blank.
+                        </p>
+                      )}
                       <button
                         type="button"
                         className="btn btn-primary"

@@ -1,7 +1,7 @@
 <?php
 header('Access-Control-Allow-Origin: http://localhost:5173');
 header('Access-Control-Allow-Credentials: true');
-header('Content-Type: application/json');
+header('Content-Type: multipart/form-data');
 header('Access-Control-Allow-Methods: PUT, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Request-With');
 
@@ -23,7 +23,7 @@ if ($requestMethod == "OPTIONS") {
     exit();
 }
 
-if ($requestMethod == "PUT") {
+if ($requestMethod == "POST") {
     $session = $_COOKIE['logged_user'] ?? '';
 
     try {
@@ -39,21 +39,29 @@ if ($requestMethod == "PUT") {
             header("HTTP/1.0 401 Unauthorized");
             echo json_encode($data);
             exit();
-        } else {
-            $inputData = json_decode(file_get_contents("php://input"), true);
+        } else if (isset($_FILES) && isset($_POST['postContent'])) {
+            $test = imageUpload($_FILES) ?? '';
+            $post_id = $_POST['post_id'] ?? '';
 
-            if (empty($inputData)) {
+            if (isset($test)) {
+                $updateContent = updateContent($_POST, $account_id, $test);
+            } else {
                 $data = [
                     'status' => 400,
-                    'message' => 'Bad Request',
+                    'message' => 'Bad Request no url',
                 ];
                 header("HTTP/1.0 400 Bad Request");
                 echo json_encode($data);
-                exit();
-            } else {
-                $updateContent = updateContent($inputData);
             }
             echo $updateContent;
+            exit();
+        } else {
+            $data = [
+                'status' => 400,
+                'message' => 'Bad Request no formdata or postContent',
+            ];
+            header("HTTP/1.0 400 Bad Request");
+            echo json_encode($data);
             exit();
         }
     } catch (ExpiredException $e) {
