@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DeleteItem from "../../assets/images/deleteItem.png";
 
 export default function HomepageDropdown({

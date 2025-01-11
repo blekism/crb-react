@@ -42,6 +42,7 @@ export default function LoginSignup() {
 
   const handleSubmitReg = (event) => {
     event.preventDefault();
+    console.log(userReg);
 
     axios
       .post("http://localhost/crb-react/PHP/api/create/register.php", userReg)
@@ -62,6 +63,7 @@ export default function LoginSignup() {
 
   const handleSubmitLog = (event) => {
     event.preventDefault();
+    console.log(userLog);
 
     axios
       .post("http://localhost/crb-react/PHP/api/read/login.php", userLog, {
@@ -120,43 +122,62 @@ export default function LoginSignup() {
       >
         <div className="loginSignupChildCont">
           {/* Right Panel */}
-          <div className="loginSignupChildCont-right">
-            <h1>Get Started!</h1>
-            <p className="p2">Register in your account to get started.</p>
+          <form onSubmit={handleSubmitReg}>
+            <div className="loginSignupChildCont-right">
+              <h1>Get Started!</h1>
+              <p className="p2">Register in your account to get started.</p>
 
-            <div className="loginSignupChildCont-rightTopContent">
-              <div className="loginSignupChildCont-rightTopContent1">
-                <p>First Name:</p>
-                <InputTemplate placeholder="First Name" name="firstName" />
-                <p>Username: </p>
-                <InputTemplate placeholder="Username" name="username" />
+              <div className="loginSignupChildCont-rightTopContent">
+                <div className="loginSignupChildCont-rightTopContent1">
+                  <p>First Name:</p>
+                  <InputTemplate
+                    placeholder="First Name"
+                    name="firstName"
+                    onChange={handleChangeReg}
+                  />
+                  <p>Username: </p>
+                  <InputTemplate
+                    placeholder="Username"
+                    name="username"
+                    onChange={handleChangeReg}
+                  />
+                </div>
+                <div className="loginSignupChildCont-rightTopContent2">
+                  <p>Last Name:</p>
+                  <InputTemplate
+                    placeholder="Last Name"
+                    name="lastName"
+                    onChange={handleChangeReg}
+                  />
+                </div>
               </div>
-              <div className="loginSignupChildCont-rightTopContent2">
-                <p>Last Name:</p>
-                <InputTemplate placeholder="Last Name" name="lastName" />
+
+              <div className="loginSignupChildCont-rightBottomContent">
+                <p>Email:</p>
+                <InputTemplate
+                  placeholder="Email"
+                  name="email"
+                  onChange={handleChangeReg}
+                />
+                <p>Password: </p>
+                <InputTemplate
+                  type="password"
+                  placeholder="Password"
+                  name="password"
+                  onChange={handleChangeReg}
+                />
               </div>
-            </div>
 
-            <div className="loginSignupChildCont-rightBottomContent">
-              <p>Email:</p>
-              <InputTemplate placeholder="Email" name="email" />
-              <p>Password: </p>
-              <InputTemplate
-                type="password"
-                placeholder="Password"
-                name="password"
-              />
+              <button
+                type="submit"
+                className="loginSignupChildCont-rightButton"
+                data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop"
+              >
+                <p>Sign Up</p>
+              </button>
             </div>
-
-            <button
-              type="button"
-              className="loginSignupChildCont-rightButton"
-              data-bs-toggle="modal"
-              data-bs-target="#staticBackdrop"
-            >
-              <p>Sign Up</p>
-            </button>
-          </div>
+          </form>
 
           {/* Left Panel */}
           <div className="loginSignupChildCont-left">

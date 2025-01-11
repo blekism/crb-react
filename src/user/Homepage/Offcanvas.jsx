@@ -3,21 +3,36 @@ import "./Offcanvas.css";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useCookies } from "react-cookie";
+import { jwtDecode } from "jwt-decode";
 
 export default function Offcanvas({ item }) {
-  const [IsPostBMK, setIsPostBMK] = useState({});
+  const [IsPostBMK, setIsPostBMK] = useState(false);
   const [cookies] = useCookies(["logged_user"]);
+  const jwt = cookies.logged_user;
+  const [readerIsOwner, setIsReaderOwner] = useState("");
   const navigate = useNavigate();
   console.log(item.post_id);
 
+  useEffect(() => {
+    try {
+      const decoded = jwtDecode(jwt);
+      setIsReaderOwner(decoded.user_id);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
   const handleReadNow = () => {
-    navigate("/Contentpage", { state: { post_id: item.post_id } });
+    navigate("/Contentpage", {
+      state: { post_id: item.post_id, owner: item.user_id },
+    });
   };
   useEffect(() => {
+    console.log("checking for bookmark");
     axios
       .post(
         "http://localhost/crb-react/PHP/api/read/readIfBookmarked.php",
-        { post_id: item.post_id },
+        { post_id: item.post_id, user_id: readerIsOwner },
         {
           headers: {
             "Content-Type": "application/json",
@@ -27,6 +42,9 @@ export default function Offcanvas({ item }) {
       .then((response) => {
         if (response.data.status === 200) {
           console.log(response.data.data);
+          setIsPostBMK(response.data.data);
+        } else if (response.data.status === 201) {
+          console.log(response.data);
           setIsPostBMK(response.data.data);
         }
       })

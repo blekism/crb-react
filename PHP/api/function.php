@@ -84,8 +84,8 @@ function register($userInput)
         $email = $userInput['email'];
         $password = $userInput['password'];
         $username = $userInput['username'];
-        $firstname = $userInput['firstname'];
-        $lastname = $userInput['lastname'];
+        $firstname = $userInput['firstName'];
+        $lastname = $userInput['lastName'];
 
         $hashed = md5($password);
 
@@ -490,7 +490,7 @@ function postContent($userInputRaw, $user_id, $imageUrlRaw)
                     return json_encode($data);
                 }
             } else if ($sentiment == 'negative') {
-                $query3 = "INSERT INTO posts_tbl (post_id, user_id, title, content, status, analysis_score, created_at) VALUES (?, ?, ?, ?, 'for_review', ?, NOW())";
+                $query3 = "INSERT INTO posts_tbl (post_id, user_id, title, content, status, analysis_score, created_at) VALUES (?, ?, ?, ?, 'rejected', ?, NOW())";
                 $stmt3 = $con->prepare($query3);
                 $stmt3->bind_param('sssss', $post_id, $user_id, $title, $content, $sentiment);
                 $result3 = $stmt3->execute();
@@ -620,14 +620,14 @@ function readContent($post_id)
                 posts_tbl.post_id,
                 user_tbl.username, 
                 posts_tbl.content,
-                category_id.name AS Category,
-                GROUP_CONCAT(genre_tbl.name SEPARATOR ', ') AS genres
+                category_id.category_id AS type,
+                GROUP_CONCAT(genre_tbl.tag_id SEPARATOR ', ') AS genre
               FROM genre_post_tbl
               INNER JOIN posts_tbl ON genre_post_tbl.post_id = posts_tbl.post_id
               INNER JOIN user_tbl ON posts_tbl.user_id = user_tbl.user_id
               INNER JOIN category_id ON genre_post_tbl.category_id = category_id.category_id
               INNER JOIN genre_tbl ON genre_post_tbl.tag_id = genre_tbl.tag_id
-            WHERE posts_tbl.post_id = ?";
+            WHERE posts_tbl.post_id = ? AND posts_tbl.status = 'posted'";
 
     $stmt = $con->prepare($query);
     $stmt->bind_param('s', $id);
@@ -636,10 +636,19 @@ function readContent($post_id)
     $stmt->close();
 
     if ($result->num_rows == 1) {
+        $row = $result->fetch_assoc();
+        $genre_ids = explode(', ', $row['genre']);
+        $row['genre'] = array_map(function ($genre_id) {
+            return ['genre_id' => $genre_id];
+        }, $genre_ids);
+
+        unset($row['genre_ids']);
+
+
         $data = [
             'status' => 200,
             'message' => 'Content retrieved successfully',
-            'data' => $result->fetch_assoc()
+            'data' => $row
         ];
         return json_encode($data);
     } else {
@@ -758,41 +767,277 @@ function report_post($post_id, $reason)
 }
 
 
-function updateContent($userInput)
+function updateContent($userInputRaw, $user_id, $imageUrlRaw)
 {
     global $con;
+
+    $userInput = json_decode($userInputRaw['postContent'], true);
+    $imageUrl = json_decode($imageUrlRaw, true);
 
     $post_id = $userInput['post_id'];
     $title = $userInput['title'];
     $content = $userInput['content'];
+    $type = $userInput['type'];
+    $genreLoop = $userInput['genre'];
 
-
-    if (empty(trim($post_id))) {
-        return error422('Post ID is required');
-    } else if (empty(trim($title))) {
+    if (empty(trim($title))) {
         return error422('Title is required');
     } else if (empty(trim($content))) {
         return error422('Content is required');
     } else {
-        $query = "UPDATE posts_tbl SET title = ?, content = ?, updated_at = NOW() WHERE post_id = ?";
-        $stmt = $con->prepare($query);
-        $stmt->bind_param("sss", $title, $content, $post_id);
-        $result = $stmt->execute();
-        $stmt->close();
+        $getGPID = "SELECT gp_id FROM genre_post_tbl WHERE post_id = ?";
+        $stmtgp = $con->prepare($getGPID);
+        $stmtgp->bind_param('s', $post_id);
+        $stmtgp->execute();
+        $resultgp = $stmtgp->get_result();
+        $stmtgp->close();
 
-        if ($result) {
-            $data = [
-                'status' => 200,
-                'message' => 'Post updated successfully',
-            ];
-            header("HTTP/1.0 200 OK");
-            return json_encode($data);
+        if ($resultgp->num_rows > 0) {
+            $gpALL = $resultgp->fetch_all(MYSQLI_ASSOC);
+            $gp_id = array_map(function ($gp) {
+                return $gp['gp_id'];
+            }, $gpALL);
+
+            $nlpResult = json_decode(nlpRead($content), true);
+            $sentiment = trim(strtolower($nlpResult['message']));
+            // $sentiment = 'positive';
+            mysqli_begin_transaction($con);
+
+            try {
+                if ($sentiment == 'positive' || $sentiment == 'neutral') {
+                    $query = "UPDATE posts_tbl SET title = ?, content = ?, status = 'posted', analysis_score = ?, updated_at = NOW(), image = ? WHERE post_id = ?";
+                    $stmt = $con->prepare($query);
+                    $stmt->bind_param('sssss', $title, $content, $sentiment, $imageUrl, $post_id);
+                    $result = $stmt->execute();
+                    $stmt->close();
+
+                    if ($result) {
+                        //dagdag to after: if equal yung dami ng nasa genre loop dun sa naretrieve na gp_id eto gagawin: 
+                        // then pag mas marami e.g. sa update nag add si user ng another genre, another na naman na else if for that scenario
+                        if ($genreLoop) {
+                            try {
+                                $insertedgp = 0;
+                                foreach ($genreLoop as $genre) {
+                                    $tag_id = $genre['genre_id'];
+                                    $single_id = array_shift($gp_id);
+                                    $query5 = "UPDATE genre_post_tbl SET category_id = ?, tag_id = ? WHERE gp_id = ? ";
+                                    $stmt5 = $con->prepare($query5);
+                                    $stmt5->bind_param('sss', $type, $tag_id, $single_id);
+                                    $result5 = $stmt5->execute();
+                                    $stmt5->close();
+
+                                    if ($result5) {
+                                        $insertedgp++;
+                                    } else {
+                                        throw new Exception('Failed to insert item');
+                                    }
+                                }
+                                mysqli_commit($con);
+                                if ($insertedgp == count($genreLoop)) {
+                                    $data = [
+                                        'status' => 200,
+                                        'message' => 'Posted',
+                                        'sentiment' => $sentiment,
+                                        'genre_inserted' => $insertedgp
+                                    ];
+                                    header("HTTP/1.0 200 OK");
+                                    return json_encode($data);
+                                } else {
+                                    $data = [
+                                        'status' => 500,
+                                        'message' => 'Internal Server Error'
+                                    ];
+                                    header("HTTP/1.0 500 Internal Server Error");
+                                    return json_encode($data);
+                                }
+                            } catch (Exception $e) {
+                                throw new Exception('Failed to insert item');
+                            }
+                        } else {
+                            $data = [
+                                'status' => 200,
+                                'message' => 'Post updated successfully',
+                                'sentiment' => $sentiment
+                            ];
+                            header("HTTP/1.0 200 OK");
+                            return json_encode($data);
+                        }
+                    } else {
+                        $data = [
+                            'status' => 500,
+                            'message' => 'Internal Server Error'
+                        ];
+                        header("HTTP/1.0 500 Internal Server Error");
+                        return json_encode($data);
+                    }
+                } else if ($sentiment == 'problematic') {
+                    $query1 = "UPDATE posts_tbl SET title = ?, content = ?, status = 'for_review', analysis_score = ?, updated_at = NOW(), image = ? WHERE post_id = ?";
+                    $stmt1 = $con->prepare($query1);
+                    $stmt1->bind_param('sssss', $title, $content, $sentiment, $imageUrl, $post_id);
+                    $result1 = $stmt1->execute();
+                    $stmt1->close();
+
+                    if ($result1) {
+                        $review_id = 'REVIEW - ' . date('Y-d') . substr(uniqid(), -5);
+                        $query2 = "INSERT INTO review_tbl (review_id, post_id, analysis_score, status, created_at) VALUES (?, ?, ?, 'for_review', NOW())";
+                        $stmt2 = $con->prepare($query2);
+                        $stmt2->bind_param('sss', $review_id, $post_id, $sentiment);
+                        $result2 = $stmt2->execute();
+                        $stmt2->close();
+
+                        if ($result2) {
+                            if ($genreLoop) {
+                                try {
+                                    $insertedgp = 0;
+                                    foreach ($genreLoop as $genre) {
+                                        $tag_id = $genre['genre_id'];
+                                        $single_id = array_shift($gp_id);
+                                        $query5 = "UPDATE genre_post_tbl SET category_id = ?, tag_id = ? WHERE gp_id = ? ";
+                                        $stmt5 = $con->prepare($query5);
+                                        $stmt5->bind_param('sss', $type, $tag_id, $single_id);
+                                        $result5 = $stmt5->execute();
+                                        $stmt5->close();
+
+                                        if ($result5) {
+                                            $insertedgp++;
+                                        } else {
+                                            throw new Exception('Failed to insert item');
+                                        }
+                                    }
+                                    mysqli_commit($con);
+                                    if ($insertedgp == count($genreLoop)) {
+                                        $data = [
+                                            'status' => 200,
+                                            'message' => 'Flagged',
+                                            'sentiment' => $sentiment,
+                                            'genre_inserted' => $insertedgp
+                                        ];
+                                        header("HTTP/1.0 200 OK");
+                                        return json_encode($data);
+                                    } else {
+                                        $data = [
+                                            'status' => 500,
+                                            'message' => 'Internal Server Error'
+                                        ];
+                                        header("HTTP/1.0 500 Internal Server Error");
+                                        return json_encode($data);
+                                    }
+                                } catch (Exception $e) {
+                                    throw new Exception('Failed to insert item');
+                                }
+                            } else {
+                                $data = [
+                                    'status' => 200,
+                                    'message' => 'Flagged',
+                                    'sentiment' => $sentiment
+                                ];
+                                header("HTTP/1.0 200 OK");
+                                return json_encode($data);
+                            }
+                        } else {
+                            $data = [
+                                'status' => 500,
+                                'message' => 'Internal Server Error'
+                            ];
+                            header("HTTP/1.0 500 Internal Server Error");
+                            return json_encode($data);
+                        }
+                    }
+                } else if ($sentiment == 'negative') {
+                    $query3 = "UPDATE posts_tbl SET title = ?, content = ?, status = 'rejected', analysis_score = ?, updated_at = NOW(), image = ? WHERE post_id = ?";
+                    $stmt3 = $con->prepare($query3);
+                    $stmt3->bind_param('sssss', $title, $content, $sentiment, $imageUrl, $post_id);
+                    $result3 = $stmt3->execute();
+                    $stmt3->close();
+
+                    if ($result3) {
+                        $reject_id = 'REJECT - ' . date('Y-d') . substr(uniqid(), -5);
+                        $query4 = "INSERT INTO review_tbl (review_id, post_id, analysis_score, status, created_at) VALUES (?, ?, ?, 'rejected', NOW())";
+                        $stmt4 = $con->prepare($query4);
+                        $stmt4->bind_param('sss', $reject_id, $post_id, $sentiment);
+                        $result4 = $stmt4->execute();
+                        $stmt4->close();
+
+                        if ($result4) {
+                            if ($genreLoop) {
+                                try {
+                                    $insertedgp = 0;
+                                    foreach ($genreLoop as $genre) {
+                                        $tag_id = $genre['genre_id'];
+                                        $single_id = array_shift($gp_id);
+                                        $query5 = "UPDATE genre_post_tbl SET category_id = ?, tag_id = ? WHERE post_id = ? ";
+                                        $stmt5 = $con->prepare($query5);
+                                        $stmt5->bind_param('sss', $type, $tag_id, $post_id);
+                                        $result5 = $stmt5->execute();
+                                        $stmt5->close();
+
+                                        if ($result5) {
+                                            $insertedgp++;
+                                        } else {
+                                            throw new Exception('Failed to insert item');
+                                        }
+                                    }
+                                    mysqli_commit($con);
+                                    if ($insertedgp == count($genreLoop)) {
+                                        $data = [
+                                            'status' => 200,
+                                            'message' => 'Rejected',
+                                            'sentiment' => $sentiment,
+                                            'genre_inserted' => $insertedgp
+                                        ];
+                                        header("HTTP/1.0 200 OK");
+                                        return json_encode($data);
+                                    } else {
+                                        $data = [
+                                            'status' => 500,
+                                            'message' => 'Internal Server Error'
+                                        ];
+                                        header("HTTP/1.0 500 Internal Server Error");
+                                        return json_encode($data);
+                                    }
+                                } catch (Exception $e) {
+                                    throw new Exception('Failed to insert item');
+                                }
+                            } else {
+                                $data = [
+                                    'status' => 200,
+                                    'message' => 'Rejected',
+                                    'sentiment' => $sentiment
+                                ];
+                                header("HTTP/1.0 200 OK");
+                                return json_encode($data);
+                            }
+                        } else {
+                            $data = [
+                                'status' => 500,
+                                'message' => 'Internal Server Error'
+                            ];
+                            header("HTTP/1.0 500 Internal Server Error");
+                            return json_encode($data);
+                        }
+                    } else {
+                        $data = [
+                            'status' => 500,
+                            'message' => 'Internal Server Error'
+                        ];
+                        header("HTTP/1.0 500 Internal Server Error");
+                        return json_encode($data);
+                    }
+                }
+            } catch (Exception $e) {
+                mysqli_rollback($con);
+                $data = [
+                    'status' => 500,
+                    'message' => 'Internal Server Error'
+                ];
+                header("HTTP/1.0 500 Internal Server Error");
+                return json_encode($data);
+            }
         } else {
             $data = [
-                'status' => 500,
-                'message' => 'Internal Server Error',
+                'status' => 404,
+                'message' => 'No contents found'
             ];
-            header("HTTP/1.0 500 Internal Server Error");
             return json_encode($data);
         }
     }
@@ -1056,11 +1301,13 @@ function readUserContent($user_id)
             posts_tbl.title,
             posts_tbl.image,
             posts_tbl.published_at,
+            posts_tbl.user_id,
             COUNT(comments_tbl.post_id) AS total_comments, 
             COUNT(bookmarks_tbl.post_id) AS total_bookmarks 
             FROM posts_tbl 
             LEFT JOIN comments_tbl ON posts_tbl.post_id = comments_tbl.post_id
             LEFT JOIN bookmarks_tbl ON posts_tbl.post_id = bookmarks_tbl.post_id
+            INNER JOIN user_tbl ON posts_tbl.user_id = user_tbl.user_id
             WHERE posts_tbl.user_id = ? AND posts_tbl.status != 'for_review' AND posts_tbl.status != 'rejected'
             GROUP BY posts_tbl.post_id";
     $stmt = $con->prepare($query);
@@ -1093,7 +1340,7 @@ function readAllContent()
 {
     global $con;
 
-    $query = "SELECT user_tbl.username, posts_tbl.* FROM posts_tbl INNER JOIN user_tbl ON posts_tbl.user_id = user_tbl.user_id WHERE published_at IS NOT NULL";
+    $query = "SELECT user_tbl.username, posts_tbl.* FROM posts_tbl INNER JOIN user_tbl ON posts_tbl.user_id = user_tbl.user_id WHERE published_at IS NOT NULL AND status = 'posted'";
     $stmt = $con->prepare($query);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -1171,31 +1418,29 @@ function readType()
 function imageUpload($userImage)
 {
     global $filepath, $bucketName;
-    if (!isset($userImage['file'])) {
-        return error422("Image is required");
-    } else {
-        $file = $userImage['file'];
-        $storage = new StorageClient((['keyFilePath' => $filepath]));
-        $bucket = $storage->bucket($bucketName);
 
-        $fileName = $file['name'];
-        $tmpName = $file['tmp_name'];
-        $mimeType = mime_content_type($tmpName);
 
-        $object = $bucket->upload(
-            fopen($tmpName, 'r'),
-            [
-                'name' => $fileName,
-                'metadata' => [
-                    'contentType' => $mimeType
-                ]
+    $file = $userImage['file'];
+    $storage = new StorageClient((['keyFilePath' => $filepath]));
+    $bucket = $storage->bucket($bucketName);
+
+    $fileName = $file['name'];
+    $tmpName = $file['tmp_name'];
+    $mimeType = mime_content_type($tmpName);
+
+    $object = $bucket->upload(
+        fopen($tmpName, 'r'),
+        [
+            'name' => $fileName,
+            'metadata' => [
+                'contentType' => $mimeType
             ]
-        );
-        $object->update(['acl' => []], ['predefinedAcl' => 'PUBLICREAD']);
-        $url = "https://storage.googleapis.com/$bucketName/$fileName";
+        ]
+    );
+    $object->update(['acl' => []], ['predefinedAcl' => 'PUBLICREAD']);
+    $url = "https://storage.googleapis.com/$bucketName/$fileName";
 
-        return json_encode($url, JSON_UNESCAPED_SLASHES);
-    }
+    return json_encode($url, JSON_UNESCAPED_SLASHES);
 }
 
 function readAllBookmark($user_id)
@@ -1210,7 +1455,7 @@ function readAllBookmark($user_id)
         bookmarks_tbl 
         	INNER JOIN posts_tbl ON bookmarks_tbl.post_id = posts_tbl.post_id
             INNER JOIN user_tbl ON posts_tbl.user_id = user_tbl.user_id 
-            WHERE bookmarks_tbl.user_id = ? AND posts_tbl.published_at IS NOT NULL";
+            WHERE bookmarks_tbl.user_id = ? AND posts_tbl.published_at IS NOT NULL AND posts_tbl.status = 'posted'";
     $stmt = $con->prepare($query);
     $stmt->bind_param('s', $user_id);
     $stmt->execute();
@@ -1240,13 +1485,14 @@ function readIfBookmarked($post_id)
     global $con;
 
     $userPost = $post_id['post_id'];
+    $user_id = $post_id['user_id'];
 
     if (empty(trim($userPost))) {
         return error422('Post ID is required');
     } else {
-        $query = "SELECT * FROM bookmarks_tbl WHERE post_id = ?";
+        $query = "SELECT * FROM bookmarks_tbl WHERE post_id = ? AND user_id = ?";
         $stmt = $con->prepare($query);
-        $stmt->bind_param('s', $userPost);
+        $stmt->bind_param('ss', $userPost, $user_id);
         $stmt->execute();
         $result = $stmt->get_result();
         $stmt->close();
@@ -1261,11 +1507,11 @@ function readIfBookmarked($post_id)
             return json_encode($data);
         } else {
             $data = [
-                'status' => 200,
+                'status' => 201,
                 'message' => 'Post is not bookmarked',
                 'data' => false
             ];
-            header("HTTP/1.0 200 No Bookmark");
+            header("HTTP/1.0 201 No Bookmark");
             return json_encode($data);
         }
     }
