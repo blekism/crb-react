@@ -9,6 +9,7 @@ import Bookmark from "./user/Bookmark/bookmarkPage.jsx";
 import Genre from "./user/Genrepage/Genrepage.jsx";
 import Admin from "./admin/Sidebar.jsx";
 import AdminDashboard from "./admin/Dashboard/AdminDashboard.jsx";
+import AdminReports from "./admin/Reports/AdminReports.jsx";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/Profile" element={<Profile />} />
           <Route path="/Admin" element={<Admin />} />
           <Route path="/AdminDashboard" element={<AdminDashboard />} />
+          <Route path="/Reports" element={<AdminReports />} />
         </Routes>
       </Router>
     </>

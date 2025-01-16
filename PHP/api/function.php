@@ -1636,3 +1636,427 @@ function readYourPostsTotalBookmarks($user_id)
         return json_encode($data);
     }
 }
+
+function readTotalPosts()
+{
+    global $con;
+
+    $query = "SELECT COUNT(*) AS Total_Posts FROM posts_tbl WHERE posts_tbl.status = 'posted';";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Posts retrieved successfully',
+            'data' => $result->fetch_assoc()
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Posts found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+
+function readTotalUsers()
+{
+    global $con;
+
+    $query = "SELECT COUNT(*) AS Total_Users FROM user_tbl WHERE user_tbl.role = 'user';";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Users retrieved successfully',
+            'data' => $result->fetch_assoc()
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Users found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+
+function readTotalComments()
+{
+    global $con;
+
+    $query = "SELECT COUNT(*) AS Total_Comments FROM comments_tbl";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Comments retrieved successfully',
+            'data' => $result->fetch_assoc()
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Comments found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+
+function readPostsIncrease()
+{
+    global $con;
+
+    $query = "SELECT COUNT(*) AS Today_Posts
+                FROM posts_tbl
+                WHERE DATE(created_at) = CURDATE() AND status = 'posted';";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Post Increase retrieved successfully',
+            'data' => $result->fetch_assoc()
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Posts found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+
+function readCommentsIncrease()
+{
+    global $con;
+
+    $query = "SELECT COUNT(*) AS Today_Comments
+                FROM comments_tbl
+                WHERE DATE(created_at) = CURDATE();";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Comments Increase retrieved successfully',
+            'data' => $result->fetch_assoc()
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Posts found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+
+function readUsersIncrease()
+{
+    global $con;
+
+    $query = "SELECT COUNT(*) AS Today_Users
+                FROM user_tbl
+                WHERE DATE(created_at) = CURDATE();";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of User Increase retrieved successfully',
+            'data' => $result->fetch_assoc()
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Users found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+
+function readTotalPostsGraph()
+{
+    global $con;
+
+    $query = "SELECT 
+                    DATE_FORMAT(created_at, '%Y-%m-%d') AS Day, 
+                    COUNT(*) AS Posts
+                FROM 
+                    posts_tbl
+                WHERE 
+                    status = 'posted' 
+                    AND MONTH(created_at) = MONTH(CURRENT_DATE) 
+                    AND YEAR(created_at) = YEAR(CURRENT_DATE)    
+                GROUP BY 
+                    DATE_FORMAT(created_at, '%Y-%m-%d')  
+                ORDER BY 
+                    DATE_FORMAT(created_at, '%Y-%m-%d') ASC;";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Post Per day of the Month retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Posts found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+
+function readTotalCommentsGraph()
+{
+    global $con;
+
+    $query = "SELECT 
+                    DATE_FORMAT(created_at, '%Y-%m-%d') AS Day, 
+                    COUNT(*) AS Comments
+                FROM 
+                    comments_tbl
+                WHERE 
+					MONTH(created_at) = MONTH(CURRENT_DATE) 
+                    AND YEAR(created_at) = YEAR(CURRENT_DATE)    
+                GROUP BY 
+                    DATE_FORMAT(created_at, '%Y-%m-%d')  
+                ORDER BY 
+                    DATE_FORMAT(created_at, '%Y-%m-%d') ASC;";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Comments Per day of the Month retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Comments found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+
+function readTotalBookmarksGraph()
+{
+    global $con;
+
+    $query = "SELECT 
+                    DATE_FORMAT(created_at, '%Y-%m-%d') AS Day, 
+                    COUNT(*) AS Bookmarks
+                FROM 
+                    bookmarks_tbl
+                WHERE 
+					MONTH(created_at) = MONTH(CURRENT_DATE) 
+                    AND YEAR(created_at) = YEAR(CURRENT_DATE)    
+                GROUP BY 
+                    DATE_FORMAT(created_at, '%Y-%m-%d')  
+                ORDER BY 
+                    DATE_FORMAT(created_at, '%Y-%m-%d') ASC;";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Bookmarks Per day of the Month retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Bookmarks found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+
+function readTotalGenrePerPostGraph()
+{
+    global $con;
+
+    $query = "SELECT genre_tbl.name AS genre, 
+                    COUNT(posts_tbl.post_id) as genre_total_post
+                FROM genre_post_tbl
+                INNER JOIN genre_tbl ON genre_post_tbl.tag_id = genre_tbl.tag_id
+                INNER JOIN posts_tbl ON genre_post_tbl.post_id = posts_tbl.post_id
+                GROUP BY genre_tbl.name ";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Genre Per Post retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Genre found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+
+function readTotalCategoryPerPostGraph()
+{
+    global $con;
+
+    $query = "SELECT category_id.name AS category, 
+                    COUNT(posts_tbl.post_id) as category_total_post
+                FROM genre_post_tbl
+                INNER JOIN category_id ON genre_post_tbl.category_id = category_id.category_id
+                INNER JOIN posts_tbl ON genre_post_tbl.post_id = posts_tbl.post_id
+                GROUP BY category_id.name;";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Genre Per Post retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Genre found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+
+function readTotalLoggedVsGuestUser()
+{
+    global $con;
+
+    $query = "SELECT 
+                role,
+                COUNT(*) AS total_count
+                FROM user_tbl
+                WHERE role IN ('user', 'guest')
+                GROUP BY role;";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Logged VS Guest User retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No User found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+
+function readTotalReviewDistribution()
+{
+    global $con;
+
+    $query = "SELECT 
+                status,
+                COUNT(*) AS total_count
+                FROM review_tbl
+                WHERE status IN ('for_review', 'posted', 'reviewing', 'rejected')
+                GROUP BY status;";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Review Status retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Review found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}

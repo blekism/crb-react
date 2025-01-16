@@ -13,7 +13,7 @@ export default function Sidebar() {
     const path = location.pathname;
     if (path.includes("AdminDashboard")) {
       setActiveLink("dashboard");
-    } else if (path.includes("Profile")) {
+    } else if (path.includes("Reports")) {
       setActiveLink("reports");
     } else if (path.includes("Bookmark")) {
       setActiveLink("contentreview");
@@ -41,7 +41,7 @@ export default function Sidebar() {
           <div className="AdminSideBar-TopCont-Reports">
             <img src={ReportsIcon} alt="Dashboard Icon" />
             <Link
-              to="/Profile"
+              to="/Reports"
               className={`AdminSideBar-TopCont-link ${
                 activeLink === "reports" ? "active" : ""
               }`}
