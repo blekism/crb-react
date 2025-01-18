@@ -45,7 +45,7 @@ export default function Genre() {
 
       <div className="genreTitle">
         <h1>Full Archive</h1>
-        <FilterButton />
+        <FilterButton showNewContent={setItems} />
       </div>
 
       {groupedItems.map((group, index) => (

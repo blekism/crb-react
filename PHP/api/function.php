@@ -1659,3 +1659,205 @@ function readYourPostsTotalBookmarks($user_id)
         return json_encode($data);
     }
 }
+
+function getFilter($userInput)
+{
+    global $con;
+
+    $genre = $userInput['genre'] ?? null;
+    $postType = $userInput['type'] ?? null;
+    $month = $userInput['month'] ?? null;
+    $year = $userInput['year'] ?? null;
+    $userId = $userInput['user_id'] ?? null;
+
+    if ($userId == null) { //for bookmark manega
+        $query = "SELECT posts_tbl.*, genre_tbl.name, category_id.name 
+              FROM genre_post_tbl
+              INNER JOIN posts_tbl ON genre_post_tbl.post_id = posts_tbl.post_id
+              INNER JOIN genre_tbl ON genre_post_tbl.tag_id = genre_tbl.tag_id
+              INNER JOIN category_id ON genre_post_tbl.category_id = category_id.category_id";
+
+        $conditions = [];
+        $params = [];
+        $types = '';
+
+
+        $conditions[] = "posts_tbl.status = ?";
+        $params[] = "posted";
+        $types .= 's';
+
+        if ($genre) {
+            $conditions[] = "genre_tbl.tag_id = ?";
+            $params[] = $genre;
+            $types .= 's';  // 's' for string type
+        }
+        if ($postType) {
+            $conditions[] = "category_id.category_id = ?";
+            $params[] = $postType;
+            $types .= 's';
+        }
+        if ($month) {
+            $conditions[] = "MONTH(posts_tbl.published_at) = ?";
+            $params[] = $month;
+            $types .= 's';  // 'i' for integer type
+        }
+        if ($year) {
+            $conditions[] = "YEAR(posts_tbl.published_at) = ?";
+            $params[] = $year;
+            $types .= 's';
+        }
+
+
+        if (count($conditions) > 0) {
+            $query .= " WHERE " . implode(" AND ", $conditions);
+            $stmt = $con->prepare($query);
+            $stmt->bind_param($types, ...$params);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $stmt->close();
+
+            if ($result->num_rows > 0) {
+                $data = [
+                    'status' => 200,
+                    'message' => 'Content retrieved successfully',
+                    'data' => $result->fetch_all(MYSQLI_ASSOC)
+                ];
+                header("HTTP/1.0 200 OK");
+                return json_encode($data);
+            } else {
+                $data = [
+                    'status' => 201,
+                    'message' => 'No contents found',
+                    // 'data' => $result->fetch_all(MYSQLI_ASSOC)
+
+                ];
+                header("HTTP/1.0 201 Not Found");
+                return json_encode($data);
+            }
+        } else {
+            $data = [
+                'status' => 422,
+                'message' => 'Invalid input'
+            ];
+            header("HTTP/1.0 422 Unprocessable Entity");
+            return json_encode($data);
+        }
+    } else { //for bookmark manega 
+        $query = "SELECT posts_tbl.*, genre_tbl.name, category_id.name, bookmarks_tbl.bookmark_id
+              FROM genre_post_tbl
+              INNER JOIN bookmarks_tbl ON genre_post_tbl.post_id = bookmarks_tbl.post_id
+              INNER JOIN posts_tbl ON genre_post_tbl.post_id = posts_tbl.post_id
+              INNER JOIN genre_tbl ON genre_post_tbl.tag_id = genre_tbl.tag_id
+              INNER JOIN category_id ON genre_post_tbl.category_id = category_id.category_id";
+
+        $conditions = [];
+        $params = [];
+        $types = '';
+
+
+        $conditions[] = "bookmarks_tbl.user_id = ?";
+        $params[] = $userId; // Set $userId to the appropriate value
+        $types .= 's';
+
+
+        $conditions[] = "posts_tbl.status = ?";
+        $params[] = "posted"; // Set $userId to the appropriate value
+        $types .= 's';
+        if ($genre) {
+            $conditions[] = "genre_tbl.tag_id = ?";
+            $params[] = $genre;
+            $types .= 's';  // 's' for string type
+        }
+        if ($postType) {
+            $conditions[] = "category_id.category_id = ?";
+            $params[] = $postType;
+            $types .= 's';
+        }
+        if ($month) {
+            $conditions[] = "MONTH(posts_tbl.published_at) = ?";
+            $params[] = $month;
+            $types .= 's';  // 'i' for integer type
+        }
+        if ($year) {
+            $conditions[] = "YEAR(posts_tbl.published_at) = ?";
+            $params[] = $year;
+            $types .= 's';
+        }
+
+
+        if (count($conditions) > 0) {
+            $query .= " WHERE " . implode(" AND ", $conditions);
+            $stmt = $con->prepare($query);
+            $stmt->bind_param($types, ...$params);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $stmt->close();
+
+            if ($result->num_rows > 0) {
+                $data = [
+                    'status' => 200,
+                    'message' => 'Content retrieved successfully',
+                    'data' => $result->fetch_all(MYSQLI_ASSOC)
+                ];
+                header("HTTP/1.0 200 OK");
+                return json_encode($data);
+            } else {
+                $data = [
+                    'status' => 201,
+                    'message' => 'No contents found',
+                    // 'data' => $result->fetch_all(MYSQLI_ASSOC)
+
+                ];
+                header("HTTP/1.0 201 Not Found");
+                return json_encode($data);
+            }
+        } else {
+            $data = [
+                'status' => 422,
+                'message' => 'Invalid input'
+            ];
+            header("HTTP/1.0 422 Unprocessable Entity");
+            return json_encode($data);
+        }
+    }
+}
+
+function searchBar($userInput)
+{
+    global $con;
+
+    $search = $userInput['search'];
+
+    if (empty(trim($search))) {
+        return error422('Search is required');
+    } else {
+        $query = "SELECT posts_tbl.*, genre_tbl.name, category_id.name
+              FROM genre_post_tbl
+              INNER JOIN posts_tbl ON genre_post_tbl.post_id = posts_tbl.post_id
+              INNER JOIN genre_tbl ON genre_post_tbl.tag_id = genre_tbl.tag_id
+              INNER JOIN category_id ON genre_post_tbl.category_id = category_id.category_id
+              WHERE posts_tbl.title LIKE ? AND posts_tbl.status = 'posted'";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param('s', $search);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+
+        if ($result->num_rows > 0) {
+            $data = [
+                'status' => 200,
+                'message' => 'Content retrieved successfully',
+                'data' => $result->fetch_all(MYSQLI_ASSOC)
+            ];
+            header("HTTP/1.0 200 OK");
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 404,
+                'message' => 'No contents found'
+            ];
+            header("HTTP/1.0 404 Not Found");
+            return json_encode($data);
+        }
+    }
+}

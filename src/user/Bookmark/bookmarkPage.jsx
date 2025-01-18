@@ -8,6 +8,7 @@ import OffcanvasBookmark from "../Homepage/Offcanvas.jsx";
 import FilterButton from "../Genrepage/FilterByButton.jsx";
 import axios from "axios";
 import { useCookies } from "react-cookie";
+import Filtering from "../Homepage/UploadModal.jsx";
 
 export default function BookmarkPage() {
   const [selectedItem, setSelectedItem] = useState(1);
@@ -58,7 +59,7 @@ export default function BookmarkPage() {
       <OffcanvasBookmark item={selectedItem} />
       <div className="Titlecontent">
         <h1>Saved Post</h1>
-        <FilterButton />
+        <FilterButton showNewContent={setItems} PageType={"bookmark"} />
       </div>
       <Carousel
         className="crsl"
