@@ -62,17 +62,27 @@ function nlpRead($userContent)
 {
     global $google_key;
 
-    $queryText = "Analyze if the following text sounds positive, neutral, negative, or problematic. The output should only contain one of the three choices: \"$userContent\"";
+    $queryText = "Analyze if the following text sounds positive, neutral, negative, or problematic. consider the context when choosing negative or problematic. negative should be when the tone seems like its hurting someone or something in a bad way, and problematic should be when the tone is just outright unacceptable in society's standards The output should only contain one of the four choices: \"$userContent\"";
     $client = new Client($google_key);
     $response = $client->generativeModel(ModelName::GEMINI_1_5_FLASH)->generateContent(
         new TextPart($queryText),
     );
 
-    $data = [
-        'status' => 200,
-        'message' => $response->text()
-    ];
-    return json_encode($data);
+    if ($response) {
+        $data = [
+            'status' => 200,
+            'message' => $response->text(),
+            'text' => $userContent
+        ];
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 201,
+            'message' => 'not processed',
+        ];
+        header("HTTP/1.0 201 Internal Server Error");
+        return json_encode($data);
+    }
 }
 
 function register($userInput)
@@ -282,10 +292,10 @@ function login($userInput)
                         //dito
                     } else {
                         $data = [
-                            'status' => 403,
+                            'status' => 201,
                             'message' => 'unverified',
                         ];
-                        header("HTTP/1.0 401 Unauthorized");
+                        header("HTTP/1.0 201 Unauthorized");
                         return json_encode($data);
                     }
                 } else {
@@ -362,6 +372,7 @@ function postContent($userInputRaw, $user_id, $imageUrlRaw)
     } else {
         $nlpResult = json_decode((nlpRead($content)), true);
         $sentiment = trim(strtolower($nlpResult['message']));
+        // $sentiment = 'positive';
         mysqli_begin_transaction($con);
 
         try {
@@ -559,6 +570,15 @@ function postContent($userInputRaw, $user_id, $imageUrlRaw)
                     header("HTTP/1.0 500 Internal Server Error");
                     return json_encode($data);
                 }
+            } else {
+                $data = [
+                    'status' => 201,
+                    'message' => 'gemini no output',
+                    'result' => $sentiment,
+                    'passed' => $nlpResult['text']
+                ];
+                header("HTTP/1.0 201 no output");
+                return json_encode($data);
             }
         } catch (Exception $e) {
             mysqli_rollback($con);
@@ -577,7 +597,7 @@ function insertComment($data, $userId)
     global $con;
 
     $comment_id = 'COMMENT- ' . date('Y-d') . substr(uniqid(), -5);
-    $content = $data['content'];
+    $content = $data['myComment'];
     $post_id = $data['post_id']; //THIS
 
     if (empty(trim($content))) {
@@ -1146,18 +1166,18 @@ function deleteComment($userInput)
     }
 }
 
-function deleteBookmark($userInput)
+function deleteBookmark($userInput, $user_id)
 {
     global $con;
 
-    $bookmark_id = $userInput['bookmark_id'];
+    $post_id = $userInput['post_id'];
 
-    if (empty(trim($bookmark_id))) {
+    if (empty(trim($post_id))) {
         return error422('Bookmark ID is required');
     } else {
-        $query = "DELETE FROM bookmarks_tbl WHERE bookmark_id = ?";
+        $query = "DELETE FROM bookmarks_tbl WHERE post_id = ? AND user_id = ?";
         $stmt = $con->prepare($query);
-        $stmt->bind_param("s", $bookmark_id);
+        $stmt->bind_param("ss", $post_id, $user_id);
         $result = $stmt->execute();
         $stmt->close();
 
@@ -1420,7 +1440,10 @@ function imageUpload($userImage)
     global $filepath, $bucketName;
 
 
-    $file = $userImage['file'];
+    $file = $userImage['file'] ?? [
+        'tmp_name' => __DIR__ . '/create/witwiw.png',
+        'name' => 'witwiw.png'
+    ];;
     $storage = new StorageClient((['keyFilePath' => $filepath]));
     $bucket = $storage->bucket($bucketName);
 
@@ -1633,81 +1656,6 @@ function readYourPostsTotalBookmarks($user_id)
             'message' => 'No contents found'
         ];
         header("HTTP/1.0 404 Not Found");
-        return json_encode($data);
-    }
-}
-
-function getFilter($userInput)
-{
-    global $con;
-
-    $genre = $userInput['genre'] ?? null;
-    $postType = $userInput['type'] ?? null;
-    $month = $userInput['month'] ?? null;
-    $year = $userInput['year'] ?? null;
-
-    $query = "SELECT posts_tbl.title, posts_tbl.published_at, genre_tbl.name, category_id.name 
-              FROM genre_post_tbl
-              INNER JOIN posts_tbl ON genre_post_tbl.post_id = posts_tbl.post_id
-              INNER JOIN genre_tbl ON genre_post_tbl.tag_id = genre_tbl.tag_id
-              INNER JOIN category_id ON genre_post_tbl.category_id = category_id.category_id";
-
-    $conditions = [];
-    $params = [];
-    $types = '';
-
-    if ($genre) {
-        $conditions[] = "genre_tbl.tag_id = ?";
-        $params[] = $genre;
-        $types .= 's';  // 's' for string type
-    }
-    if ($postType) {
-        $conditions[] = "category_id.category_id = ?";
-        $params[] = $postType;
-        $types .= 's';
-    }
-    if ($month) {
-        $conditions[] = "MONTH(posts_tbl.published_at) = ?";
-        $params[] = $month;
-        $types .= 's';  // 'i' for integer type
-    }
-    if ($year) {
-        $conditions[] = "YEAR(posts_tbl.published_at) = ?";
-        $params[] = $year;
-        $types .= 's';
-    }
-
-
-    if (count($conditions) > 0) {
-        $query .= " WHERE " . implode(" AND ", $conditions);
-        $stmt = $con->prepare($query);
-        $stmt->bind_param($types, ...$params);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $stmt->close();
-
-        if ($result->num_rows > 0) {
-            $data = [
-                'status' => 200,
-                'message' => 'Content retrieved successfully',
-                'data' => $result->fetch_all(MYSQLI_ASSOC)
-            ];
-            header("HTTP/1.0 200 OK");
-            return json_encode($data);
-        } else {
-            $data = [
-                'status' => 404,
-                'message' => 'No contents found'
-            ];
-            header("HTTP/1.0 404 Not Found");
-            return json_encode($data);
-        }
-    } else {
-        $data = [
-            'status' => 422,
-            'message' => 'Invalid input'
-        ];
-        header("HTTP/1.0 422 Unprocessable Entity");
         return json_encode($data);
     }
 }

@@ -69,77 +69,47 @@ export default function UploadModal({ postID }) {
     event.preventDefault();
     const formData = new FormData();
 
+    // Check if Postcontent.type is selected
+    if (!Postcontent.type) {
+      alert("Please select a post type.");
+      return;
+    }
+
+    // Check if all genres are selected
+    if (Postcontent.genre.length === 0) {
+      alert("Please select a genre for each tag.");
+      return;
+    }
     formData.append("file", SelectedFile);
     formData.append("postContent", JSON.stringify(Postcontent));
     formData.append("post_id", postID);
 
-    if (!postID) {
-      for (const [key, value] of formData.entries()) {
-        console.log(`${key}:`, value);
-      }
-      console.log("creating post");
-      //do this if theres no post id (for creating a post)
-      try {
-        axios
-          .post(
-            "http://localhost/crb-react/PHP/api/create/post_content.php",
-            formData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-                Authorization: "Bearer " + cookies.logged_user,
-              },
-              withCredentials: true,
-            }
-          )
-          .then((response) => {
-            if (response.data.status === 200) {
-              console.log(response.data);
-            } else {
-              console.log(response.data);
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      } catch (error) {
-        console.log(error);
-      }
-    } else {
-      console.log("updating post");
-      for (const [key, value] of formData.entries()) {
-        console.log(`${key}:`, value);
-      }
-      //do this if theres a post id (for updating a post)
-      try {
-        axios
-          .post(
-            "http://localhost/crb-react/PHP/api/update/update_content.php",
-            formData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-                Authorization: "Bearer " + cookies.logged_user,
-              },
-              withCredentials: true,
-            }
-          )
-          .then((response) => {
-            if (response.data.status === 200) {
-              console.log(response.data);
-              // alert("Post updated successfully!");
-            } else {
-              // alert("Post update failed.");
-              console.log(response.data);
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      } catch (error) {
-        console.log(error);
-      }
+    const apiUrl = postID
+      ? "http://localhost/crb-react/PHP/api/update/update_content.php"
+      : "http://localhost/crb-react/PHP/api/create/post_content.php";
+
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
     }
+
+    axios
+      .post(apiUrl, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: "Bearer " + cookies.logged_user,
+        },
+        withCredentials: true,
+      })
+      .then((response) => {
+        if (response.data.status === 200) {
+          console.log(response.data);
+        } else {
+          console.log(response.data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   // purpose is to get the genre and type data for the dropdowns

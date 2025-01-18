@@ -1,12 +1,15 @@
 <?php
 
-header('Access-Control-Allow-Origin:*');
+header('Access-Control-Allow-Origin: http://localhost:5173');
+header('Access-Control-Allow-Credentials: true');
 header('Content-Type: application/json');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Request-With');
 
 include('../function.php');
 require(__DIR__ . '../../creds.php');
+require  __DIR__ . '/../../vendor/autoload.php';
+
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\ExpiredException;
@@ -42,7 +45,7 @@ if ($requestMethod == "POST") {
             // Get input data
             $inputData = json_decode(file_get_contents("php://input"), true);
 
-            if (empty($inputData) || !isset($inputData['post_id'])) {
+            if (empty($inputData)) {
                 $data = [
                     'status' => 400,
                     'message' => 'Bad Request: Missing post_id',
@@ -53,7 +56,7 @@ if ($requestMethod == "POST") {
             }
 
             $post_id = $inputData['post_id']; // Extract post_id from input
-            $reason = $inputData['reason'];// Extract report_reason from input
+            $reason = $inputData['myReport']; // Extract report_reason from input
             $reportPost = report_post($post_id, $reason);
 
             echo $reportPost;
