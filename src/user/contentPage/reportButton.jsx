@@ -1,20 +1,28 @@
 import React from "react";
 
-export default function reportButton() {
+export default function reportButton({
+  title,
+  content,
+  hint,
+  name,
+  target,
+  handleChange,
+  handleSubmit,
+}) {
   return (
-    <div>
+    <form onSubmit={handleSubmit}>
       <button
         type="button"
         className="btn btn-primary"
         data-bs-toggle="modal"
-        data-bs-target="#reportmodal"
+        data-bs-target={`#${target}`}
       >
-        Report
+        {title}
       </button>
 
       <div
         className="modal fade"
-        id="reportmodal"
+        id={target}
         data-bs-backdrop="static"
         data-bs-keyboard="false"
         tabIndex="-1"
@@ -25,7 +33,7 @@ export default function reportButton() {
           <div className="modal-content">
             <div className="modal-header">
               <h1 className="modal-title fs-5" id="staticBackdropLabel">
-                Report this post
+                {title}
               </h1>
               <button
                 type="button"
@@ -37,18 +45,25 @@ export default function reportButton() {
             <div className="modal-body">
               <textarea
                 className="modal-textbox"
-                placeholder="Reason for reporting this post..."
-              ></textarea>
+                name={name}
+                value={content}
+                onChange={handleChange}
+                placeholder={hint}
+              />
             </div>
 
             <div className="modal-footer">
-              <button type="button" className="btn btn-primary">
+              <button
+                type="submit"
+                className="btn btn-primary"
+                // data-bs-dismiss="modal"
+              >
                 send
               </button>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </form>
   );
 }

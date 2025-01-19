@@ -5,8 +5,7 @@ import bookmark from "../../assets/images/bookmark.png";
 import comment from "../../assets/images/comment.png";
 import view from "../../assets/images/view.png";
 import Commentuser from "./commentUser";
-import Commentbutton from "./commentButton";
-import ReportButton from "./reportButton";
+import RepOrComment from "./reportButton";
 import LaunchModal from "./launchModal";
 import EditUploadModal from "../Homepage/UploadModal";
 import { useLocation } from "react-router-dom";
@@ -14,6 +13,7 @@ import axios from "axios";
 import { useCookies } from "react-cookie";
 import { jwtDecode } from "jwt-decode";
 import Edit from "../../assets/images/Edit.svg";
+import Bookmarked from "../../assets/images/bookmarked.png";
 
 export default function Contentpage() {
   const location = useLocation();
@@ -24,8 +24,19 @@ export default function Contentpage() {
   const [cookies] = useCookies(["logged_user"]);
   const jwt = cookies.logged_user;
   const [viewerIsOwner, setViewerIsOwner] = useState(false);
+  const decoded = jwtDecode(jwt);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [userComment, setComment] = useState({
+    myComment: "",
+    post_id: post_id,
+  });
+  const [userReport, setReport] = useState({
+    myReport: "",
+    post_id: post_id,
+  });
 
   console.log("owner", owner || "no owner");
+  console.log("post_id", post_id);
 
   useEffect(() => {
     if (post_id) {
@@ -54,10 +65,7 @@ export default function Contentpage() {
       if (owner) {
         //checks if the viewer is the owner of the post
         try {
-          const decoded = jwtDecode(jwt);
           if (decoded.user_id === owner) {
-            //USER - 2025-0852764
-            //USER - 2025-0852764
             setViewerIsOwner(true);
           } else {
             setViewerIsOwner(false);
@@ -69,6 +77,29 @@ export default function Contentpage() {
         //if no owner is passed, viewer is not owner
         setViewerIsOwner(false);
       }
+
+      axios //checks if this specific post is bookmarked by the viewer
+        .post(
+          "http://localhost/crb-react/PHP/api/read/readIfBookmarked.php",
+
+          { post_id: post_id, user_id: decoded.user_id },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        .then((response) => {
+          console.log(response.data);
+          if (response.data.status === 200) {
+            setIsBookmarked(true);
+          } else {
+            setIsBookmarked(false);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   }, []);
 
@@ -98,6 +129,144 @@ export default function Contentpage() {
         });
     }
   }, [post_id]);
+
+  const handleBookmark = () => {
+    if (!isBookmarked) {
+      console.log("adding bookmark");
+      axios
+        .post(
+          "http://localhost/crb-react/PHP/api/create/bookmark.php",
+          { post_id: post_id },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + cookies.logged_user,
+            },
+            withCredentials: true,
+          }
+        )
+        .then((response) => {
+          if (response.data.status === 201) {
+            console.log(response.data);
+            setIsBookmarked(true);
+          } else if (response.data.status === 409) {
+            console.log(response.data);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      console.log("deleting bookmark");
+      axios
+        .post(
+          "http://localhost/crb-react/PHP/api/delete/delete_bookmark.php",
+          { post_id: post_id },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + cookies.logged_user,
+            },
+            withCredentials: true,
+          }
+        )
+        .then((response) => {
+          console.log(response.data);
+          if (response.data.status === 200) {
+            setIsBookmarked(false);
+          } else {
+            console.log(response.data);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
+
+  const handleCommentChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+
+    setComment({
+      ...userComment,
+      [name]: value,
+    });
+  };
+
+  const handleReportChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+
+    setReport({
+      ...userReport,
+      [name]: value,
+    });
+  };
+
+  const handleCommentSubmit = (e) => {
+    e.preventDefault();
+    console.log(userComment);
+
+    axios
+      .post(
+        "http://localhost/crb-react/PHP/api/create/insert_comment.php",
+        userComment,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + cookies.logged_user,
+          },
+          withCredentials: true,
+        }
+      )
+      .then((response) => {
+        console.log(response.data);
+        if (response.data.status === 201) {
+          console.log(response.data);
+          setComment({
+            myComment: "",
+          });
+        } else {
+          console.log(response.data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleReportSubmit = (e) => {
+    e.preventDefault();
+    console.log(userReport.myReport);
+
+    axios
+      .post(
+        "http://localhost/crb-react/PHP/api/create/report_post.php",
+        userReport,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + cookies.logged_user,
+          },
+          withCredentials: true,
+        }
+      )
+      .then((response) => {
+        console.log(response.data);
+        if (response.data.status === 201) {
+          console.log(response.data);
+          setReport({
+            myReport: "",
+          });
+        } else {
+          console.log(response.data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     <>
@@ -144,16 +313,32 @@ export default function Contentpage() {
           <div className="title-right">
             <h1>{postContent.title}</h1>
             <div>
-              <img
-                src={bookmark}
-                className="search-icon"
-                style={{
-                  height: "50px",
-                  width: "50px",
-                  marginRight: "20px",
-                  cursor: "pointer",
-                }}
-              />
+              {isBookmarked ? (
+                <img
+                  src={Bookmarked}
+                  className="search-icon"
+                  onClick={() => handleBookmark()}
+                  style={{
+                    height: "50px",
+                    width: "50px",
+                    marginRight: "20px",
+                    cursor: "pointer",
+                  }}
+                />
+              ) : (
+                <img
+                  src={bookmark}
+                  className="search-icon"
+                  onClick={() => handleBookmark()}
+                  style={{
+                    height: "50px",
+                    width: "50px",
+                    marginRight: "20px",
+                    cursor: "pointer",
+                  }}
+                />
+              )}
+
               {viewerIsOwner && (
                 <>
                   <LaunchModal Edit={Edit} />
@@ -172,7 +357,15 @@ export default function Contentpage() {
 
           <hr />
           <div className="button-right">
-            <ReportButton />
+            <RepOrComment
+              name={"myReport"}
+              title={"Report this Post"}
+              hint={"What is your issue with this post?"}
+              target={"reportmodal"}
+              content={userReport.myReport}
+              handleChange={handleReportChange}
+              handleSubmit={handleReportSubmit}
+            />
           </div>
         </div>
       </div>
@@ -182,7 +375,15 @@ export default function Contentpage() {
       <div className="flex-content-bottom">
         <div className="commentTitle">
           <h2>COMMENTS</h2>
-          <Commentbutton />
+          <RepOrComment
+            name={"myComment"}
+            title={"Leave a Comment"}
+            hint={"Tell us what you think about this post"}
+            target={"commentmodal"}
+            content={userComment.myComment}
+            handleChange={handleCommentChange}
+            handleSubmit={handleCommentSubmit}
+          />
         </div>
         <div className="commentName">
           {postComment.map((postComment, index) => (

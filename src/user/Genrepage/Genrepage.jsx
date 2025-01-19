@@ -40,12 +40,12 @@ export default function Genre() {
 
   return (
     <>
-      <Navbar />
+      <Navbar searchItem={setItems} />
       <OffcanvasGenre item={selectedItem} />
 
       <div className="genreTitle">
         <h1>Full Archive</h1>
-        <FilterButton />
+        <FilterButton showNewContent={setItems} />
       </div>
 
       {groupedItems.map((group, index) => (
