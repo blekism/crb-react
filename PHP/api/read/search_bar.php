@@ -24,38 +24,14 @@ if ($requestMethod == "OPTIONS") {
 }
 
 if ($requestMethod == "POST") {
-    $session = $_COOKIE['logged_user'] ?? '';
     $inputData = json_decode(file_get_contents("php://input"), true); // Retrieve and decode input data
 
 
-    try {
-        $decoded = JWT::decode($session, new Key($secret_key, 'HS256'));
-        $account_id = $decoded->user_id;
-        $expiry = $decoded->exp;
-
-        if (time() > $expiry) {
-            $data = [
-                'status' => 401,
-                'message' => 'Unauthorized',
-            ];
-            header("HTTP/1.0 401 Unauthorized");
-            echo json_encode($data);
-            exit();
-        } else {
             $searchBar = searchBar($inputData);
 
             echo $searchBar;
             exit();
-        }
-    } catch (ExpiredException $e) {
-        $data = [
-            'status' => 401,
-            'message' => 'Unauthorized',
-        ];
-        header("HTTP/1.0 401 Unauthorized");
-        echo json_encode($data);
-        exit();
-    }
+  
 } else {
     $data = [
         'status' => 405,

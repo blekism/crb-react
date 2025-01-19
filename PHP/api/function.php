@@ -1827,10 +1827,10 @@ function searchBar($userInput)
     global $con;
 
     $search = $userInput['search'];
+    $userId = $userInput['user_id'] ?? null;
 
-    if (empty(trim($search))) {
-        return error422('Search is required');
-    } else {
+   if ($userId == null){
+    if ($search) {
         $query = "SELECT posts_tbl.*, genre_tbl.name, category_id.name
               FROM genre_post_tbl
               INNER JOIN posts_tbl ON genre_post_tbl.post_id = posts_tbl.post_id
@@ -1839,6 +1839,8 @@ function searchBar($userInput)
               WHERE posts_tbl.title LIKE ? AND posts_tbl.status = 'posted'";
 
               $likeQuery = "%" . $search. "%";
+
+
 
     $stmt = $con->prepare($query);
     $stmt->bind_param("s", $likeQuery);
@@ -1849,7 +1851,7 @@ function searchBar($userInput)
     if ($result->num_rows > 0) {
         $data = [
             'status' => 200,
-            'message' => 'Content retrieved successfully',
+            'message' => 'Content retrieved successfully Archive or YNGWIE',
             'data' => $result->fetch_all(MYSQLI_ASSOC)
         ];
         header("HTTP/1.0 200 OK");
@@ -1863,4 +1865,38 @@ function searchBar($userInput)
         return json_encode($data);
     }
     }
-}
+    } else {
+            $query = "SELECT posts_tbl.*, genre_tbl.name, category_id.name, bookmarks_tbl.bookmark_id
+            FROM genre_post_tbl
+            INNER JOIN bookmarks_tbl ON genre_post_tbl.post_id = bookmarks_tbl.post_id
+            INNER JOIN posts_tbl ON genre_post_tbl.post_id = posts_tbl.post_id
+            INNER JOIN genre_tbl ON genre_post_tbl.tag_id = genre_tbl.tag_id
+            INNER JOIN category_id ON genre_post_tbl.category_id = category_id.category_id
+              WHERE posts_tbl.title LIKE ? AND posts_tbl.status = 'posted' AND bookmarks_tbl.user_id = ?";
+
+              $likeQuery = "%" . $search. "%";
+
+              $stmt = $con->prepare($query);
+              $stmt->bind_param("ss", $likeQuery, $userId);
+              $stmt->execute();
+              $result = $stmt->get_result();
+              $stmt->close();
+      
+              if ($result->num_rows > 0) {
+                  $data = [
+                      'status' => 200,
+                      'message' => 'Content retrieved successfully Bookmark',
+                      'data' => $result->fetch_all(MYSQLI_ASSOC)
+                  ];
+                  header("HTTP/1.0 200 OK");
+                  return json_encode($data);
+              } else {
+                  $data = [
+                      'status' => 404,
+                      'message' => 'No contents found'
+                  ];
+                  header("HTTP/1.0 404 Not Found");
+                  return json_encode($data);
+              }
+    }
+   }
