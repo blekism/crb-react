@@ -1,20 +1,68 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Search from "../../assets/images/search.png";
 import "./Navbar.css";
 import { Link } from "react-router-dom";
 import Pomasin from "../../assets/images/lheopomasin.jpg";
 import { useCookies } from "react-cookie";
 import { jwtDecode } from "jwt-decode";
+import axios from "axios";
 
-export default function Navbar() {
+export default function Navbar({ searchItem, User }) {
   const [cookies, setCookie, removeCookie] = useCookies(["logged_user"]);
   const jwt = cookies.logged_user;
+
+  const [userSearch, setUserSearch] = useState({
+    search: "",
+  });
+
+  const handleSearchLog = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+
+    setUserSearch((values) => ({ ...values, [name]: value }));
+  };
+
+  const handleSubmitSearch = (event) => {
+    // event.preventDefault;
+    console.log(userSearch, "search CARL");
+
+    axios
+      .post(
+        "http://localhost/crb-react/PHP/api/read/search_bar.php",
+        userSearch
+      )
+      .then((response) => {
+        console.log(response.data);
+        searchItem(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      console.log(User);
+      handleSubmitSearch();
+    }
+  };
 
   useEffect(() => {
     if (!jwt) {
       window.location.href = "/";
     } else {
       console.log("user is logged in");
+      if (User === "bookmark") {
+        try {
+          const decoded = jwtDecode(cookies.logged_user);
+          setUserSearch((prevContent) => ({
+            ...prevContent,
+            user_id: decoded.user_id,
+          }));
+        } catch (error) {
+          console.log(error);
+        }
+      }
     }
   }, []);
 
@@ -65,11 +113,14 @@ export default function Navbar() {
             />
           </span>
           <input
+            name="search"
             type="text"
             className="form-control"
             placeholder="start looking..."
             aria-label="Username"
             aria-describedby="basic-addon1"
+            onChange={handleSearchLog}
+            onKeyDown={handleKeyDown}
           />
         </div>
         <div className="profileLogo">

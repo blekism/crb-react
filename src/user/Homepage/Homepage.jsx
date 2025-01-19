@@ -45,7 +45,8 @@ export default function Homepage() {
 
   return (
     <>
-      <Navbar />
+      <Navbar searchItem={setItems} />
+
       <OffcanvasHome item={selectedItem} />
       <UploadModal />
       <div className="homepage-parent">

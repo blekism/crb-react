@@ -40,7 +40,7 @@ export default function Genre() {
 
   return (
     <>
-      <Navbar />
+      <Navbar searchItem={setItems} />
       <OffcanvasGenre item={selectedItem} />
 
       <div className="genreTitle">
