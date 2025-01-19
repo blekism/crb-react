@@ -1660,6 +1660,314 @@ function readYourPostsTotalBookmarks($user_id)
     }
 }
 
+function readPosts(){
+
+    global $con;
+    $query = "SELECT * FROM posts_tbl";
+    $query_run = mysqli_query($con, $query);
+
+    if($query_run){
+
+        if(mysqli_num_rows($query_run) > 0){
+
+            $res = mysqli_fetch_all($query_run, MYSQLI_ASSOC);
+
+            $data = [
+                'status' => 200,
+                'message' => 'Customer List Fetched Successfully',
+                'data' => $res
+            ];
+            header('HTTP/1.0 200 OK');
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 404,
+                'message' => 'No Customer Found',
+            ];
+            header('HTTP/1.0 404 No Customer Found');
+            return json_encode($data);
+        }
+
+    } else {
+        $data = [
+        'status' => 500,
+        'message' => 'Internal Server Error',
+    ];
+    header('HTTP/1.0 500 Internal Server Error');
+    return json_encode($data);
+    }
+
+}
+
+function readReports(){
+
+    global $con;
+    $query = "SELECT * FROM reports_tbl";
+    $query_run = mysqli_query($con, $query);
+
+    if($query_run){
+
+        if(mysqli_num_rows($query_run) > 0){
+
+            $res = mysqli_fetch_all($query_run, MYSQLI_ASSOC);
+
+            $data = [
+                'status' => 200,
+                'message' => 'Customer List Fetched Successfully',
+                'data' => $res
+            ];
+            header('HTTP/1.0 200 OK');
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 404,
+                'message' => 'No Customer Found',
+            ];
+            header('HTTP/1.0 404 No Customer Found');
+            return json_encode($data);
+        }
+
+    } else {
+        $data = [
+        'status' => 500,
+        'message' => 'Internal Server Error',
+    ];
+    header('HTTP/1.0 500 Internal Server Error');
+    return json_encode($data);
+    }
+
+}
+
+function readAdmin(){
+
+    global $con;
+    $query = "SELECT * FROM user_tbl WHERE role ='admin'";
+    $query_run = mysqli_query($con, $query);
+
+    if($query_run){
+
+        if(mysqli_num_rows($query_run) > 0){
+
+            $res = mysqli_fetch_all($query_run, MYSQLI_ASSOC);
+
+            $data = [
+                'status' => 200,
+                'message' => 'Customer List Fetched Successfully',
+                'data' => $res
+            ];
+            header('HTTP/1.0 200 OK');
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 404,
+                'message' => 'No Customer Found',
+            ];
+            header('HTTP/1.0 404 No Customer Found');
+            return json_encode($data);
+        }
+
+    } else {
+        $data = [
+        'status' => 500,
+        'message' => 'Internal Server Error',
+    ];
+    header('HTTP/1.0 500 Internal Server Error');
+    return json_encode($data);
+    }
+
+}
+
+function readUser(){
+
+    global $con;
+    $query = "SELECT * FROM user_tbl";
+    $query_run = mysqli_query($con, $query);
+
+    if($query_run){
+
+        if(mysqli_num_rows($query_run) > 0){
+
+            $res = mysqli_fetch_all($query_run, MYSQLI_ASSOC);
+
+            $data = [
+                'status' => 200,
+                'message' => 'Customer List Fetched Successfully',
+                'data' => $res
+            ];
+            header('HTTP/1.0 200 OK');
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 404,
+                'message' => 'No Customer Found',
+            ];
+            header('HTTP/1.0 404 No Customer Found');
+            return json_encode($data);
+        }
+
+    } else {
+        $data = [
+        'status' => 500,
+        'message' => 'Internal Server Error',
+    ];
+    header('HTTP/1.0 500 Internal Server Error');
+    return json_encode($data);
+    }
+
+}
+
+function readSingleUser($user_input){
+    global $con;
+    $user_id = $user_input['user_id'];
+    $query = "SELECT * FROM user_tbl WHERE user_id = '$user_id' AND role ='user'";
+    $query_run = mysqli_query($con, $query);
+
+    if($query_run){
+
+        if(mysqli_num_rows($query_run) > 0){
+
+            $res = mysqli_fetch_assoc($query_run);
+
+            $data = [
+                'status' => 200,
+                'message' => 'User List Fetched Successfully',
+                'data' => $res
+            ];
+            header('HTTP/1.0 200 OK');
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 404,
+                'message' => 'No User Found',
+            ];
+            header('HTTP/1.0 404 No User Found');
+            return json_encode($data);
+        }
+
+    } else {
+        $data = [
+        'status' => 500,
+        'message' => 'Internal Server Error',
+    ];
+    header('HTTP/1.0 500 Internal Server Error');
+    return json_encode($data);
+    }
+}
+
+function readSingleAdmin($user_input){
+    global $con;
+    $user_id = $user_input['user_id'];
+    $query = "SELECT * FROM user_tbl WHERE user_id = '$user_id' AND role ='admin'";
+    $query_run = mysqli_query($con, $query);
+
+    if($query_run){
+
+        if(mysqli_num_rows($query_run) > 0){
+
+            $res = mysqli_fetch_assoc($query_run);
+
+            $data = [
+                'status' => 200,
+                'message' => 'User List Fetched Successfully',
+                'data' => $res
+            ];
+            header('HTTP/1.0 200 OK');
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 404,
+                'message' => 'No User Found',
+            ];
+            header('HTTP/1.0 404 No User Found');
+            return json_encode($data);
+        }
+
+    } else {
+        $data = [
+        'status' => 500,
+        'message' => 'Internal Server Error',
+    ];
+    header('HTTP/1.0 500 Internal Server Error');
+    return json_encode($data);
+    }
+}
+
+function readSinglePost($user_input){
+    global $con;
+    $post_id = $user_input['post_id'];
+    $query = "SELECT * FROM posts_tbl WHERE post_id = '$post_id'";
+    $query_run = mysqli_query($con, $query);
+
+    if($query_run){
+
+        if(mysqli_num_rows($query_run) > 0){
+
+            $res = mysqli_fetch_assoc($query_run);
+
+            $data = [
+                'status' => 200,
+                'message' => 'Posts List Fetched Successfully',
+                'data' => $res
+            ];
+            header('HTTP/1.0 200 OK');
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 404,
+                'message' => 'No Post Found',
+            ];
+            header('HTTP/1.0 404 No User Found');
+            return json_encode($data);
+        }
+
+    } else {
+        $data = [
+        'status' => 500,
+        'message' => 'Internal Server Error',
+    ];
+    header('HTTP/1.0 500 Internal Server Error');
+    return json_encode($data);
+    }
+}
+
+function readSingleReport($user_input){
+    global $con;
+    $report_id = $user_input['report_id'];
+    $query = "SELECT * FROM reports_tbl WHERE report_id = '$report_id'";
+    $query_run = mysqli_query($con, $query);
+
+    if($query_run){
+
+        if(mysqli_num_rows($query_run) > 0){
+
+            $res = mysqli_fetch_assoc($query_run);
+
+            $data = [
+                'status' => 200,
+                'message' => 'Reports List Fetched Successfully',
+                'data' => $res
+            ];
+            header('HTTP/1.0 200 OK');
+            return json_encode($data);
+        } else {
+           $data = [
+                'status' => 404,
+                'message' => 'No Report Found',
+            ];
+            header('HTTP/1.0 404 No User Found');
+            return json_encode($data);
+        }
+    } else {
+        $data = [
+        'status' => 500,
+        'message' => 'Internal Server Error',
+    ];
+    header('HTTP/1.0 500 Internal Server Error');
+    return json_encode($data);
+    }
+}
+          
+          
 function getFilter($userInput)
 {
     global $con;
@@ -1899,3 +2207,6 @@ function searchBar($userInput)
         }
     }
 }
+              
+
+
