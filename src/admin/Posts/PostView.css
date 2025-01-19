@@ -1,0 +1,203 @@
+.PostView-Parent{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+}
+
+.PostView-Parent .PostView-Header{
+    width: 100%;
+    height: 7vh;
+    display: flex;
+    flex-direction: row;
+    row-gap: 70px;
+    background-color: #133E87;
+    align-items: center;
+    color: white;
+    padding-left: 20px;
+}
+
+.PostView-Parent .PostView-Header img{
+    width: 40px;
+    height: 40px;
+    border-radius: 20%;
+    background-color: #658ABD;
+}
+
+.PostView-Parent .PostView-Child{
+    width: 100%;
+    height: 93vh;
+    display: flex;
+    flex-direction: row;
+    background-color: white;
+}
+
+.PostView-Parent .PostView-Child .PostView-Child-Left{
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(241, 241, 241);
+    padding: 30px;
+    row-gap: 20px;
+}
+
+.PostView-Parent .PostView-Child .PostView-Child-Left .PostView-Child-Left-Top{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    column-gap: 10px;
+}
+
+.PostView-Parent .PostView-Child .PostView-Child-Left .PostView-Child-Left-Top .PostView-Child-Left-Top-Left{
+    width: 70%;
+    height: 25vh;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    padding: 20px;
+    padding-top: 30px;
+    row-gap: 25px;
+}
+
+.PostView-Parent .PostView-Child .PostView-Child-Left .PostView-Child-Left-Top .PostView-Child-Left-Top-Left .Top{
+    width: 100%;
+    height: 5vh;
+    display: flex;
+    flex-direction: row;
+    column-gap: 20px;
+    row-gap: 25px;
+}
+
+.PostView-Parent .PostView-Child .PostView-Child-Left .PostView-Child-Left-Top .PostView-Child-Left-Top-Left .Top .UserIdCont, .PostStatusCont{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    column-gap: 10px;
+}
+
+.PostView-Parent .PostView-Child .PostView-Child-Left .PostView-Child-Left-Top .PostView-Child-Left-Top-Left .Top .UserIdCont, .PostStatusCont p{
+    font-size: 18px;
+    font-weight: 650;
+}
+
+.PostView-Parent .PostView-Child .PostView-Child-Left .PostView-Child-Left-Top .PostView-Child-Left-Top-Left .TitleCont{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    column-gap: 10px;
+    line-height: 10px;
+}
+
+.PostView-Parent .PostView-Child .PostView-Child-Left .PostView-Child-Left-Top .PostView-Child-Left-Top-Left .TitleCont p{
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.PostView-Parent .PostView-Child .PostView-Child-Left .PostView-Child-Left-Top .PostView-Child-Left-Top-Right{
+    width: 30%;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(255, 255, 255);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.PostView-Parent .PostView-Child .PostView-Child-Left .PostView-Child-Left-Top .PostView-Child-Left-Top-Right p{
+    font-size: 25px;
+    font-weight: 650;
+}
+
+.PostView-Parent .PostView-Child .PostView-Child-Left .PostView-Child-Left-Top .PostView-Child-Left-Top-Right .ScoreResult{
+    width: fit-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(88, 121, 172);
+    border-radius: 10px;
+    color: white;
+    padding: 10px;
+    padding-bottom: 0;
+    margin: auto;
+    font-size: 25px;
+    font-weight: 600;
+}
+
+.PostView-Parent .PostView-Child .PostView-Child-Left .PostView-Child-Left-Bottom{
+    width: 100%;
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    border-radius: 10px;
+    row-gap: 10px;
+}
+
+.PostView-Parent .PostView-Child .PostView-Child-Left .PostView-Child-Left-Bottom .PostView-Child-Left-Bottom-Cont{
+    width: 100%;
+    height: 10vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    /* background-color: rgb(245, 180, 180); */
+    border-radius: 10px;
+}
+
+.PostView-Parent .PostView-Child .PostView-Child-Left .PostView-Child-Left-Bottom .PostView-Child-Left-Bottom-Cont .Date{
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    column-gap: 20px;
+    /* background-color: rgb(228, 128, 128); */
+    border-radius: 10px;
+    /* padding: 5px; */
+}
+
+.PostView-Parent .PostView-Child .PostView-Child-Left .PostView-Child-Left-Bottom .PostView-Child-Left-Bottom-Cont .Date .date1, .date2{
+    line-height: 5px;
+    padding: 10px;
+}
+
+.PostView-Parent .PostView-Child .PostView-Child-Left .PostView-Child-Left-Bottom .PostView-Child-Left-Bottom-Cont .Date .date1, .date2 p{
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.PostView-Parent .PostView-Child .PostView-Child-Right{
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(241, 241, 241);
+}
+
+.PostView-Parent .PostView-Child .PostView-Child-Right .PostView-Child-Right-Content{
+    width: 100%;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 30px;
+    border-radius: 10px;
+}
+
+.PostView-Parent .PostView-Child .PostView-Child-Right .PostView-Child-Right-Content .PostView-Child-Right-Comments{
+    width: 100%;
+    height: 65vh;
+    display: flex;
+    flex-direction: column;
+    background-color:rgba(19, 62, 135, 0.21);
+    padding: 20px;
+    border-radius: 10px;
+    overflow: auto;
+}
+

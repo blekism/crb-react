@@ -62,7 +62,7 @@ function nlpRead($userContent)
 {
     global $google_key;
 
-    $queryText = "Analyze if the following text sounds positive, neutral, negative, or problematic. The output should only contain one of the three choices: \"$userContent\"";
+    $queryText = "Analyze if the following text sounds positive, neutral, negative, or problematic. consider the context when choosing negative or problematic. negative should be when the tone seems like its hurting someone or something in a bad way, and problematic should be when the tone is just outright unacceptable in society's standards The output should only contain one of the four choices: \"$userContent\"";
     $client = new Client($google_key);
     $response = $client->generativeModel(ModelName::GEMINI_1_5_FLASH)->generateContent(
         new TextPart($queryText),

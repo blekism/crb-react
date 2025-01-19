@@ -55,6 +55,53 @@
     margin: 0;
 }
 
+.AdminReports-Parent .AdminReports-Child .AdminReports-MainContent .AdminReports-MainContent-Table{
+    overflow: auto;
+   height: 65vh;
+}
 
+.AdminReports-Parent .AdminReports-Child .AdminReports-MainContent .AdminReports-MainContent-Table .table thead{
+    text-align: center;
+}
 
+.Admin-Parent .AdminReports-Child .AdminReports-MainContent .AdminReports-MainContent-Table .table tbody{
+    text-align: center;
+    font-weight: 500;
+}
 
+/* modal */
+.modal .modal-dialog .modal-content .modal-body .adminModalBody-rightTopContent {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    column-gap: 5px;
+    padding: 10px;
+    padding-bottom: 0;
+    line-height: 5px;
+  }
+
+  .modal .modal-dialog .modal-content .modal-body .adminModalBody-rightTopContent .adminModalBody-rightTopCont1, .adminModalBody-rightTopCont2 {
+    display: flex;
+    flex-direction: row;
+    column-gap: 10px;
+    padding: 10px;
+    padding-bottom: 0;
+    text-align: start;
+  }
+  
+  .modal .modal-dialog .modal-content .modal-body .adminModalBody-rightTopContent .adminModalBody-rightTopCont1
+  .adminModalBody-rightTopContent1, .adminModalBody-rightTopContent2 {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    column-gap: 5px;
+  }
+  
+  .modal .modal-dialog .modal-content .modal-body .adminModalBody-rightBottomContent {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    column-gap: 5px;
+    padding: 10px;
+    line-height: 5px;
+  }

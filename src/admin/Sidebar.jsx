@@ -24,16 +24,14 @@ export default function Sidebar() {
       setActiveLink("users");
     } else if (path.includes("Admin")) {
       setActiveLink("admin");
-    } else if (path.includes("Reports")) {
+    } else if (path.includes("Posts")) {
       setActiveLink("posts");
-    } else if (path.includes("Reports")) {
-      setActiveLink("comments");
-    } else if (path.includes("Reports")) {
-      setActiveLink("bookmarks");
+      // } else if (path.includes("Comments")) {
+      //   setActiveLink("comments");
     } else if (path.includes("Reports")) {
       setActiveLink("reports");
-    } else if (path.includes("Bookmark")) {
-      setActiveLink("contentreview");
+      // } else if (path.includes("Bookmark")) {
+      //   setActiveLink("contentreview");
     }
   }, [location]);
 
@@ -83,7 +81,7 @@ export default function Sidebar() {
           <div className="AdminSideBar-TopCont-Reports">
             <img src={Posts} alt="Dashboard Icon" />
             <Link
-              to="/Reports"
+              to="/Posts"
               className={`AdminSideBar-TopCont-link ${
                 activeLink === "posts" ? "active" : ""
               }`}
@@ -92,10 +90,10 @@ export default function Sidebar() {
               Posts
             </Link>
           </div>
-          <div className="AdminSideBar-TopCont-Reports">
+          {/* <div className="AdminSideBar-TopCont-Reports">
             <img src={Comment} alt="Dashboard Icon" />
             <Link
-              to="/Reports"
+              to="/Comments"
               className={`AdminSideBar-TopCont-link ${
                 activeLink === "comments" ? "active" : ""
               }`}
@@ -103,19 +101,7 @@ export default function Sidebar() {
             >
               Comments
             </Link>
-          </div>
-          <div className="AdminSideBar-TopCont-Reports">
-            <img src={Bookmark} alt="Dashboard Icon" />
-            <Link
-              to="/Reports"
-              className={`AdminSideBar-TopCont-link ${
-                activeLink === "bookmarks" ? "active" : ""
-              }`}
-              onClick={() => handleLinkClick("bookmarks")}
-            >
-              Bookmarks
-            </Link>
-          </div>
+          </div> */}
           <div className="AdminSideBar-TopCont-Reports">
             <img src={ReportsIcon} alt="Dashboard Icon" />
             <Link
@@ -128,7 +114,7 @@ export default function Sidebar() {
               Reports
             </Link>
           </div>
-          <div className="AdminSideBar-TopCont-ContRev">
+          {/* <div className="AdminSideBar-TopCont-ContRev">
             <img src={ContRevIcon} alt="Dashboard Icon" />
             <Link
               to="/Bookmark"
@@ -139,7 +125,7 @@ export default function Sidebar() {
             >
               Reviews
             </Link>
-          </div>
+          </div> */}
         </div>
         <div className="AdminSideBar-BottomCont"></div>
       </div>

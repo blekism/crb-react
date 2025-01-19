@@ -3,6 +3,7 @@ import "./Users.css";
 import axios from "axios";
 import Sidebar from "../Sidebar";
 import InputTemplate from "../../user/loginSignupPage/InputTemplate";
+import Delete from "../../assets/images/delRed.svg";
 
 export default function Users() {
   return (
@@ -17,19 +18,23 @@ export default function Users() {
           <div className="Users-MainContent">
             <div className="Users-MainContent-header">
               <h3>USERS</h3>
-              <button
-                type="button"
-                className="btn btn-primary"
+              <select
+                className="form-select mb-3"
+                aria-label="Default select example"
+                name="event_status"
+                // value={eventItem.event_status}
+                // onChange={handleChange}
                 style={{
+                  width: "fit-content",
+                  height: "40px",
+                  backgroundColor: "rgba(19, 62, 135, 0.81)",
                   color: "white",
-                  paddingLeft: "20px",
-                  paddingRight: "20px",
-                  fontWeight: "400",
-                  height: "45px",
+                  border: "none",
                 }}
               >
-                Filter
-              </button>
+                <option value="user">USER</option>
+                <option value="guest">GUEST</option>
+              </select>
             </div>
 
             <div className="Users-MainContent-Table">
@@ -243,7 +248,17 @@ export default function Users() {
                         </div>
                       </div>
                     </td>
-                    <td></td>
+                    <td>
+                      <img
+                        src={Delete}
+                        alt="Edit"
+                        className="DeleteIcon"
+                        style={{
+                          width: "70px",
+                          height: "40px",
+                        }}
+                      />
+                    </td>
                   </tr>
                   {/* ))} */}
                 </tbody>

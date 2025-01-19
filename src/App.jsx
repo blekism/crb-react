@@ -12,6 +12,9 @@ import AdminDashboard from "./admin/Dashboard/AdminDashboard.jsx";
 import AdminReports from "./admin/Reports/AdminReports.jsx";
 import Users from "./admin/Users&Admin/Users.jsx";
 import Admin from "./admin/Users&Admin/Admin.jsx";
+import PostsTable from "./admin/Posts/Posts.jsx";
+import Comments from "./admin/Comments/Comments.jsx";
+import PostView from "./admin/Posts/PostView.jsx";
 
 function App() {
   return (
@@ -29,6 +32,9 @@ function App() {
           <Route path="/Reports" element={<AdminReports />} />
           <Route path="/Users" element={<Users />} />
           <Route path="/Admin" element={<Admin />} />
+          <Route path="/Posts" element={<PostsTable />} />
+          <Route path="/Comments" element={<Comments />} />
+          <Route path="/PostView" element={<PostView />} />
         </Routes>
       </Router>
     </>

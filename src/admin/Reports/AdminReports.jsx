@@ -1,6 +1,7 @@
 import React from "react";
 import "./AdminReports.css";
 import Sidebar from "../Sidebar";
+import Delete from "../../assets/images/delRed.svg";
 
 export default function AdminReports() {
   return (
@@ -14,20 +15,24 @@ export default function AdminReports() {
           </div>
           <div className="AdminReports-MainContent">
             <div className="AdminReports-MainContent-header">
-              <h3>New Posts</h3>
-              <button
-                type="button"
-                className="btn btn-primary"
+              <h3>Reports</h3>
+              <select
+                className="form-select mb-3"
+                aria-label="Default select example"
+                name="event_status"
+                // value={eventItem.event_status}
+                // onChange={handleChange}
                 style={{
+                  width: "fit-content",
+                  height: "40px",
+                  backgroundColor: "rgba(19, 62, 135, 0.81)",
                   color: "white",
-                  paddingLeft: "20px",
-                  paddingRight: "20px",
-                  fontWeight: "400",
-                  height: "45px",
+                  border: "none",
                 }}
               >
-                Filter
-              </button>
+                <option value="reported">REPORTED</option>
+                <option value="closed">CLOSED</option>
+              </select>
             </div>
 
             <div className="AdminReports-MainContent-Table">
@@ -38,8 +43,8 @@ export default function AdminReports() {
                     <th scope="col">POST ID</th>
                     <th scope="col">REASON</th>
                     <th scope="col">STATUS</th>
-                    <th scope="col">CREATED AT</th>
-                    <th scope="col">UPDATED AT</th>
+                    <th scope="col">VIEW</th>
+                    <th scope="col">ACTION</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -52,7 +57,17 @@ export default function AdminReports() {
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td></td>
+                    <td>
+                      <img
+                        src={Delete}
+                        alt="Edit"
+                        className="DeleteIcon"
+                        style={{
+                          width: "70px",
+                          height: "40px",
+                        }}
+                      />
+                    </td>
                   </tr>
                   {/* ))} */}
                 </tbody>

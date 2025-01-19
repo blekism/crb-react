@@ -4,6 +4,7 @@ import axios from "axios";
 import Sidebar from "../Sidebar";
 import InputTemplate from "../../user/loginSignupPage/InputTemplate";
 import AddAdminModal from "./AddAdminModal";
+import Delete from "../../assets/images/delRed.svg";
 
 export default function Admin() {
   return (
@@ -197,7 +198,17 @@ export default function Admin() {
                         </div>
                       </div>
                     </td>
-                    <td></td>
+                    <td>
+                      <img
+                        src={Delete}
+                        alt="Edit"
+                        className="DeleteIcon"
+                        style={{
+                          width: "70px",
+                          height: "40px",
+                        }}
+                      />
+                    </td>
                   </tr>
                   {/* ))} */}
                 </tbody>
