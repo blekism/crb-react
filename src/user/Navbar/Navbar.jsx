@@ -23,7 +23,6 @@ export default function Navbar({ searchItem, User }) {
   };
 
   const handleSubmitSearch = (event) => {
-    // event.preventDefault;
     console.log(userSearch, "search CARL");
 
     axios
