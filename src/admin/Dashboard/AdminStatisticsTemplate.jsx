@@ -1,5 +1,4 @@
 import React from "react";
-import "./AdminStatisticsTemplate.css";
 
 export default function AdminStatisticsTemplate({
   statsTitle,

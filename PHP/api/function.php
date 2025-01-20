@@ -1241,7 +1241,6 @@ function updateProfile($userInput, $user_id)
     $password = $userInput['password'];
     $bio = $userInput['bio'];
 
-
     if (empty(trim($username))) {
         return error422('User ID is required');
     } else if (empty(trim($first_name))) {
@@ -1660,6 +1659,33 @@ function readYourPostsTotalBookmarks($user_id)
     }
 }
 
+function readTotalPosts()
+{
+    global $con;
+
+    $query = "SELECT COUNT(*) AS Total_Posts FROM posts_tbl WHERE posts_tbl.status = 'posted';";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+  
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Posts retrieved successfully',
+            'data' => $result->fetch_assoc()
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Posts found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+  
 function readPosts()
 {
 
@@ -1680,37 +1706,82 @@ function readPosts()
     $result = $stmt->get_result();
     $stmt->close();
 
-    if ($result) {
-
-        if ($result->num_rows > 0) {
-
-            $res = $result->fetch_all(MYSQLI_ASSOC);
-
-            $data = [
-                'status' => 200,
-                'message' => 'Customer List Fetched Successfully',
-                'data' => $res
-            ];
-            header('HTTP/1.0 200 OK');
-            return json_encode($data);
-        } else {
-            $data = [
-                'status' => 404,
-                'message' => 'No Customer Found',
-            ];
-            header('HTTP/1.0 404 No Customer Found');
-            return json_encode($data);
-        }
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Posts retrieved successfully',
+            'data' => $result->fetch_assoc()
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
     } else {
         $data = [
-            'status' => 500,
-            'message' => 'Internal Server Error',
+            'status' => 404,
+            'message' => 'No Posts found'
         ];
-        header('HTTP/1.0 500 Internal Server Error');
+        header("HTTP/1.0 404 Not Found");
         return json_encode($data);
     }
 }
 
+function readTotalUsers()
+{
+    global $con;
+
+    $query = "SELECT COUNT(*) AS Total_Users FROM user_tbl WHERE user_tbl.role = 'user';";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Users retrieved successfully',
+            'data' => $result->fetch_assoc()
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Users found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+
+
+function readTotalComments()
+{
+    global $con;
+
+    $query = "SELECT COUNT(*) AS Total_Comments FROM comments_tbl";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+  
+  if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Comments retrieved successfully',
+            'data' => $result->fetch_assoc()
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Comments found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+  
+  
 function readReports()
 {
 
@@ -1721,39 +1792,85 @@ function readReports()
     $result = $stmt->get_result();
     $stmt->close();
 
-
-    if ($result) {
-
-        if ($result->num_rows > 0) {
-
-            $res = $result->fetch_all(MYSQLI_ASSOC);
-
-
-            $data = [
-                'status' => 200,
-                'message' => 'Customer List Fetched Successfully',
-                'data' => $res
-            ];
-            header('HTTP/1.0 200 OK');
-            return json_encode($data);
-        } else {
-            $data = [
-                'status' => 404,
-                'message' => 'No Customer Found',
-            ];
-            header('HTTP/1.0 404 No Customer Found');
-            return json_encode($data);
-        }
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'reports retrieved successfully',
+            'data' => $result->fetch_assoc()
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
     } else {
         $data = [
-            'status' => 500,
-            'message' => 'Internal Server Error',
+            'status' => 404,
+            'message' => 'No Comments found'
         ];
-        header('HTTP/1.0 500 Internal Server Error');
+        header("HTTP/1.0 404 Not Found");
         return json_encode($data);
     }
 }
 
+function readPostsIncrease()
+{
+    global $con;
+
+    $query = "SELECT COUNT(*) AS Today_Posts
+                FROM posts_tbl
+                WHERE DATE(created_at) = CURDATE() AND status = 'posted';";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Post Increase retrieved successfully',
+            'data' => $result->fetch_assoc()
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Posts found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+      return json_encode($data);
+    }
+}
+
+
+function readCommentsIncrease()
+{
+    global $con;
+
+    $query = "SELECT COUNT(*) AS Today_Comments
+                FROM comments_tbl
+                WHERE DATE(created_at) = CURDATE();";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+  
+  if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Comments Increase retrieved successfully',
+            'data' => $result->fetch_assoc()
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Posts found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+  
 function readAdmin()
 {
 
@@ -1764,37 +1881,94 @@ function readAdmin()
     $result = $stmt->get_result();
     $stmt->close();
 
-    if ($result) {
-
-        if ($result->num_rows > 0) {
-
-            $res = $result->fetch_all(MYSQLI_ASSOC);
-
-
-            $data = [
-                'status' => 200,
-                'message' => 'Customer List Fetched Successfully',
-                'data' => $res
-            ];
-            header('HTTP/1.0 200 OK');
-            return json_encode($data);
-        } else {
-            $data = [
-                'status' => 404,
-                'message' => 'No Customer Found',
-            ];
-            header('HTTP/1.0 404 No Customer Found');
-            return json_encode($data);
-        }
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'admin list retrieved successfully',
+            'data' => $result->fetch_assoc()
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
     } else {
         $data = [
-            'status' => 500,
-            'message' => 'Internal Server Error',
+            'status' => 404,
+            'message' => 'No Posts found'
         ];
-        header('HTTP/1.0 500 Internal Server Error');
+        header("HTTP/1.0 404 Not Found");
         return json_encode($data);
     }
 }
+
+function readUsersIncrease()
+{
+    global $con;
+
+    $query = "SELECT COUNT(*) AS Today_Users
+                FROM user_tbl
+                WHERE DATE(created_at) = CURDATE();";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of User Increase retrieved successfully',
+            'data' => $result->fetch_assoc()
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Users found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+
+function readTotalPostsGraph()
+{
+    global $con;
+
+    $query = "SELECT 
+                    DATE_FORMAT(created_at, '%Y-%m-%d') AS Day, 
+                    COUNT(*) AS Posts
+                FROM 
+                    posts_tbl
+                WHERE 
+                    status = 'posted' 
+                    AND MONTH(created_at) = MONTH(CURRENT_DATE) 
+                    AND YEAR(created_at) = YEAR(CURRENT_DATE)    
+                GROUP BY 
+                    DATE_FORMAT(created_at, '%Y-%m-%d')  
+                ORDER BY 
+                    DATE_FORMAT(created_at, '%Y-%m-%d') ASC;";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+  
+  if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Post Per day of the Month retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Posts found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+  
 
 function readUser()
 {
@@ -1806,38 +1980,105 @@ function readUser()
     $result = $stmt->get_result();
     $stmt->close();
 
-    if ($result) {
-
-        if ($result->num_rows > 0) {
-
-            $res = $result->fetch_all(MYSQLI_ASSOC);
-
-
-            $data = [
-                'status' => 200,
-                'message' => 'Customer List Fetched Successfully',
-                'data' => $res
-            ];
-            header('HTTP/1.0 200 OK');
-            return json_encode($data);
-        } else {
-            $data = [
-                'status' => 404,
-                'message' => 'No Customer Found',
-            ];
-            header('HTTP/1.0 404 No Customer Found');
-            return json_encode($data);
-        }
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'users retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
     } else {
         $data = [
-            'status' => 500,
-            'message' => 'Internal Server Error',
+            'status' => 404,
+            'message' => 'No Posts found'
         ];
-        header('HTTP/1.0 500 Internal Server Error');
+        header("HTTP/1.0 404 Not Found");
         return json_encode($data);
     }
 }
 
+function readTotalCommentsGraph()
+{
+    global $con;
+
+    $query = "SELECT 
+                    DATE_FORMAT(created_at, '%Y-%m-%d') AS Day, 
+                    COUNT(*) AS Comments
+                FROM 
+                    comments_tbl
+                WHERE 
+					MONTH(created_at) = MONTH(CURRENT_DATE) 
+                    AND YEAR(created_at) = YEAR(CURRENT_DATE)    
+                GROUP BY 
+                    DATE_FORMAT(created_at, '%Y-%m-%d')  
+                ORDER BY 
+                    DATE_FORMAT(created_at, '%Y-%m-%d') ASC;";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Comments Per day of the Month retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Comments found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+
+
+function readTotalBookmarksGraph()
+{
+    global $con;
+
+    $query = "SELECT 
+                    DATE_FORMAT(created_at, '%Y-%m-%d') AS Day, 
+                    COUNT(*) AS Bookmarks
+                FROM 
+                    bookmarks_tbl
+                WHERE 
+					MONTH(created_at) = MONTH(CURRENT_DATE) 
+                    AND YEAR(created_at) = YEAR(CURRENT_DATE)    
+                GROUP BY 
+                    DATE_FORMAT(created_at, '%Y-%m-%d')  
+                ORDER BY 
+                    DATE_FORMAT(created_at, '%Y-%m-%d') ASC;";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+  
+  
+    if ($result->num_rows > 0) {
+          $data = [
+              'status' => 200,
+              'message' => 'Total Count of Bookmarks Per day of the Month retrieved successfully',
+              'data' => $result->fetch_all(MYSQLI_ASSOC)
+          ];
+          header("HTTP/1.0 200 OK");
+          return json_encode($data);
+      } else {
+          $data = [
+              'status' => 404,
+              'message' => 'No Bookmarks found'
+          ];
+          header("HTTP/1.0 404 Not Found");
+          return json_encode($data);
+      }
+  }
+  
+  
 function readSingleUser($user_input)
 {
     global $con;
@@ -1849,37 +2090,92 @@ function readSingleUser($user_input)
     $result = $stmt->get_result();
     $stmt->close();
 
-    if ($result) {
-
-        if ($result->num_rows == 1) {
-
-            $res = $result->fetch_assoc();
-
-            $data = [
-                'status' => 200,
-                'message' => 'User List Fetched Successfully',
-                'data' => $res
-            ];
-            header('HTTP/1.0 200 OK');
-            return json_encode($data);
-        } else {
-            $data = [
-                'status' => 404,
-                'message' => 'No User Found',
-            ];
-            header('HTTP/1.0 404 No User Found');
-            return json_encode($data);
-        }
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'single user retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
     } else {
         $data = [
-            'status' => 500,
-            'message' => 'Internal Server Error',
+            'status' => 404,
+            'message' => 'No Bookmarks found'
         ];
-        header('HTTP/1.0 500 Internal Server Error');
+        header("HTTP/1.0 404 Not Found");
         return json_encode($data);
     }
 }
 
+function readTotalGenrePerPostGraph()
+{
+    global $con;
+
+    $query = "SELECT genre_tbl.name AS genre, 
+                    COUNT(posts_tbl.post_id) as genre_total_post
+                FROM genre_post_tbl
+                INNER JOIN genre_tbl ON genre_post_tbl.tag_id = genre_tbl.tag_id
+                INNER JOIN posts_tbl ON genre_post_tbl.post_id = posts_tbl.post_id
+                GROUP BY genre_tbl.name ";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Genre Per Post retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Genre found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+
+
+function readTotalCategoryPerPostGraph()
+{
+    global $con;
+
+    $query = "SELECT category_id.name AS category, 
+                    COUNT(posts_tbl.post_id) as category_total_post
+                FROM genre_post_tbl
+                INNER JOIN category_id ON genre_post_tbl.category_id = category_id.category_id
+                INNER JOIN posts_tbl ON genre_post_tbl.post_id = posts_tbl.post_id
+                GROUP BY category_id.name;";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+    
+  if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Genre Per Post retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Genre found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+  
+  
 function readSingleAdmin($user_input)
 {
     global $con;
@@ -1890,8 +2186,8 @@ function readSingleAdmin($user_input)
     $stmt->execute();
     $result = $stmt->get_result();
     $stmt->close();
-
-    if ($result) {
+  
+  if ($result) {
 
         if ($result->num_rows == 1) {
 
@@ -1921,7 +2217,43 @@ function readSingleAdmin($user_input)
         return json_encode($data);
     }
 }
+  
+  
 
+function readTotalLoggedVsGuestUser()
+{
+    global $con;
+
+    $query = "SELECT 
+                role,
+                COUNT(*) AS total_count
+                FROM user_tbl
+                WHERE role IN ('user', 'guest')
+                GROUP BY role;";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+  
+  if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Logged VS Guest User retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No User found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+  
+  
 function readSinglePost($user_input)
 {
     global $con;
@@ -1947,8 +2279,8 @@ function readSinglePost($user_input)
     $stmt->execute();
     $result = $stmt->get_result();
     $stmt->close();
-
-    if ($result) {
+  
+   if ($result) {
 
         if ($result->num_rows == 1) {
 
@@ -1979,6 +2311,41 @@ function readSinglePost($user_input)
     }
 }
 
+
+function readTotalReviewDistribution()
+{
+    global $con;
+
+    $query = "SELECT 
+                status,
+                COUNT(*) AS total_count
+                FROM review_tbl
+                WHERE status IN ('for_review', 'posted', 'reviewing', 'rejected')
+                GROUP BY status;";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+  
+  if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Review Status retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Review found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+  
+  
 function readSingleReport($user_input)
 {
     global $con;
@@ -2002,7 +2369,7 @@ function readSingleReport($user_input)
     $stmt->execute();
     $result = $stmt->get_result();
     $stmt->close();
-
+  
     if ($result) {
 
         if ($result->num_rows == 1) {
@@ -2031,6 +2398,187 @@ function readSingleReport($user_input)
         ];
         header('HTTP/1.0 500 Internal Server Error');
         return json_encode($data);
+    }
+}
+
+
+function addAdmin($userInput)
+{
+    global $con;
+
+    if (isset($userInput['email']) && isset($userInput['password'])) {
+        $user_id = 'USER - ' . date('Y-d') . substr(uniqid(), -5);
+        $email = $userInput['email'];
+        $password = $userInput['password'];
+        $firstname = $userInput['first_name'];
+        $lastname = $userInput['last_name'];
+
+        $hashed = md5($password);
+
+        if (empty(trim($email))) {
+            return error422('Email is required');
+        } else if (empty(trim($password))) {
+            return error422('Password is required');
+        } else if (empty(trim($firstname))) {
+            return error422('First name is required');
+        } else if (empty(trim($lastname))) {
+            return error422('Last name is required');
+        } else {
+
+            $query = "INSERT INTO user_tbl (user_id, email, password, first_name, last_name, role, created_at) VALUES (?, ?, ?, ?, ?, 'admin', NOW())";
+            $stmt = $con->prepare($query);
+            $stmt->bind_param('sssss', $user_id, $email, $hashed, $firstname, $lastname);
+            $result = $stmt->execute();
+            $stmt->close();
+
+            if ($result) {
+                $data = [
+                    'status' => 201,
+                    'message' => 'Admin Inserted Successfully',
+                ];
+                header("HTTP/1.0 201 OK");
+                return json_encode($data);
+            } else {
+                $data = [
+                    "status" => 500,
+                    "message" => "Internal Server Error",
+                ];
+                header("HTTP/1.0 500 Internal Server Error");
+                return json_encode($data);
+            }
+        }
+    } else {
+        return error422('Email and Password are required');
+    }
+}
+
+function updateAdmin($userInput)
+{
+    global $con;
+
+    $user_id = $userInput['user_id'];
+    $first_name = $userInput['first_name'];
+    $last_name = $userInput['last_name'];
+    $email = $userInput['email'];
+    $password = $userInput['password'];
+
+    $hashed = md5($password);
+
+    if (empty(trim($first_name))) {
+        return error422('First name is required');
+    } else if (empty(trim($last_name))) {
+        return error422('Last name is required');
+    } else if (empty(trim($email))) {
+        return error422('Email is required');
+    } else if (empty(trim($password))) {
+        return error422('Password is required');
+    } else {
+        $query = "UPDATE user_tbl SET first_name = ?, last_name = ?, email = ?, password = ?, updated_at = NOW() WHERE user_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("sssss", $first_name, $last_name, $email, $hashed, $user_id);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        if ($result) {
+            $data = [
+                'status' => 200,
+                'message' => 'Admin Profile updated successfully',
+            ];
+            header("HTTP/1.0 200 OK");
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 500,
+                'message' => 'Internal Server Error',
+            ];
+            header("HTTP/1.0 500 Internal Server Error");
+            return json_encode($data);
+        }
+    }
+}
+
+function updateUser($userInput)
+{
+    global $con;
+
+    $user_id = $userInput['user_id'];
+    $username = $userInput['username'];
+    $first_name = $userInput['first_name'];
+    $last_name = $userInput['last_name'];
+    $email = $userInput['email'];
+    $password = $userInput['password'];
+    $bio = $userInput['bio'];
+
+    $hashed = md5($password);
+
+    if (empty(trim($username))) {
+        return error422('Username is required');
+    } else if (empty(trim($first_name))) {
+        return error422('First name is required');
+    } else if (empty(trim($last_name))) {
+        return error422('Last name is required');
+    } else if (empty(trim($email))) {
+        return error422('Email is required');
+    } else if (empty(trim($password))) {
+        return error422('Password is required');
+    } else if (empty(trim($bio))) {
+        return error422('Bio is required');
+    } else {
+        $query = "UPDATE user_tbl SET username = ?, first_name = ?, last_name = ?, email = ?, password = ?, bio = ?, updated_at = NOW() WHERE user_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("sssssss", $username, $first_name, $last_name, $email, $hashed, $bio, $user_id);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        if ($result) {
+            $data = [
+                'status' => 200,
+                'message' => 'User Profile updated successfully',
+            ];
+            header("HTTP/1.0 200 OK");
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 500,
+                'message' => 'Internal Server Error',
+            ];
+            header("HTTP/1.0 500 Internal Server Error");
+            return json_encode($data);
+        }
+    }
+}
+
+function updateReport($userInput)
+{
+    global $con;
+
+    $report_id = $userInput['report_id'];
+    $status = $userInput['status'];
+
+    if (empty(trim($status))) {
+        return error422('Status is required');
+    } else {
+        $query = "UPDATE reports_tbl SET status = ?, updated_at = NOW() WHERE report_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("ss", $status, $report_id);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        if ($result) {
+            $data = [
+                'status' => 200,
+                'message' => 'Report updated successfully',
+            ];
+            header("HTTP/1.0 200 OK");
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 500,
+                'message' => 'Internal Server Error',
+            ];
+            header("HTTP/1.0 500 Internal Server Error");
+          return json_encode($data);
+        }
     }
 }
 
@@ -2181,7 +2729,6 @@ function getFilter($userInput)
                     'status' => 201,
                     'message' => 'No contents found',
                     // 'data' => $result->fetch_all(MYSQLI_ASSOC)
-
                 ];
                 header("HTTP/1.0 201 Not Found");
                 return json_encode($data);
@@ -2197,6 +2744,43 @@ function getFilter($userInput)
     }
 }
 
+function updatePost($userInput)
+{
+    global $con;
+
+    $report_id = $userInput['report_id'];
+    $status = $userInput['status'];
+
+    if (empty(trim($status))) {
+        return error422('Status is required');
+    } else {
+        $query = "UPDATE reports_tbl SET status = ?, updated_at = NOW() WHERE report_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("ss", $status, $report_id);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        if ($result) {
+            $data = [
+                'status' => 200,
+                'message' => 'Report updated successfully',
+                ];
+            header("HTTP/1.0 200 OK");
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 500,
+                'message' => 'Internal Server Error',
+            ];
+            header("HTTP/1.0 500 Internal Server Error");
+            return json_encode($data);
+        }
+    }
+}
+              
+              
+              
+              
 function searchBar($userInput)
 {
 

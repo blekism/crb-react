@@ -1,0 +1,107 @@
+.AdminReports-Parent{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: white;
+}
+
+.AdminReports-Parent .AdminReports-Child{
+    width: 85%;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #f5f5f5;
+    margin-left: 15%;
+}
+
+.AdminReports-Parent .AdminReports-Child .AdminReports-Header{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    height: 15vh;
+    background-color: white;
+    padding-top: 30px;
+    padding-left: 70px;
+    line-height: 10px;
+}
+
+.AdminReports-Parent .AdminReports-Child .AdminReports-MainContent{
+    width: 100%;
+    height: 85vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #b3e7cb;
+    padding: 20px;
+    /* row-gap: 20px; */
+}
+
+.AdminReports-Parent .AdminReports-Child .AdminReports-MainContent .AdminReports-MainContent-header{
+    width: 100%;
+    height: 8vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding-left: 3%;
+    padding-right: 7%;
+    padding-top: 15px;
+    padding-bottom: 10px;
+    background-color: Transparent;
+}
+
+.AdminReports-Parent .AdminReports-Child .AdminReports-MainContent .AdminReports-MainContent-header h3{
+    font-size: 32px;
+    margin: 0;
+}
+
+.AdminReports-Parent .AdminReports-Child .AdminReports-MainContent .AdminReports-MainContent-Table{
+    overflow: auto;
+   height: 65vh;
+}
+
+.AdminReports-Parent .AdminReports-Child .AdminReports-MainContent .AdminReports-MainContent-Table .table thead{
+    text-align: center;
+}
+
+.AdminReports-Parent .AdminReports-Child .AdminReports-MainContent .AdminReports-MainContent-Table .table tbody{
+    text-align: center;
+    font-weight: 500;
+}
+
+/* modal */
+.modal .modal-dialog .modal-content .modal-body .reportsModalBody-rightTopContent {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    column-gap: 5px;
+    padding: 10px;
+    padding-bottom: 0;
+    line-height: 5px;
+  }
+
+  .modal .modal-dialog .modal-content .modal-body .reportsModalBody-rightTopContent .reportsModalBody-rightTopCont1, .reportsModalBody-rightTopCont2 {
+    display: flex;
+    flex-direction: row;
+    column-gap: 10px;
+    padding: 10px;
+    padding-bottom: 0;
+    text-align: start;
+  }
+  
+  .modal .modal-dialog .modal-content .modal-body .reportsModalBody-rightTopContent .reportsModalBody-rightTopCont1
+  .reportsModalBody-rightTopContent1, .reportsModalBody-rightTopContent2 {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    column-gap: 5px;
+  }
+  
+  .modal .modal-dialog .modal-content .modal-body .reportsModalBody-rightBottomContent {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    column-gap: 5px;
+    padding: 10px;
+    line-height: 5px;
+  }
