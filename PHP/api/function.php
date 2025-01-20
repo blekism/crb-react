@@ -2549,15 +2549,23 @@ function updateReport($userInput)
         $query = "UPDATE reports_tbl SET status = ?, updated_at = NOW() WHERE report_id = ?";
         $stmt = $con->prepare($query);
         $stmt->bind_param("ss", $status, $report_id);
-        $result = $stmt->execute();
-        $stmt->close();
+        $stmt->execute();
 
-        if ($result) {
+        if ($stmt->affected_rows > 0) {
             $data = [
                 'status' => 200,
                 'message' => 'Report updated successfully',
             ];
             header("HTTP/1.0 200 OK");
+            $stmt->close();
+            return json_encode($data);
+        } else if ($stmt->affected_rows == 0) {
+            $data = [
+                'status' => 404,
+                'message' => 'no report found',
+            ];
+            header("HTTP/1.0 404 no such report found");
+            $stmt->close();
             return json_encode($data);
         } else {
             $data = [
@@ -2565,6 +2573,7 @@ function updateReport($userInput)
                 'message' => 'Internal Server Error',
             ];
             header("HTTP/1.0 500 Internal Server Error");
+            $stmt->close();
             return json_encode($data);
         }
     }
