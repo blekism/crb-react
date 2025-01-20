@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import InputTemplate from "./InputTemplate";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-export default function VerificationModal() {
+export default function VerificationModal({ onClose }) {
   const [verification, setVerification] = useState({
     verification_code: "",
   });
-
+  const navigate = useNavigate();
   const handleVerifyChange = (event) => {
     const name = event.target.name;
     const value = event.target.value;
@@ -31,8 +32,9 @@ export default function VerificationModal() {
         console.log(response.data);
         if (response.data.status === 200) {
           alert("Account verified!");
+          window.location.reload();
         } else {
-          alert("Invalid verification code");
+          alert("Invalid verification code. check your email for correct code");
         }
       })
       .catch((error) => {
@@ -43,59 +45,64 @@ export default function VerificationModal() {
   return (
     <>
       <div
-        className="modal fade"
-        id="staticBackdrop"
-        data-bs-backdrop="static"
-        data-bs-keyboard="false"
-        tabIndex="-1"
-        aria-labelledby="staticBackdropLabel"
-        aria-hidden="true"
+        className="dialog"
+        style={{
+          display: "flex",
+          position: "fixed",
+          zIndex: "100",
+          width: "100%",
+          height: "100%",
+          overflow: "auto",
+          backgroundColor: "rgba(0,0,0,0.5)",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
       >
-        <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h1 className="modal-title fs-5" id="staticBackdropLabel">
-                Verification Code
-              </h1>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <form onSubmit={handleSubmit}>
-              <div
-                className="modal-body"
-                style={{
-                  padding: "20px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginTop: "10px",
-                }}
-              >
-                <InputTemplate
-                  placeholder="Enter Verification Code"
-                  name="verification_code"
-                  style={{ fontSize: "30px" }}
-                  onChange={handleVerifyChange}
-                />
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-bs-dismiss="modal"
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="btn btn-primary">
-                  Verify
-                </button>
-              </div>
-            </form>
+        <div
+          className="content"
+          style={{
+            backgroundColor: "white",
+            width: "fit-content",
+            padding: "20px",
+            borderRadius: "10px",
+          }}
+        >
+          <div className="header">
+            <h1 className="title">Verification Code</h1>
+            <button
+              type="button"
+              class="btn btnclose"
+              onClick={onClose}
+            ></button>
           </div>
+          <form onSubmit={handleSubmit}>
+            <div
+              className="body"
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <InputTemplate
+                placeholder="Enter Verification Code"
+                name="verification_code"
+                style={{ fontSize: "30px" }}
+                onChange={handleVerifyChange}
+              />
+            </div>
+            <div
+              className="footer"
+              style={{ display: "flex", columnGap: "10px" }}
+            >
+              <button type="button" class="btn btn-secondary" onClick={onClose}>
+                Cancel
+              </button>
+              <button type="submit" className="btn btn-primary">
+                Verify
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </>

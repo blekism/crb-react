@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "07f98f9eec88a2332536651a3df51dab",
+    "content-hash": "68049c6797e8e2716aa779257fc60b9f",
     "packages": [
         {
             "name": "brick/math",
@@ -183,16 +183,16 @@
         },
         {
             "name": "gemini-api-php/client",
-            "version": "v1.6.0",
+            "version": "v1.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/gemini-api-php/client.git",
-                "reference": "e3bc5201f2356755fbf10165761c58257eb72c71"
+                "reference": "6475b25e9abc533eedfe7370ff1015949a71bcf8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gemini-api-php/client/zipball/e3bc5201f2356755fbf10165761c58257eb72c71",
-                "reference": "e3bc5201f2356755fbf10165761c58257eb72c71",
+                "url": "https://api.github.com/repos/gemini-api-php/client/zipball/6475b25e9abc533eedfe7370ff1015949a71bcf8",
+                "reference": "6475b25e9abc533eedfe7370ff1015949a71bcf8",
                 "shasum": ""
             },
             "require": {
@@ -244,9 +244,9 @@
             ],
             "support": {
                 "issues": "https://github.com/gemini-api-php/client/issues",
-                "source": "https://github.com/gemini-api-php/client/tree/v1.6.0"
+                "source": "https://github.com/gemini-api-php/client/tree/v1.7.1"
             },
-            "time": "2024-12-01T16:48:18+00:00"
+            "time": "2025-01-13T11:26:59+00:00"
         },
         {
             "name": "google/auth",
@@ -377,16 +377,16 @@
         },
         {
             "name": "google/cloud-storage",
-            "version": "v1.45.0",
+            "version": "v1.46.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-cloud-php-storage.git",
-                "reference": "9873cb5a27f4adc20909329d0eae85f2b3b0dba6"
+                "reference": "e551043bb7e812c3c222d6edc0b264e4aed55a50"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-cloud-php-storage/zipball/9873cb5a27f4adc20909329d0eae85f2b3b0dba6",
-                "reference": "9873cb5a27f4adc20909329d0eae85f2b3b0dba6",
+                "url": "https://api.github.com/repos/googleapis/google-cloud-php-storage/zipball/e551043bb7e812c3c222d6edc0b264e4aed55a50",
+                "reference": "e551043bb7e812c3c222d6edc0b264e4aed55a50",
                 "shasum": ""
             },
             "require": {
@@ -428,9 +428,9 @@
             ],
             "description": "Cloud Storage Client for PHP",
             "support": {
-                "source": "https://github.com/googleapis/google-cloud-php-storage/tree/v1.45.0"
+                "source": "https://github.com/googleapis/google-cloud-php-storage/tree/v1.46.0"
             },
-            "time": "2024-12-12T21:15:35+00:00"
+            "time": "2025-01-11T02:14:50+00:00"
         },
         {
             "name": "google/common-protos",
@@ -2319,10 +2319,10 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
-    "platform-dev": [],
+    "platform": {},
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }

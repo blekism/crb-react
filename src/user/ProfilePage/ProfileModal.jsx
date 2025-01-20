@@ -133,7 +133,7 @@ export default function ProfileModal() {
                       onChange={handleInputChange}
                       required
                     />
-                    <p>Bio: </p>
+                    <p>*Bio: </p>
                     <InputTemplate
                       type="text"
                       placeholder="Bio"
@@ -157,6 +157,7 @@ export default function ProfileModal() {
                   type="submit"
                   className="btn btn-primary"
                   data-bs-dismiss="modal"
+                  disabled={!profileModalDetails.bio.trim()}
                 >
                   Save changes
                 </button>

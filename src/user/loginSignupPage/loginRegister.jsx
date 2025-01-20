@@ -10,6 +10,8 @@ export default function LoginSignup() {
   const navigate = useNavigate();
   const [cookies, setCookie] = useCookies(["logged_user"]);
   const [isRightPanelActive, setIsRightPanelActive] = useState(false);
+  const [modalVerify, setModalVerify] = useState(false);
+  const [accountRegistered, setAccountRegistered] = useState(false);
   const [userReg, setUserReg] = useState({
     firstName: "",
     lastName: "",
@@ -21,6 +23,10 @@ export default function LoginSignup() {
     email: "",
     password: "",
   });
+
+  const handleModalClose = () => {
+    setModalVerify(false);
+  };
 
   const getJwtExpiry = (token) => {
     const payload = JSON.parse(atob(token.split(".")[1]));
@@ -49,7 +55,8 @@ export default function LoginSignup() {
       .then((response) => {
         console.log(response.data);
         if (response.data.status === 200) {
-          alert("check ur email bruh");
+          console.log("Signup successful!");
+          setModalVerify(true);
           // mag open ng popup na may message na check mo email mo
         } else {
           alert("error");
@@ -93,12 +100,8 @@ export default function LoginSignup() {
             email: "",
             password: "",
           });
-        } else if (response.data.status === 403) {
-          alert("Account unverified");
-          setUserLog({
-            email: "",
-            password: "",
-          });
+        } else if (response.data.status === 201) {
+          setAccountRegistered(true);
         } else {
           alert("server error");
           setUserLog({
@@ -171,8 +174,6 @@ export default function LoginSignup() {
               <button
                 type="submit"
                 className="loginSignupChildCont-rightButton"
-                data-bs-toggle="modal"
-                data-bs-target="#staticBackdrop"
               >
                 <p>Sign Up</p>
               </button>
@@ -200,12 +201,35 @@ export default function LoginSignup() {
                   onChange={handleChangeLog}
                 />
 
-                <button
-                  className="loginSignupChildCont-leftButton"
-                  type="submit"
+                <div
+                  className="btnContainer"
+                  style={{ display: "flex", flexDirection: "column" }}
                 >
-                  <p>Log in</p>
-                </button>
+                  <button
+                    className="loginSignupChildCont-leftButton"
+                    type="submit"
+                  >
+                    <p>Log in</p>
+                  </button>
+                  {accountRegistered && (
+                    <button
+                      type="button"
+                      onClick={() => setModalVerify(true)}
+                      style={{
+                        color: "red",
+                        fontSize: "12px",
+                        textDecoration: "underline",
+                        background: "none",
+                        border: "none",
+                        padding: 0,
+                        cursor: "pointer",
+                        marginTop: "10px",
+                      }}
+                    >
+                      Verify your account first!
+                    </button>
+                  )}
+                </div>
               </form>
             </div>
           </div>
@@ -243,7 +267,8 @@ export default function LoginSignup() {
             </div>
           </div>
         </div>
-        <VerificationModal />
+        {modalVerify && <VerificationModal onClose={handleModalClose} />}
+        {/* <VerificationModal /> */}
       </div>
     </>
   );
