@@ -1353,8 +1353,6 @@ function readUserContent($user_id)
     }
 }
 
-
-
 function readAllContent()
 {
     global $con;
@@ -1380,7 +1378,6 @@ function readAllContent()
         return json_encode($data);
     }
 }
-
 
 function readGenre()
 {
@@ -1668,7 +1665,7 @@ function readTotalPosts()
     $stmt->execute();
     $result = $stmt->get_result();
     $stmt->close();
-  
+
     if ($result->num_rows > 0) {
         $data = [
             'status' => 200,
@@ -1685,7 +1682,8 @@ function readTotalPosts()
         header("HTTP/1.0 404 Not Found");
         return json_encode($data);
     }
-  
+}
+
 function readPosts()
 {
 
@@ -1762,8 +1760,8 @@ function readTotalComments()
     $stmt->execute();
     $result = $stmt->get_result();
     $stmt->close();
-  
-  if ($result->num_rows > 0) {
+
+    if ($result->num_rows > 0) {
         $data = [
             'status' => 200,
             'message' => 'Total Count of Comments retrieved successfully',
@@ -1780,8 +1778,8 @@ function readTotalComments()
         return json_encode($data);
     }
 }
-  
-  
+
+
 function readReports()
 {
 
@@ -1836,7 +1834,7 @@ function readPostsIncrease()
             'message' => 'No Posts found'
         ];
         header("HTTP/1.0 404 Not Found");
-      return json_encode($data);
+        return json_encode($data);
     }
 }
 
@@ -1852,8 +1850,8 @@ function readCommentsIncrease()
     $stmt->execute();
     $result = $stmt->get_result();
     $stmt->close();
-  
-  if ($result->num_rows > 0) {
+
+    if ($result->num_rows > 0) {
         $data = [
             'status' => 200,
             'message' => 'Total Count of Comments Increase retrieved successfully',
@@ -1870,7 +1868,7 @@ function readCommentsIncrease()
         return json_encode($data);
     }
 }
-  
+
 function readAdmin()
 {
 
@@ -1950,8 +1948,8 @@ function readTotalPostsGraph()
     $stmt->execute();
     $result = $stmt->get_result();
     $stmt->close();
-  
-  if ($result->num_rows > 0) {
+
+    if ($result->num_rows > 0) {
         $data = [
             'status' => 200,
             'message' => 'Total Count of Post Per day of the Month retrieved successfully',
@@ -1968,7 +1966,7 @@ function readTotalPostsGraph()
         return json_encode($data);
     }
 }
-  
+
 
 function readUser()
 {
@@ -2058,27 +2056,27 @@ function readTotalBookmarksGraph()
     $stmt->execute();
     $result = $stmt->get_result();
     $stmt->close();
-  
-  
+
+
     if ($result->num_rows > 0) {
-          $data = [
-              'status' => 200,
-              'message' => 'Total Count of Bookmarks Per day of the Month retrieved successfully',
-              'data' => $result->fetch_all(MYSQLI_ASSOC)
-          ];
-          header("HTTP/1.0 200 OK");
-          return json_encode($data);
-      } else {
-          $data = [
-              'status' => 404,
-              'message' => 'No Bookmarks found'
-          ];
-          header("HTTP/1.0 404 Not Found");
-          return json_encode($data);
-      }
-  }
-  
-  
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Bookmarks Per day of the Month retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Bookmarks found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+
+
 function readSingleUser($user_input)
 {
     global $con;
@@ -2156,8 +2154,8 @@ function readTotalCategoryPerPostGraph()
     $stmt->execute();
     $result = $stmt->get_result();
     $stmt->close();
-    
-  if ($result->num_rows > 0) {
+
+    if ($result->num_rows > 0) {
         $data = [
             'status' => 200,
             'message' => 'Total Count of Genre Per Post retrieved successfully',
@@ -2174,8 +2172,8 @@ function readTotalCategoryPerPostGraph()
         return json_encode($data);
     }
 }
-  
-  
+
+
 function readSingleAdmin($user_input)
 {
     global $con;
@@ -2186,8 +2184,8 @@ function readSingleAdmin($user_input)
     $stmt->execute();
     $result = $stmt->get_result();
     $stmt->close();
-  
-  if ($result) {
+
+    if ($result) {
 
         if ($result->num_rows == 1) {
 
@@ -2217,8 +2215,8 @@ function readSingleAdmin($user_input)
         return json_encode($data);
     }
 }
-  
-  
+
+
 
 function readTotalLoggedVsGuestUser()
 {
@@ -2234,8 +2232,8 @@ function readTotalLoggedVsGuestUser()
     $stmt->execute();
     $result = $stmt->get_result();
     $stmt->close();
-  
-  if ($result->num_rows > 0) {
+
+    if ($result->num_rows > 0) {
         $data = [
             'status' => 200,
             'message' => 'Total Count of Logged VS Guest User retrieved successfully',
@@ -2252,8 +2250,8 @@ function readTotalLoggedVsGuestUser()
         return json_encode($data);
     }
 }
-  
-  
+
+
 function readSinglePost($user_input)
 {
     global $con;
@@ -2279,8 +2277,8 @@ function readSinglePost($user_input)
     $stmt->execute();
     $result = $stmt->get_result();
     $stmt->close();
-  
-   if ($result) {
+
+    if ($result) {
 
         if ($result->num_rows == 1) {
 
@@ -2326,8 +2324,8 @@ function readTotalReviewDistribution()
     $stmt->execute();
     $result = $stmt->get_result();
     $stmt->close();
-  
-  if ($result->num_rows > 0) {
+
+    if ($result->num_rows > 0) {
         $data = [
             'status' => 200,
             'message' => 'Total Count of Review Status retrieved successfully',
@@ -2344,8 +2342,8 @@ function readTotalReviewDistribution()
         return json_encode($data);
     }
 }
-  
-  
+
+
 function readSingleReport($user_input)
 {
     global $con;
@@ -2369,7 +2367,7 @@ function readSingleReport($user_input)
     $stmt->execute();
     $result = $stmt->get_result();
     $stmt->close();
-  
+
     if ($result) {
 
         if ($result->num_rows == 1) {
@@ -2577,7 +2575,7 @@ function updateReport($userInput)
                 'message' => 'Internal Server Error',
             ];
             header("HTTP/1.0 500 Internal Server Error");
-          return json_encode($data);
+            return json_encode($data);
         }
     }
 }
@@ -2764,7 +2762,7 @@ function updatePost($userInput)
             $data = [
                 'status' => 200,
                 'message' => 'Report updated successfully',
-                ];
+            ];
             header("HTTP/1.0 200 OK");
             return json_encode($data);
         } else {
@@ -2777,10 +2775,10 @@ function updatePost($userInput)
         }
     }
 }
-              
-              
-              
-              
+
+
+
+
 function searchBar($userInput)
 {
 
