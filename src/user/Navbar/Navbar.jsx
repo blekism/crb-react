@@ -31,8 +31,13 @@ export default function Navbar({ searchItem, User }) {
         userSearch
       )
       .then((response) => {
-        console.log(response.data);
-        searchItem(response.data.data);
+        if (response.data.status === 200) {
+          console.log(response.data);
+          searchItem(response.data.data);
+        } else if (response.data.status === 201) {
+          console.log(response.data);
+          searchItem([]);
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -41,6 +46,10 @@ export default function Navbar({ searchItem, User }) {
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
+      if (!userSearch.search.trim()) {
+        console.log("empty search");
+        return;
+      }
       console.log(User);
       handleSubmitSearch();
     }

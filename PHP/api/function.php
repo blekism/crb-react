@@ -1708,7 +1708,7 @@ function readPosts()
         $data = [
             'status' => 200,
             'message' => 'Total Count of Posts retrieved successfully',
-            'data' => $result->fetch_assoc()
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
         ];
         header("HTTP/1.0 200 OK");
         return json_encode($data);
@@ -1750,7 +1750,6 @@ function readTotalUsers()
     }
 }
 
-
 function readTotalComments()
 {
     global $con;
@@ -1779,7 +1778,6 @@ function readTotalComments()
     }
 }
 
-
 function readReports()
 {
 
@@ -1794,7 +1792,8 @@ function readReports()
         $data = [
             'status' => 200,
             'message' => 'reports retrieved successfully',
-            'data' => $result->fetch_assoc()
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+
         ];
         header("HTTP/1.0 200 OK");
         return json_encode($data);
@@ -1837,7 +1836,6 @@ function readPostsIncrease()
         return json_encode($data);
     }
 }
-
 
 function readCommentsIncrease()
 {
@@ -1883,14 +1881,15 @@ function readAdmin()
         $data = [
             'status' => 200,
             'message' => 'admin list retrieved successfully',
-            'data' => $result->fetch_assoc()
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+
         ];
         header("HTTP/1.0 200 OK");
         return json_encode($data);
     } else {
         $data = [
             'status' => 404,
-            'message' => 'No Posts found'
+            'message' => 'No admins found'
         ];
         header("HTTP/1.0 404 Not Found");
         return json_encode($data);
@@ -1967,12 +1966,11 @@ function readTotalPostsGraph()
     }
 }
 
-
 function readUser()
 {
 
     global $con;
-    $query = "SELECT * FROM user_tbl";
+    $query = "SELECT * FROM user_tbl WHERE role = 'user'";
     $stmt = $con->prepare($query);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -1982,7 +1980,8 @@ function readUser()
         $data = [
             'status' => 200,
             'message' => 'users retrieved successfully',
-            'data' => $result->fetch_all(MYSQLI_ASSOC)
+            'data' => $result->fetch_all(MYSQLI_ASSOC),
+
         ];
         header("HTTP/1.0 200 OK");
         return json_encode($data);
@@ -2035,7 +2034,6 @@ function readTotalCommentsGraph()
     }
 }
 
-
 function readTotalBookmarksGraph()
 {
     global $con;
@@ -2076,7 +2074,6 @@ function readTotalBookmarksGraph()
     }
 }
 
-
 function readSingleUser($user_input)
 {
     global $con;
@@ -2092,7 +2089,7 @@ function readSingleUser($user_input)
         $data = [
             'status' => 200,
             'message' => 'single user retrieved successfully',
-            'data' => $result->fetch_all(MYSQLI_ASSOC)
+            'data' => $result->fetch_all(MYSQLI_ASSOC),
         ];
         header("HTTP/1.0 200 OK");
         return json_encode($data);
@@ -2139,7 +2136,6 @@ function readTotalGenrePerPostGraph()
     }
 }
 
-
 function readTotalCategoryPerPostGraph()
 {
     global $con;
@@ -2172,7 +2168,6 @@ function readTotalCategoryPerPostGraph()
         return json_encode($data);
     }
 }
-
 
 function readSingleAdmin($user_input)
 {
@@ -2216,8 +2211,6 @@ function readSingleAdmin($user_input)
     }
 }
 
-
-
 function readTotalLoggedVsGuestUser()
 {
     global $con;
@@ -2251,7 +2244,6 @@ function readTotalLoggedVsGuestUser()
     }
 }
 
-
 function readSinglePost($user_input)
 {
     global $con;
@@ -2278,11 +2270,26 @@ function readSinglePost($user_input)
     $result = $stmt->get_result();
     $stmt->close();
 
-    if ($result) {
 
-        if ($result->num_rows == 1) {
+    if ($result->num_rows == 1) {
 
-            $res = $result->fetch_assoc();
+        $res = $result->fetch_assoc();
+
+        if ($res['post_id'] == null) {
+            $data = [
+                'status' => 404,
+                'message' => 'No Post Found',
+            ];
+            header('HTTP/1.0 404 No User Found');
+            return json_encode($data);
+        } else {
+            $genre_ids = explode(', ', $res['genre']);
+            $res['genre'] = array_map(function ($genre_id) {
+                return ['genre_id' => $genre_id];
+            }, $genre_ids);
+
+            unset($res['genre_ids']);
+
 
             $data = [
                 'status' => 200,
@@ -2291,24 +2298,9 @@ function readSinglePost($user_input)
             ];
             header('HTTP/1.0 200 OK');
             return json_encode($data);
-        } else {
-            $data = [
-                'status' => 404,
-                'message' => 'No Post Found',
-            ];
-            header('HTTP/1.0 404 No User Found');
-            return json_encode($data);
         }
-    } else {
-        $data = [
-            'status' => 500,
-            'message' => 'Internal Server Error',
-        ];
-        header('HTTP/1.0 500 Internal Server Error');
-        return json_encode($data);
     }
 }
-
 
 function readTotalReviewDistribution()
 {
@@ -2342,7 +2334,6 @@ function readTotalReviewDistribution()
         return json_encode($data);
     }
 }
-
 
 function readSingleReport($user_input)
 {
@@ -2398,7 +2389,6 @@ function readSingleReport($user_input)
         return json_encode($data);
     }
 }
-
 
 function addAdmin($userInput)
 {
@@ -2579,7 +2569,6 @@ function updateReport($userInput)
         }
     }
 }
-
 
 function getFilter($userInput)
 {
@@ -2776,9 +2765,6 @@ function updatePost($userInput)
     }
 }
 
-
-
-
 function searchBar($userInput)
 {
 
@@ -2789,13 +2775,14 @@ function searchBar($userInput)
 
     if ($userId == null) {
         if ($search) {
-            $query = "SELECT SELECT posts_tbl.*, GROUP_CONCAT(genre_tbl.name SEPARATOR ', ') AS genre,
+            $query = "SELECT posts_tbl.*, GROUP_CONCAT(genre_tbl.name SEPARATOR ', ') AS genre,
                 GROUP_CONCAT(genre_tbl.tag_id SEPARATOR ', ') AS genre_id, category_id.name
               FROM genre_post_tbl
               INNER JOIN posts_tbl ON genre_post_tbl.post_id = posts_tbl.post_id
               INNER JOIN genre_tbl ON genre_post_tbl.tag_id = genre_tbl.tag_id
               INNER JOIN category_id ON genre_post_tbl.category_id = category_id.category_id
-              WHERE posts_tbl.title LIKE ? AND posts_tbl.status = 'posted'";
+              WHERE posts_tbl.title LIKE ? AND posts_tbl.status = 'posted'
+              GROUP BY posts_tbl.post_id";
 
             $likeQuery = "%" . $search . "%";
             $stmt = $con->prepare($query);
@@ -2820,9 +2807,17 @@ function searchBar($userInput)
                 header("HTTP/1.0 404 Not Found");
                 return json_encode($data);
             }
+        } else {
+            $data = [
+                'status' => 201,
+                'message' => 'invalid output'
+            ];
+            header("HTTP/1.0 201 no output");
+            return json_encode($data);
         }
     } else {
-        $query = "SELECT posts_tbl.*, GROUP_CONCAT(genre_tbl.name SEPARATOR ', ') AS genre,
+        if ($search) {
+            $query = "SELECT posts_tbl.*, GROUP_CONCAT(genre_tbl.name SEPARATOR ', ') AS genre,
                 GROUP_CONCAT(genre_tbl.tag_id SEPARATOR ', ') AS genre_id, category_id.name, bookmarks_tbl.bookmark_id
             FROM genre_post_tbl
             INNER JOIN bookmarks_tbl ON genre_post_tbl.post_id = bookmarks_tbl.post_id
@@ -2832,28 +2827,36 @@ function searchBar($userInput)
               WHERE posts_tbl.title LIKE ? AND posts_tbl.status = 'posted' AND bookmarks_tbl.user_id = ?
               GROUP BY posts_tbl.post_id";
 
-        $likeQuery = "%" . $search . "%";
+            $likeQuery = "%" . $search . "%";
 
-        $stmt = $con->prepare($query);
-        $stmt->bind_param("ss", $likeQuery, $userId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $stmt->close();
+            $stmt = $con->prepare($query);
+            $stmt->bind_param("ss", $likeQuery, $userId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $stmt->close();
 
-        if ($result->num_rows > 0) {
-            $data = [
-                'status' => 200,
-                'message' => 'Content retrieved successfully Bookmark',
-                'data' => $result->fetch_all(MYSQLI_ASSOC)
-            ];
-            header("HTTP/1.0 200 OK");
-            return json_encode($data);
+            if ($result->num_rows > 0) {
+                $data = [
+                    'status' => 200,
+                    'message' => 'Content retrieved successfully Bookmark',
+                    'data' => $result->fetch_all(MYSQLI_ASSOC)
+                ];
+                header("HTTP/1.0 200 OK");
+                return json_encode($data);
+            } else {
+                $data = [
+                    'status' => 404,
+                    'message' => 'No contents found'
+                ];
+                header("HTTP/1.0 404 Not Found");
+                return json_encode($data);
+            }
         } else {
             $data = [
-                'status' => 404,
-                'message' => 'No contents found'
+                'status' => 201,
+                'message' => 'Invalid output'
             ];
-            header("HTTP/1.0 404 Not Found");
+            header("HTTP/1.0 201 no output");
             return json_encode($data);
         }
     }
