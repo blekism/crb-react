@@ -6,6 +6,60 @@ import InputTemplate from "../../user/loginSignupPage/InputTemplate";
 import Delete from "../../assets/images/delRed.svg";
 
 export default function Users() {
+  const [users, setUsers] = useState([]);
+  const [singleReadUser, setSingleReadUser] = useState({
+    user_id: "",
+    role: "",
+    username: "",
+    first_name: "",
+    last_name: "",
+    email: "",
+    password: "",
+    bio: "",
+    verified_at: "",
+    created_at: "",
+  });
+
+  useEffect(() => {
+    axios
+      .get("http://localhost/crb-react/PHP/api/read/readUser.php")
+      .then((response) => {
+        if (response.data.status === 200) {
+          console.log(response.data.data);
+          setUsers(response.data.data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  const handleButtonClick = async (id) => {
+    console.log("Item clicked: ", id);
+    try {
+      const response = await axios.post(
+        "http://localhost/crb-react/PHP/api/read/readSingleUser.php",
+        { user_id: id },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response.data);
+      setSingleReadUser(response.data.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleInputChange = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+
+    setSingleReadUser((values) => ({ ...values, [name]: value }));
+  };
+
   return (
     <>
       <div className="Users-Parent">
@@ -35,215 +89,206 @@ export default function Users() {
                   </tr>
                 </thead>
                 <tbody>
-                  {/* {donations
-                    .filter((donation) => donation.status_name === "SUBMITTED")
-                    .map((donation, key) => ( */}
-                  <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                      <div className="UsersViewModal-ParentCont">
-                        <button
-                          type="button"
-                          className="btn"
-                          data-bs-toggle="modal"
-                          data-bs-target="#viewItemsModalToggle"
-                          //   onClick={() =>
-                          //     handleButtonClick(donation.donation_id)
-                          //   }
-                          style={{
-                            backgroundColor: "#354290",
-                            color: "#ffffff",
-                          }}
-                        >
-                          View
-                        </button>
+                  {users.map((user, key) => (
+                    <tr key={key}>
+                      <td>{user.user_id}</td>
+                      <td>{user.role}</td>
+                      <td>{user.username}</td>
+                      <td>
+                        {user.first_name} {user.last_name}
+                      </td>
+                      <td>{user.email}</td>
+                      <td>{user.password}</td>
+                      <td>
+                        <div className="UsersViewModal-ParentCont">
+                          <button
+                            type="button"
+                            className="btn"
+                            data-bs-toggle="modal"
+                            data-bs-target="#viewUserModalToggle"
+                            onClick={() => handleButtonClick(user.user_id)}
+                            style={{
+                              backgroundColor: "#354290",
+                              color: "#ffffff",
+                            }}
+                          >
+                            View
+                          </button>
 
-                        <div
-                          className="modal fade"
-                          id="viewItemsModalToggle"
-                          aria-hidden="true"
-                          aria-labelledby="viewItemsModalToggleLabel"
-                          data-bs-backdrop="static"
-                          data-bs-keyboard="false"
-                          tabIndex="-1"
-                        >
-                          <div className="modal-dialog modal-m  modal-dialog-centered">
-                            <div className="modal-content">
-                              <div className="modal-header">
-                                <h5
-                                  className="modal-title"
-                                  style={{
-                                    color: "black",
-                                    fontWeight: "600",
-                                  }}
-                                >
-                                  EDIT USER DETAILS
-                                </h5>
-                                <button
-                                  type="button"
-                                  className="btn-close"
-                                  data-bs-dismiss="modal"
-                                  aria-label="Close"
-                                ></button>
-                              </div>
+                          <div
+                            className="modal fade"
+                            id="viewUserModalToggle"
+                            aria-hidden="true"
+                            aria-labelledby="viewUserModalToggleLabel"
+                            data-bs-backdrop="static"
+                            data-bs-keyboard="false"
+                            tabIndex="-1"
+                          >
+                            <div className="modal-dialog modal-m  modal-dialog-centered">
+                              <div className="modal-content">
+                                <div className="modal-header">
+                                  <h5
+                                    className="modal-title"
+                                    style={{
+                                      color: "black",
+                                      fontWeight: "600",
+                                    }}
+                                  >
+                                    EDIT USER DETAILS
+                                  </h5>
+                                  <button
+                                    type="button"
+                                    className="btn-close"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Close"
+                                  ></button>
+                                </div>
 
-                              {/* <form onSubmit={handleSubmit}> */}
-                              <div className="modal-body">
-                                <div className="userModalBody-rightTopContent">
-                                  <div className="userModalBody-rightTopCont1">
-                                    <div className="userModalBody-rightTopContent1">
-                                      <p>First Name:</p>
+                                {/* <form onSubmit={handleSubmit}> */}
+                                <div className="modal-body">
+                                  <div className="userModalBody-rightTopContent">
+                                    <div className="userModalBody-rightTopCont1">
+                                      <div className="userModalBody-rightTopContent1">
+                                        <p>First Name:</p>
+                                        <InputTemplate
+                                          placeholder="First Name"
+                                          name="first_name"
+                                          value={singleReadUser.first_name}
+                                          onChange={handleInputChange}
+                                          required
+                                        />
+                                      </div>
+                                      <div className="modalBody-rightTopContent2">
+                                        <p>Last Name:</p>
+                                        <InputTemplate
+                                          placeholder="Last Name"
+                                          name="last_name"
+                                          value={singleReadUser.last_name}
+                                          onChange={handleInputChange}
+                                          required
+                                        />
+                                      </div>
+                                    </div>
+
+                                    <div className="userModalBody-rightTopCont2">
+                                      <div className="modalBody-rightTopContent1">
+                                        <p>Username:</p>
+                                        <InputTemplate
+                                          placeholder="Username"
+                                          name="username"
+                                          value={singleReadUser.username}
+                                          onChange={handleInputChange}
+                                          required
+                                        />
+                                      </div>
+                                      <div className="userModalBody-rightTopContent2">
+                                        <p>Role:</p>
+                                        <InputTemplate
+                                          placeholder="Role"
+                                          name="role"
+                                          value={singleReadUser.role}
+                                          // onChange={handleInputChange}
+                                          readOnly
+                                        />
+                                      </div>
+                                    </div>
+
+                                    <div className="userModalBody-rightTopCont3">
+                                      <div className="userModalBody-rightTopContent1">
+                                        <p>Verified Date:</p>
+                                        <InputTemplate
+                                          placeholder="Verified Date"
+                                          name="verified_at"
+                                          value={singleReadUser.verified_at}
+                                          // onChange={handleInputChange}
+                                          readOnly
+                                        />
+                                      </div>
+                                      <div className="userModalBody-rightTopContent2">
+                                        <p>Created Date:</p>
+                                        <InputTemplate
+                                          placeholder="Created Date"
+                                          name="created_at"
+                                          value={singleReadUser.created_at}
+                                          // onChange={handleInputChange}
+                                          readOnly
+                                        />
+                                      </div>
+                                    </div>
+
+                                    <div className="userModalBody-rightBottomContent">
+                                      <p>Password: </p>
                                       <InputTemplate
-                                        placeholder="First Name"
-                                        name="first_name"
-                                        // value={profileModalDetails.first_name}
-                                        // onChange={handleInputChange}
+                                        placeholder="Password"
+                                        name="password"
+                                        value={singleReadUser.password}
+                                        onChange={handleInputChange}
                                         required
                                       />
-                                    </div>
-                                    <div className="modalBody-rightTopContent2">
-                                      <p>Last Name:</p>
+                                      <p>Email:</p>
                                       <InputTemplate
-                                        placeholder="Last Name"
-                                        name="last_name"
-                                        // value={profileModalDetails.last_name}
-                                        // onChange={handleInputChange}
+                                        placeholder="Email"
+                                        name="email"
+                                        value={singleReadUser.email}
+                                        onChange={handleInputChange}
                                         required
                                       />
-                                    </div>
-                                  </div>
-
-                                  <div className="userModalBody-rightTopCont2">
-                                    <div className="modalBody-rightTopContent1">
-                                      <p>Username:</p>
-                                      <InputTemplate
-                                        placeholder="Username"
-                                        name="username"
-                                        // value={profileModalDetails.first_name}
-                                        // onChange={handleInputChange}
-                                        required
-                                      />
-                                    </div>
-                                    <div className="userModalBody-rightTopContent2">
-                                      <p>Role:</p>
-                                      <select
-                                        className="form-select mb-3"
-                                        aria-label="Default select example"
-                                        name="is_volunteer"
-                                        // value={volunteerItem.is_volunteer}
-                                        // onChange={handleChange}
+                                      <p>Bio: </p>
+                                      <textarea
+                                        className="form-control"
+                                        id="exampleFormControlTextarea1"
+                                        rows="3"
+                                        placeholder="Bio"
+                                        name="bio"
                                         style={{
-                                          width: "210px",
+                                          height: "10vh",
+                                          maxHeight: "10vh",
+                                          resize: "none",
+                                          fontSize: "16px",
                                           backgroundColor:
                                             "rgba(19, 62, 135, 0.21)",
                                         }}
-                                      >
-                                        <option value="user">User</option>
-                                        {/* change na to input and readOnly lang */}
-                                      </select>
+                                        value={singleReadUser.bio || ""}
+                                        onChange={handleInputChange}
+                                      ></textarea>
                                     </div>
-                                  </div>
-
-                                  <div className="userModalBody-rightTopCont3">
-                                    <div className="userModalBody-rightTopContent1">
-                                      <p>Verified Date:</p>
-                                      <InputTemplate
-                                        placeholder="Verified Date"
-                                        name="username"
-                                        // value={profileModalDetails.first_name}
-                                        // onChange={handleInputChange}
-                                        readOnly
-                                      />
-                                    </div>
-                                    <div className="userModalBody-rightTopContent2">
-                                      <p>Created Date:</p>
-                                      <InputTemplate
-                                        placeholder="Created Date"
-                                        name="username"
-                                        // value={profileModalDetails.first_name}
-                                        // onChange={handleInputChange}
-                                        readOnly
-                                      />
-                                    </div>
-                                  </div>
-
-                                  <div className="userModalBody-rightBottomContent">
-                                    <p>Password: </p>
-                                    <InputTemplate
-                                      placeholder="Password"
-                                      name="password"
-                                      //   value={profileModalDetails.username}
-                                      //   onChange={handleInputChange}
-                                      required
-                                    />
-                                    <p>Email:</p>
-                                    <InputTemplate
-                                      placeholder="Email"
-                                      name="email"
-                                      //   value={profileModalDetails.email}
-                                      //   onChange={handleInputChange}
-                                      required
-                                    />
-                                    <p>Bio: </p>
-                                    <textarea
-                                      className="form-control"
-                                      id="exampleFormControlTextarea1"
-                                      rows="3"
-                                      placeholder="Bio"
-                                      style={{
-                                        height: "10vh",
-                                        maxHeight: "10vh",
-                                        resize: "none",
-                                        fontSize: "16px",
-                                        backgroundColor:
-                                          "rgba(19, 62, 135, 0.21)",
-                                      }}
-                                      //   value={postContents.content || ""}
-                                      //   onChange={onChange}
-                                    ></textarea>
                                   </div>
                                 </div>
+                                <div className="modal-footer">
+                                  <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    data-bs-dismiss="modal"
+                                  >
+                                    Cancel
+                                  </button>
+                                  <button
+                                    type="submit"
+                                    className="btn btn-primary"
+                                    data-bs-dismiss="modal"
+                                  >
+                                    Save changes
+                                  </button>
+                                </div>
+                                {/* </form> */}
                               </div>
-                              <div className="modal-footer">
-                                <button
-                                  type="button"
-                                  className="btn btn-secondary"
-                                  data-bs-dismiss="modal"
-                                >
-                                  Cancel
-                                </button>
-                                <button
-                                  type="submit"
-                                  className="btn btn-primary"
-                                  data-bs-dismiss="modal"
-                                >
-                                  Save changes
-                                </button>
-                              </div>
-                              {/* </form> */}
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </td>
-                    <td>
-                      <img
-                        src={Delete}
-                        alt="Edit"
-                        className="DeleteIcon"
-                        style={{
-                          width: "70px",
-                          height: "40px",
-                        }}
-                      />
-                    </td>
-                  </tr>
-                  {/* ))} */}
+                      </td>
+                      <td>
+                        <img
+                          src={Delete}
+                          alt="Edit"
+                          className="DeleteIcon"
+                          style={{
+                            width: "70px",
+                            height: "40px",
+                          }}
+                        />
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>

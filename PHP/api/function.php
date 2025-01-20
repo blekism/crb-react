@@ -1902,7 +1902,7 @@ function readUsersIncrease()
 
     $query = "SELECT COUNT(*) AS Today_Users
                 FROM user_tbl
-                WHERE DATE(created_at) = CURDATE();";
+                WHERE role = 'user' AND DATE(created_at) = CURDATE();";
     $stmt = $con->prepare($query);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -2089,7 +2089,7 @@ function readSingleUser($user_input)
         $data = [
             'status' => 200,
             'message' => 'single user retrieved successfully',
-            'data' => $result->fetch_all(MYSQLI_ASSOC),
+            'data' => $result->fetch_assoc()
         ];
         header("HTTP/1.0 200 OK");
         return json_encode($data);
@@ -2464,15 +2464,24 @@ function updateAdmin($userInput)
         $query = "UPDATE user_tbl SET first_name = ?, last_name = ?, email = ?, password = ?, updated_at = NOW() WHERE user_id = ?";
         $stmt = $con->prepare($query);
         $stmt->bind_param("sssss", $first_name, $last_name, $email, $hashed, $user_id);
-        $result = $stmt->execute();
-        $stmt->close();
+        $stmt->execute();
 
-        if ($result) {
+
+        if ($stmt->affected_rows > 0) {
             $data = [
                 'status' => 200,
                 'message' => 'Admin Profile updated successfully',
             ];
             header("HTTP/1.0 200 OK");
+            $stmt->close();
+            return json_encode($data);
+        } else if ($stmt->affected_rows == 0) {
+            $data = [
+                'status' => 404,
+                'message' => 'no Admin found',
+            ];
+            header("HTTP/1.0 404 no such admin found");
+            $stmt->close();
             return json_encode($data);
         } else {
             $data = [
@@ -2480,6 +2489,7 @@ function updateAdmin($userInput)
                 'message' => 'Internal Server Error',
             ];
             header("HTTP/1.0 500 Internal Server Error");
+            $stmt->close();
             return json_encode($data);
         }
     }
@@ -2515,15 +2525,23 @@ function updateUser($userInput)
         $query = "UPDATE user_tbl SET username = ?, first_name = ?, last_name = ?, email = ?, password = ?, bio = ?, updated_at = NOW() WHERE user_id = ?";
         $stmt = $con->prepare($query);
         $stmt->bind_param("sssssss", $username, $first_name, $last_name, $email, $hashed, $bio, $user_id);
-        $result = $stmt->execute();
-        $stmt->close();
+        $stmt->execute();
 
-        if ($result) {
+        if ($stmt->affected_rows > 0) {
             $data = [
                 'status' => 200,
                 'message' => 'User Profile updated successfully',
             ];
             header("HTTP/1.0 200 OK");
+            $stmt->close();
+            return json_encode($data);
+        } else if ($stmt->affected_rows == 0) {
+            $data = [
+                'status' => 404,
+                'message' => 'no user found',
+            ];
+            header("HTTP/1.0 404 no such user found");
+            $stmt->close();
             return json_encode($data);
         } else {
             $data = [
@@ -2531,6 +2549,7 @@ function updateUser($userInput)
                 'message' => 'Internal Server Error',
             ];
             header("HTTP/1.0 500 Internal Server Error");
+            $stmt->close();
             return json_encode($data);
         }
     }
