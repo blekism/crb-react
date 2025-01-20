@@ -2731,40 +2731,6 @@ function getFilter($userInput)
     }
 }
 
-function updatePost($userInput)
-{
-    global $con;
-
-    $report_id = $userInput['report_id'];
-    $status = $userInput['status'];
-
-    if (empty(trim($status))) {
-        return error422('Status is required');
-    } else {
-        $query = "UPDATE reports_tbl SET status = ?, updated_at = NOW() WHERE report_id = ?";
-        $stmt = $con->prepare($query);
-        $stmt->bind_param("ss", $status, $report_id);
-        $result = $stmt->execute();
-        $stmt->close();
-
-        if ($result) {
-            $data = [
-                'status' => 200,
-                'message' => 'Report updated successfully',
-            ];
-            header("HTTP/1.0 200 OK");
-            return json_encode($data);
-        } else {
-            $data = [
-                'status' => 500,
-                'message' => 'Internal Server Error',
-            ];
-            header("HTTP/1.0 500 Internal Server Error");
-            return json_encode($data);
-        }
-    }
-}
-
 function searchBar($userInput)
 {
 
