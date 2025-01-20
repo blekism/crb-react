@@ -757,15 +757,15 @@ function Bookmark($post_id, $user_id)
     }
 }
 
-function report_post($post_id, $reason)
+function report_post($post_id, $reason, $user_id)
 {
     global $con;
 
     $report_id = 'REPORT- ' . date('Y-d') . substr(uniqid(), -5);
 
-    $query = "INSERT INTO reports_tbl (report_id, post_id, reason, status, created_at) VALUES (?, ?, ?, 'REPORTED', NOW())";
+    $query = "INSERT INTO reports_tbl (report_id, post_id, reason, status, created_at, user_id) VALUES (?, ?, ?, 'REPORTED', NOW(), ?)";
     $stmt = $con->prepare($query);
-    $stmt->bind_param('sss', $report_id, $post_id, $reason);
+    $stmt->bind_param('ssss', $report_id, $post_id, $reason, $user_id);
     $result = $stmt->execute();
     $stmt->close();
 
@@ -1660,17 +1660,31 @@ function readYourPostsTotalBookmarks($user_id)
     }
 }
 
-function readPosts(){
+function readPosts()
+{
 
     global $con;
-    $query = "SELECT * FROM posts_tbl";
-    $query_run = mysqli_query($con, $query);
+    $query = "SELECT 
+        posts_tbl.post_id,
+        posts_tbl.user_id,
+        posts_tbl.title,
+        posts_tbl.content,
+        posts_tbl.status,
+        posts_tbl.published_at,
+        posts_tbl.created_at
+    FROM
+        posts_tbl
+    WHERE status = 'posted'";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
 
-    if($query_run){
+    if ($result) {
 
-        if(mysqli_num_rows($query_run) > 0){
+        if ($result->num_rows > 0) {
 
-            $res = mysqli_fetch_all($query_run, MYSQLI_ASSOC);
+            $res = $result->fetch_all(MYSQLI_ASSOC);
 
             $data = [
                 'status' => 200,
@@ -1687,29 +1701,33 @@ function readPosts(){
             header('HTTP/1.0 404 No Customer Found');
             return json_encode($data);
         }
-
     } else {
         $data = [
-        'status' => 500,
-        'message' => 'Internal Server Error',
-    ];
-    header('HTTP/1.0 500 Internal Server Error');
-    return json_encode($data);
+            'status' => 500,
+            'message' => 'Internal Server Error',
+        ];
+        header('HTTP/1.0 500 Internal Server Error');
+        return json_encode($data);
     }
-
 }
 
-function readReports(){
+function readReports()
+{
 
     global $con;
     $query = "SELECT * FROM reports_tbl";
-    $query_run = mysqli_query($con, $query);
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
 
-    if($query_run){
 
-        if(mysqli_num_rows($query_run) > 0){
+    if ($result) {
 
-            $res = mysqli_fetch_all($query_run, MYSQLI_ASSOC);
+        if ($result->num_rows > 0) {
+
+            $res = $result->fetch_all(MYSQLI_ASSOC);
+
 
             $data = [
                 'status' => 200,
@@ -1726,29 +1744,32 @@ function readReports(){
             header('HTTP/1.0 404 No Customer Found');
             return json_encode($data);
         }
-
     } else {
         $data = [
-        'status' => 500,
-        'message' => 'Internal Server Error',
-    ];
-    header('HTTP/1.0 500 Internal Server Error');
-    return json_encode($data);
+            'status' => 500,
+            'message' => 'Internal Server Error',
+        ];
+        header('HTTP/1.0 500 Internal Server Error');
+        return json_encode($data);
     }
-
 }
 
-function readAdmin(){
+function readAdmin()
+{
 
     global $con;
     $query = "SELECT * FROM user_tbl WHERE role ='admin'";
-    $query_run = mysqli_query($con, $query);
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
 
-    if($query_run){
+    if ($result) {
 
-        if(mysqli_num_rows($query_run) > 0){
+        if ($result->num_rows > 0) {
 
-            $res = mysqli_fetch_all($query_run, MYSQLI_ASSOC);
+            $res = $result->fetch_all(MYSQLI_ASSOC);
+
 
             $data = [
                 'status' => 200,
@@ -1765,29 +1786,32 @@ function readAdmin(){
             header('HTTP/1.0 404 No Customer Found');
             return json_encode($data);
         }
-
     } else {
         $data = [
-        'status' => 500,
-        'message' => 'Internal Server Error',
-    ];
-    header('HTTP/1.0 500 Internal Server Error');
-    return json_encode($data);
+            'status' => 500,
+            'message' => 'Internal Server Error',
+        ];
+        header('HTTP/1.0 500 Internal Server Error');
+        return json_encode($data);
     }
-
 }
 
-function readUser(){
+function readUser()
+{
 
     global $con;
     $query = "SELECT * FROM user_tbl";
-    $query_run = mysqli_query($con, $query);
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
 
-    if($query_run){
+    if ($result) {
 
-        if(mysqli_num_rows($query_run) > 0){
+        if ($result->num_rows > 0) {
 
-            $res = mysqli_fetch_all($query_run, MYSQLI_ASSOC);
+            $res = $result->fetch_all(MYSQLI_ASSOC);
+
 
             $data = [
                 'status' => 200,
@@ -1804,29 +1828,32 @@ function readUser(){
             header('HTTP/1.0 404 No Customer Found');
             return json_encode($data);
         }
-
     } else {
         $data = [
-        'status' => 500,
-        'message' => 'Internal Server Error',
-    ];
-    header('HTTP/1.0 500 Internal Server Error');
-    return json_encode($data);
+            'status' => 500,
+            'message' => 'Internal Server Error',
+        ];
+        header('HTTP/1.0 500 Internal Server Error');
+        return json_encode($data);
     }
-
 }
 
-function readSingleUser($user_input){
+function readSingleUser($user_input)
+{
     global $con;
     $user_id = $user_input['user_id'];
-    $query = "SELECT * FROM user_tbl WHERE user_id = '$user_id' AND role ='user'";
-    $query_run = mysqli_query($con, $query);
+    $query = "SELECT * FROM user_tbl WHERE user_id = ? AND role ='user'";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
 
-    if($query_run){
+    if ($result) {
 
-        if(mysqli_num_rows($query_run) > 0){
+        if ($result->num_rows == 1) {
 
-            $res = mysqli_fetch_assoc($query_run);
+            $res = $result->fetch_assoc();
 
             $data = [
                 'status' => 200,
@@ -1843,28 +1870,32 @@ function readSingleUser($user_input){
             header('HTTP/1.0 404 No User Found');
             return json_encode($data);
         }
-
     } else {
         $data = [
-        'status' => 500,
-        'message' => 'Internal Server Error',
-    ];
-    header('HTTP/1.0 500 Internal Server Error');
-    return json_encode($data);
+            'status' => 500,
+            'message' => 'Internal Server Error',
+        ];
+        header('HTTP/1.0 500 Internal Server Error');
+        return json_encode($data);
     }
 }
 
-function readSingleAdmin($user_input){
+function readSingleAdmin($user_input)
+{
     global $con;
     $user_id = $user_input['user_id'];
-    $query = "SELECT * FROM user_tbl WHERE user_id = '$user_id' AND role ='admin'";
-    $query_run = mysqli_query($con, $query);
+    $query = "SELECT * FROM user_tbl WHERE user_id = ? AND role ='admin'";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
 
-    if($query_run){
+    if ($result) {
 
-        if(mysqli_num_rows($query_run) > 0){
+        if ($result->num_rows == 1) {
 
-            $res = mysqli_fetch_assoc($query_run);
+            $res = $result->fetch_assoc();
 
             $data = [
                 'status' => 200,
@@ -1881,28 +1912,47 @@ function readSingleAdmin($user_input){
             header('HTTP/1.0 404 No User Found');
             return json_encode($data);
         }
-
     } else {
         $data = [
-        'status' => 500,
-        'message' => 'Internal Server Error',
-    ];
-    header('HTTP/1.0 500 Internal Server Error');
-    return json_encode($data);
+            'status' => 500,
+            'message' => 'Internal Server Error',
+        ];
+        header('HTTP/1.0 500 Internal Server Error');
+        return json_encode($data);
     }
 }
 
-function readSinglePost($user_input){
+function readSinglePost($user_input)
+{
     global $con;
     $post_id = $user_input['post_id'];
-    $query = "SELECT * FROM posts_tbl WHERE post_id = '$post_id'";
-    $query_run = mysqli_query($con, $query);
+    $query = "SELECT 
+        posts_tbl.post_id,
+        posts_tbl.user_id,
+        posts_tbl.title,
+        posts_tbl.content,
+        GROUP_CONCAT(genre_tbl.tag_id SEPARATOR ', ') AS genre,
+        category_id.category_id AS category,
+        posts_tbl.status,
+        posts_tbl.published_at,
+        posts_tbl.created_at
+    FROM 
+        genre_post_tbl
+    INNER JOIN posts_tbl ON genre_post_tbl.post_id = posts_tbl.post_id
+    INNER JOIN genre_tbl ON genre_post_tbl.tag_id = genre_tbl.tag_id
+    INNER JOIN category_id ON genre_post_tbl.category_id = category_id.category_id
+    WHERE genre_post_tbl.post_id = ? AND posts_tbl.status = 'posted'";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $post_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
 
-    if($query_run){
+    if ($result) {
 
-        if(mysqli_num_rows($query_run) > 0){
+        if ($result->num_rows == 1) {
 
-            $res = mysqli_fetch_assoc($query_run);
+            $res = $result->fetch_assoc();
 
             $data = [
                 'status' => 200,
@@ -1919,26 +1969,42 @@ function readSinglePost($user_input){
             header('HTTP/1.0 404 No User Found');
             return json_encode($data);
         }
-
     } else {
         $data = [
-        'status' => 500,
-        'message' => 'Internal Server Error',
-    ];
-    header('HTTP/1.0 500 Internal Server Error');
-    return json_encode($data);
+            'status' => 500,
+            'message' => 'Internal Server Error',
+        ];
+        header('HTTP/1.0 500 Internal Server Error');
+        return json_encode($data);
     }
 }
 
-function readSingleReport($user_input){
+function readSingleReport($user_input)
+{
+    // mga need na data: 
+    // report_id
+    // user_id nung nagpasa ng report 
+    // post_id nung nireport nyang post
+    // content nung post na nireport
+    // title nung post na nireport
+    // reason nung report
+    // status nung report
+    // created_at nung report
+
+    //tables na pagsasamahin: 
+    // reports_tbl = report_id, reason, status, created_at nung nireport
+    // posts_tbl = mga info ng post na nireport
+    // user_tbl = mga info ng user na nagreport
+
+
     global $con;
     $report_id = $user_input['report_id'];
     $query = "SELECT * FROM reports_tbl WHERE report_id = '$report_id'";
     $query_run = mysqli_query($con, $query);
 
-    if($query_run){
+    if ($query_run) {
 
-        if(mysqli_num_rows($query_run) > 0){
+        if (mysqli_num_rows($query_run) > 0) {
 
             $res = mysqli_fetch_assoc($query_run);
 
@@ -1950,7 +2016,7 @@ function readSingleReport($user_input){
             header('HTTP/1.0 200 OK');
             return json_encode($data);
         } else {
-           $data = [
+            $data = [
                 'status' => 404,
                 'message' => 'No Report Found',
             ];
@@ -1959,15 +2025,15 @@ function readSingleReport($user_input){
         }
     } else {
         $data = [
-        'status' => 500,
-        'message' => 'Internal Server Error',
-    ];
-    header('HTTP/1.0 500 Internal Server Error');
-    return json_encode($data);
+            'status' => 500,
+            'message' => 'Internal Server Error',
+        ];
+        header('HTTP/1.0 500 Internal Server Error');
+        return json_encode($data);
     }
 }
-          
-          
+
+
 function getFilter($userInput)
 {
     global $con;
@@ -2140,7 +2206,8 @@ function searchBar($userInput)
 
     if ($userId == null) {
         if ($search) {
-            $query = "SELECT posts_tbl.*, genre_tbl.name, category_id.name
+            $query = "SELECT SELECT posts_tbl.*, GROUP_CONCAT(genre_tbl.name SEPARATOR ', ') AS genre,
+                GROUP_CONCAT(genre_tbl.tag_id SEPARATOR ', ') AS genre_id, category_id.name
               FROM genre_post_tbl
               INNER JOIN posts_tbl ON genre_post_tbl.post_id = posts_tbl.post_id
               INNER JOIN genre_tbl ON genre_post_tbl.tag_id = genre_tbl.tag_id
@@ -2172,7 +2239,8 @@ function searchBar($userInput)
             }
         }
     } else {
-        $query = "SELECT posts_tbl.*, genre_tbl.name, category_id.name, bookmarks_tbl.bookmark_id
+        $query = "SELECT posts_tbl.*, GROUP_CONCAT(genre_tbl.name SEPARATOR ', ') AS genre,
+                GROUP_CONCAT(genre_tbl.tag_id SEPARATOR ', ') AS genre_id, category_id.name, bookmarks_tbl.bookmark_id
             FROM genre_post_tbl
             INNER JOIN bookmarks_tbl ON genre_post_tbl.post_id = bookmarks_tbl.post_id
             INNER JOIN posts_tbl ON genre_post_tbl.post_id = posts_tbl.post_id
@@ -2207,6 +2275,3 @@ function searchBar($userInput)
         }
     }
 }
-              
-
-

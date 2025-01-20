@@ -57,7 +57,7 @@ if ($requestMethod == "POST") {
 
             $post_id = $inputData['post_id']; // Extract post_id from input
             $reason = $inputData['myReport']; // Extract report_reason from input
-            $reportPost = report_post($post_id, $reason);
+            $reportPost = report_post($post_id, $reason, $user_id);
 
             echo $reportPost;
             exit();
