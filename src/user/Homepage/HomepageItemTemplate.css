@@ -4,11 +4,11 @@
 }
 
 .card-parent {
-  margin: 5px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   border-radius: 15px;
   overflow: hidden;
-  width: 16%;
+  width: 100%;
+  max-width: 300px;
   height: 30vh;
   position: relative;
 }

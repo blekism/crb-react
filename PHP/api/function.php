@@ -300,7 +300,7 @@ function login($userInput)
                     }
                 } else {
                     $data = [
-                        'status' => 401,
+                        'status' => 404,
                         'message' => 'Invalid Email or Password',
                     ];
                     header("HTTP/1.0 401 Unauthorized");
@@ -466,12 +466,12 @@ function postContent($userInputRaw, $user_id, $imageUrlRaw)
                             mysqli_commit($con);
                             if ($insertedgp == count($genreLoop)) {
                                 $data = [
-                                    'status' => 200,
+                                    'status' => 422,
                                     'message' => 'Flagged',
                                     'sentiment' => $sentiment,
                                     'genre_inserted' => $insertedgp
                                 ];
-                                header("HTTP/1.0 200 OK");
+                                header("HTTP/1.0 422 unprocessable entity");
                                 return json_encode($data);
                             } else {
                                 $data = [
@@ -536,12 +536,12 @@ function postContent($userInputRaw, $user_id, $imageUrlRaw)
                             mysqli_commit($con);
                             if ($insertedgp == count($genreLoop)) {
                                 $data = [
-                                    'status' => 200,
+                                    'status' => 422,
                                     'message' => 'Rejected',
                                     'sentiment' => $sentiment,
                                     'genre_inserted' => $insertedgp
                                 ];
-                                header("HTTP/1.0 200 OK");
+                                header("HTTP/1.0 422 unprocessable entity");
                                 return json_encode($data);
                             } else {
                                 $data = [
