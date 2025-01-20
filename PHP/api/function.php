@@ -1981,32 +1981,33 @@ function readSinglePost($user_input)
 
 function readSingleReport($user_input)
 {
-    // mga need na data: 
-    // report_id
-    // user_id nung nagpasa ng report 
-    // post_id nung nireport nyang post
-    // content nung post na nireport
-    // title nung post na nireport
-    // reason nung report
-    // status nung report
-    // created_at nung report
-
-    //tables na pagsasamahin: 
-    // reports_tbl = report_id, reason, status, created_at nung nireport
-    // posts_tbl = mga info ng post na nireport
-    // user_tbl = mga info ng user na nagreport
-
-
     global $con;
     $report_id = $user_input['report_id'];
-    $query = "SELECT * FROM reports_tbl WHERE report_id = '$report_id'";
-    $query_run = mysqli_query($con, $query);
+    $query = "SELECT
+    	reports_tbl.report_id,
+    	reports_tbl.user_id,
+        user_tbl.username,
+    	reports_tbl.post_id,
+        posts_tbl.title,
+        posts_tbl.content,
+    	reports_tbl.reason,
+    	reports_tbl.status,
+    	reports_tbl.created_at
+    FROM reports_tbl
+    INNER JOIN posts_tbl ON reports_tbl.post_id = posts_tbl.post_id
+    INNER JOIN user_tbl ON reports_tbl.user_id = user_tbl.user_id
+    WHERE reports_tbl.report_id = ?";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $report_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
 
-    if ($query_run) {
+    if ($result) {
 
-        if (mysqli_num_rows($query_run) > 0) {
+        if ($result->num_rows == 1) {
 
-            $res = mysqli_fetch_assoc($query_run);
+            $res = $result->fetch_assoc();
 
             $data = [
                 'status' => 200,
