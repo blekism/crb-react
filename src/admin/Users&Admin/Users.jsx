@@ -4,8 +4,10 @@ import axios from "axios";
 import Sidebar from "../Sidebar";
 import InputTemplate from "../../user/loginSignupPage/InputTemplate";
 import Delete from "../../assets/images/delRed.svg";
+import ReactLoading from "react-loading";
 
 export default function Users() {
+  const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const [singleReadUser, setSingleReadUser] = useState({
     user_id: "",
@@ -58,6 +60,31 @@ export default function Users() {
     const value = event.target.value;
 
     setSingleReadUser((values) => ({ ...values, [name]: value }));
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setLoading(true);
+    axios
+      .put(
+        "http://localhost/crb-react/PHP/api/update/updateUser.php",
+        singleReadUser,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response.data);
+        alert("User Profile updated successfully!");
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log("There was an error submitting the form!", error);
+        alert("There was an error updating user profile!");
+        setLoading(false);
+      });
   };
 
   return (
@@ -115,6 +142,18 @@ export default function Users() {
                             View
                           </button>
 
+                          {loading ? (
+                            <div className="loadProgress">
+                              <ReactLoading
+                                type="bars"
+                                color="#133e87"
+                                height={100}
+                                width={100}
+                              />
+                            </div>
+                          ) : (
+                            <></>
+                          )}
                           <div
                             className="modal fade"
                             id="viewUserModalToggle"
@@ -144,133 +183,134 @@ export default function Users() {
                                   ></button>
                                 </div>
 
-                                {/* <form onSubmit={handleSubmit}> */}
-                                <div className="modal-body">
-                                  <div className="userModalBody-rightTopContent">
-                                    <div className="userModalBody-rightTopCont1">
-                                      <div className="userModalBody-rightTopContent1">
-                                        <p>First Name:</p>
+                                <form onSubmit={handleSubmit}>
+                                  <div className="modal-body">
+                                    <div className="userModalBody-rightTopContent">
+                                      <div className="userModalBody-rightTopCont1">
+                                        <div className="userModalBody-rightTopContent1">
+                                          <p>First Name:</p>
+                                          <InputTemplate
+                                            placeholder="First Name"
+                                            name="first_name"
+                                            value={singleReadUser.first_name}
+                                            onChange={handleInputChange}
+                                            required
+                                          />
+                                        </div>
+                                        <div className="modalBody-rightTopContent2">
+                                          <p>Last Name:</p>
+                                          <InputTemplate
+                                            placeholder="Last Name"
+                                            name="last_name"
+                                            value={singleReadUser.last_name}
+                                            onChange={handleInputChange}
+                                            required
+                                          />
+                                        </div>
+                                      </div>
+
+                                      <div className="userModalBody-rightTopCont2">
+                                        <div className="modalBody-rightTopContent1">
+                                          <p>Username:</p>
+                                          <InputTemplate
+                                            placeholder="Username"
+                                            name="username"
+                                            value={singleReadUser.username}
+                                            onChange={handleInputChange}
+                                            required
+                                          />
+                                        </div>
+                                        <div className="userModalBody-rightTopContent2">
+                                          <p>Role:</p>
+                                          <InputTemplate
+                                            placeholder="Role"
+                                            name="role"
+                                            value={singleReadUser.role}
+                                            // onChange={handleInputChange}
+                                            readOnly
+                                          />
+                                        </div>
+                                      </div>
+
+                                      <div className="userModalBody-rightTopCont3">
+                                        <div className="userModalBody-rightTopContent1">
+                                          <p>Verified Date:</p>
+                                          <InputTemplate
+                                            placeholder="Verified Date"
+                                            name="verified_at"
+                                            value={singleReadUser.verified_at}
+                                            // onChange={handleInputChange}
+                                            readOnly
+                                          />
+                                        </div>
+                                        <div className="userModalBody-rightTopContent2">
+                                          <p>Created Date:</p>
+                                          <InputTemplate
+                                            placeholder="Created Date"
+                                            name="created_at"
+                                            value={singleReadUser.created_at}
+                                            // onChange={handleInputChange}
+                                            readOnly
+                                          />
+                                        </div>
+                                      </div>
+
+                                      <div className="userModalBody-rightBottomContent">
+                                        <p>Password: </p>
                                         <InputTemplate
-                                          placeholder="First Name"
-                                          name="first_name"
-                                          value={singleReadUser.first_name}
+                                          placeholder="Password"
+                                          name="password"
+                                          value={singleReadUser.password}
                                           onChange={handleInputChange}
                                           required
                                         />
-                                      </div>
-                                      <div className="modalBody-rightTopContent2">
-                                        <p>Last Name:</p>
+                                        <p>Email:</p>
                                         <InputTemplate
-                                          placeholder="Last Name"
-                                          name="last_name"
-                                          value={singleReadUser.last_name}
+                                          placeholder="Email"
+                                          name="email"
+                                          value={singleReadUser.email}
                                           onChange={handleInputChange}
                                           required
                                         />
-                                      </div>
-                                    </div>
-
-                                    <div className="userModalBody-rightTopCont2">
-                                      <div className="modalBody-rightTopContent1">
-                                        <p>Username:</p>
-                                        <InputTemplate
-                                          placeholder="Username"
-                                          name="username"
-                                          value={singleReadUser.username}
+                                        <p>*Bio: </p>
+                                        <textarea
+                                          className="form-control"
+                                          id="exampleFormControlTextarea1"
+                                          rows="3"
+                                          placeholder="Bio"
+                                          name="bio"
+                                          style={{
+                                            height: "10vh",
+                                            maxHeight: "10vh",
+                                            resize: "none",
+                                            fontSize: "16px",
+                                            backgroundColor:
+                                              "rgba(19, 62, 135, 0.21)",
+                                          }}
+                                          value={singleReadUser.bio || ""}
                                           onChange={handleInputChange}
-                                          required
-                                        />
+                                        ></textarea>
                                       </div>
-                                      <div className="userModalBody-rightTopContent2">
-                                        <p>Role:</p>
-                                        <InputTemplate
-                                          placeholder="Role"
-                                          name="role"
-                                          value={singleReadUser.role}
-                                          // onChange={handleInputChange}
-                                          readOnly
-                                        />
-                                      </div>
-                                    </div>
-
-                                    <div className="userModalBody-rightTopCont3">
-                                      <div className="userModalBody-rightTopContent1">
-                                        <p>Verified Date:</p>
-                                        <InputTemplate
-                                          placeholder="Verified Date"
-                                          name="verified_at"
-                                          value={singleReadUser.verified_at}
-                                          // onChange={handleInputChange}
-                                          readOnly
-                                        />
-                                      </div>
-                                      <div className="userModalBody-rightTopContent2">
-                                        <p>Created Date:</p>
-                                        <InputTemplate
-                                          placeholder="Created Date"
-                                          name="created_at"
-                                          value={singleReadUser.created_at}
-                                          // onChange={handleInputChange}
-                                          readOnly
-                                        />
-                                      </div>
-                                    </div>
-
-                                    <div className="userModalBody-rightBottomContent">
-                                      <p>Password: </p>
-                                      <InputTemplate
-                                        placeholder="Password"
-                                        name="password"
-                                        value={singleReadUser.password}
-                                        onChange={handleInputChange}
-                                        required
-                                      />
-                                      <p>Email:</p>
-                                      <InputTemplate
-                                        placeholder="Email"
-                                        name="email"
-                                        value={singleReadUser.email}
-                                        onChange={handleInputChange}
-                                        required
-                                      />
-                                      <p>Bio: </p>
-                                      <textarea
-                                        className="form-control"
-                                        id="exampleFormControlTextarea1"
-                                        rows="3"
-                                        placeholder="Bio"
-                                        name="bio"
-                                        style={{
-                                          height: "10vh",
-                                          maxHeight: "10vh",
-                                          resize: "none",
-                                          fontSize: "16px",
-                                          backgroundColor:
-                                            "rgba(19, 62, 135, 0.21)",
-                                        }}
-                                        value={singleReadUser.bio || ""}
-                                        onChange={handleInputChange}
-                                      ></textarea>
                                     </div>
                                   </div>
-                                </div>
-                                <div className="modal-footer">
-                                  <button
-                                    type="button"
-                                    className="btn btn-secondary"
-                                    data-bs-dismiss="modal"
-                                  >
-                                    Cancel
-                                  </button>
-                                  <button
-                                    type="submit"
-                                    className="btn btn-primary"
-                                    data-bs-dismiss="modal"
-                                  >
-                                    Save changes
-                                  </button>
-                                </div>
-                                {/* </form> */}
+                                  <div className="modal-footer">
+                                    <button
+                                      type="button"
+                                      className="btn btn-secondary"
+                                      data-bs-dismiss="modal"
+                                    >
+                                      Cancel
+                                    </button>
+                                    <button
+                                      type="submit"
+                                      className="btn btn-primary"
+                                      data-bs-dismiss="modal"
+                                      disabled={!singleReadUser.bio.trim()}
+                                    >
+                                      Save changes
+                                    </button>
+                                  </div>
+                                </form>
                               </div>
                             </div>
                           </div>
