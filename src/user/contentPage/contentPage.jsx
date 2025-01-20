@@ -14,6 +14,7 @@ import { useCookies } from "react-cookie";
 import { jwtDecode } from "jwt-decode";
 import Edit from "../../assets/images/Edit.svg";
 import Bookmarked from "../../assets/images/bookmarked.png";
+import ReactLoading from "react-loading";
 
 export default function Contentpage() {
   const location = useLocation();
@@ -26,6 +27,7 @@ export default function Contentpage() {
   const [viewerIsOwner, setViewerIsOwner] = useState(false);
   const decoded = jwtDecode(jwt);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [userComment, setComment] = useState({
     myComment: "",
     post_id: post_id,
@@ -207,6 +209,7 @@ export default function Contentpage() {
   const handleCommentSubmit = (e) => {
     e.preventDefault();
     console.log(userComment);
+    setLoading(true);
 
     axios
       .post(
@@ -224,21 +227,29 @@ export default function Contentpage() {
         console.log(response.data);
         if (response.data.status === 201) {
           console.log(response.data);
+          setLoading(false);
+          window.location.reload();
+
           setComment({
             myComment: "",
           });
         } else {
           console.log(response.data);
+          window.location.reload();
+          setLoading(false);
         }
       })
       .catch((error) => {
         console.log(error);
+        window.location.reload();
+        setLoading(false);
       });
   };
 
   const handleReportSubmit = (e) => {
     e.preventDefault();
     console.log(userReport.myReport);
+    setLoading(true);
 
     axios
       .post(
@@ -255,21 +266,34 @@ export default function Contentpage() {
       .then((response) => {
         console.log(response.data);
         if (response.data.status === 201) {
+          setLoading(false);
+          window.location.reload();
           console.log(response.data);
           setReport({
             myReport: "",
           });
         } else {
+          setLoading(false);
           console.log(response.data);
+          window.location.reload();
         }
       })
       .catch((error) => {
+        setLoading(false);
         console.log(error);
+        window.location.reload();
       });
   };
 
   return (
     <>
+      {loading ? (
+        <div className="loadProgress">
+          <ReactLoading type="bars" color="#133e87" height={100} width={100} />
+        </div>
+      ) : (
+        <></>
+      )}
       <Navbar />
       <div className="flex-content-parent">
         <div className="flex-content-parent-left">

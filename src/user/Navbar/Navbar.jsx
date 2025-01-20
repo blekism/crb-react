@@ -6,6 +6,7 @@ import Pomasin from "../../assets/images/lheopomasin.jpg";
 import { useCookies } from "react-cookie";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+import Hub from "../../assets/images/hubs.mp4";
 
 export default function Navbar({ searchItem, User }) {
   const [cookies, setCookie, removeCookie] = useCookies(["logged_user"]);
@@ -76,6 +77,14 @@ export default function Navbar({ searchItem, User }) {
 
   return (
     <div className="navbar-parent">
+      {/* ---------------- */}
+      <div className="audios" style={{ display: "none" }}>
+        <video width="600" autoPlay controls>
+          <source src={Hub} type="video/mp4" />
+          Your browser does not support the video element.
+        </video>
+      </div>
+      {/* ---------------- */}
       <div className="nav-buttons">
         <p className="navbtn">
           <Link

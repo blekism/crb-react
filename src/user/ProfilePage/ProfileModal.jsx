@@ -3,8 +3,10 @@ import axios from "axios";
 import { useCookies } from "react-cookie";
 import "./ProfileModal.css";
 import InputTemplate from "../loginSignupPage/InputTemplate";
+import ReactLoading from "react-loading";
 
 export default function ProfileModal() {
+  const [loading, setLoading] = useState(false);
   const [profileModalDetails, setProfileModalDetails] = useState({
     first_name: "",
     last_name: "",
@@ -47,6 +49,7 @@ export default function ProfileModal() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
     axios
       .put(
         "http://localhost/crb-react/PHP/api/update/update_profile.php",
@@ -61,14 +64,27 @@ export default function ProfileModal() {
       )
       .then((response) => {
         console.log(response.data);
+        alert("Profile updated successfully!");
+        setLoading(false);
+        window.location.reload();
       })
       .catch((error) => {
         console.log("There was an error submitting the form!", error);
+        alert("There was an error updating your profile!");
+        setLoading(false);
+        window.location.reload();
       });
   };
 
   return (
     <>
+      {loading ? (
+        <div className="loadProgress">
+          <ReactLoading type="bars" color="#133e87" height={100} width={100} />
+        </div>
+      ) : (
+        <></>
+      )}
       <div
         className="modal fade"
         id="profileModal"

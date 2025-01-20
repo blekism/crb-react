@@ -3,12 +3,15 @@ import "./UploadModal.css";
 import HomepageDropdown from "./HomepageDropdown.jsx";
 import axios from "axios";
 import { useCookies } from "react-cookie";
+import ReactLoading from "react-loading";
+import vid from "../../assets/images/ugh.mp4";
 
 export default function UploadModal({ postID }) {
   const [genre, setGenre] = useState([]);
   const [type, setType] = useState([]);
   const [cookies] = useCookies(["logged_user"]);
   const [SelectedFile, setSelectedFile] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [Postcontent, setPostContent] = useState({
     title: "",
     content: "",
@@ -68,6 +71,7 @@ export default function UploadModal({ postID }) {
   const handleContentSubmit = (event) => {
     event.preventDefault();
     const formData = new FormData();
+    setLoading(true);
 
     // Check if Postcontent.type is selected
     if (!Postcontent.type) {
@@ -98,17 +102,34 @@ export default function UploadModal({ postID }) {
           "Content-Type": "multipart/form-data",
           Authorization: "Bearer " + cookies.logged_user,
         },
+        validateStatus: function (status) {
+          return status >= 200 && status < 500;
+        },
         withCredentials: true,
       })
       .then((response) => {
         if (response.data.status === 200) {
+          setLoading(false);
           console.log(response.data);
+          alert("Post successful!");
+          window.location.reload();
+        } else if (response.data.status === 422) {
+          console.log(response.data);
+          setLoading(false);
+          window.location.reload();
+          alert(
+            "Your post was flagged and rejected due to inappropriate content."
+          );
         } else {
           console.log(response.data);
+          setLoading(false);
+          alert("An unexpected error occurred. Please try again later.");
         }
       })
       .catch((error) => {
         console.log(error);
+        setLoading(false);
+        alert("An unexpected error occurred. Please try again later.");
       });
   };
 
@@ -192,6 +213,18 @@ export default function UploadModal({ postID }) {
 
   return (
     <>
+      {loading ? (
+        <div className="loadProgress" style={{ display: "none" }}>
+          {/* <ReactLoading type="bars" color="#133e87" height={100} width={100} /> */}
+          <video width="600" autoPlay controls>
+            <source src={vid} type="video/mp4" />
+            Your browser does not support the video element.
+          </video>
+        </div>
+      ) : (
+        <></>
+      )}
+
       <div
         className="modal fade"
         id="UploadModal"

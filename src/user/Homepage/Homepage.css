@@ -24,8 +24,8 @@
 .homepage-parent .new-post-content {
   display: flex;
   flex-direction: row;
+  width: 100%;
   column-gap: 80px;
-  padding: 20px;
   padding-top: 0;
   margin: auto;
   align-items: center;

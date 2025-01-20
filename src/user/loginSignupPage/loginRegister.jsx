@@ -51,20 +51,25 @@ export default function LoginSignup() {
     console.log(userReg);
 
     axios
-      .post("http://localhost/crb-react/PHP/api/create/register.php", userReg)
+      .post("http://localhost/crb-react/PHP/api/create/register.php", userReg, {
+        validateStatus: function (status) {
+          return status >= 200 && status <= 500;
+        },
+      })
       .then((response) => {
         console.log(response.data);
         if (response.data.status === 200) {
           console.log("Signup successful!");
           setModalVerify(true);
           // mag open ng popup na may message na check mo email mo
-        } else {
-          alert("error");
+        } else if (response.data.status === 422) {
+          alert("Something went wrong. Please try again.");
           //error bobo baka wala kang internet kase
         }
       })
       .catch((error) => {
         console.log(error);
+        alert("An unexpected error occurred. Please try again later.");
       });
   };
 
@@ -77,10 +82,14 @@ export default function LoginSignup() {
         headers: {
           "Content-Type": "application/json",
         },
+        validateStatus: function (status) {
+          return status >= 200 && status < 410;
+        },
       })
       .then((response) => {
         console.log(response.data);
         if (response.data.status === 200) {
+          // login successful
           console.log(response.data);
           setCookie("logged_user", response.data.token, {
             path: "/",
@@ -94,20 +103,18 @@ export default function LoginSignup() {
             email: "",
             password: "",
           });
-        } else if (response.data.status === 401) {
+        } else if (response.data.status === 201) {
+          //account not verified
+          setAccountRegistered(true);
+        } else if (response.data.status === 404) {
+          // wrong credentials
           alert("Invalid credentials");
           setUserLog({
             email: "",
             password: "",
           });
-        } else if (response.data.status === 201) {
-          setAccountRegistered(true);
         } else {
-          alert("server error");
-          setUserLog({
-            email: "",
-            password: "",
-          });
+          alert("error");
         }
       })
       .catch((error) => {

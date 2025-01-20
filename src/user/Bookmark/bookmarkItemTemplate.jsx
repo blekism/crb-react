@@ -1,5 +1,5 @@
 import React from "react";
-import "./bookmarkItemTemplate.css";
+// import "./bookmarkItemTemplate.css";
 
 export default function bookmarkItemTemplate({
   image,
