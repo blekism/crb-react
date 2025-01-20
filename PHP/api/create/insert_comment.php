@@ -1,13 +1,15 @@
 <?php
 
-header('Access-Control-Allow-Origin:*');
+header('Access-Control-Allow-Origin: http://localhost:5173');
+header('Access-Control-Allow-Credentials: true');
 header('Content-Type: application/json');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Request-With');
 
 include('../function.php');
 require(__DIR__ . '../../creds.php');
-// require  __DIR__ . '../../vendor/autoload.php';
+require  __DIR__ . '/../../vendor/autoload.php';
+
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\ExpiredException;
@@ -40,32 +42,31 @@ if ($requestMethod == "POST") {
             echo json_encode($data);
             exit();
         } else {
-    $inputData = json_decode(file_get_contents("php://input"), true);
+            $inputData = json_decode(file_get_contents("php://input"), true);
 
-    if (empty($inputData)) {
+            if (empty($inputData)) {
+                $data = [
+                    'status' => 400,
+                    'message' => 'Bad Request',
+                ];
+                header("HTTP/1.0 400 Bad Request");
+                echo json_encode($data);
+                exit();
+            } else {
+                $insertComment = insertComment($inputData, $account_id);
+            }
+            echo $insertComment;
+            exit();
+        }
+    } catch (ExpiredException $e) {
         $data = [
-            'status' => 400,
-            'message' => 'Bad Request',
+            'status' => 401,
+            'message' => 'Unauthorized',
         ];
-        header("HTTP/1.0 400 Bad Request");
+        header("HTTP/1.0 401 Unauthorized");
         echo json_encode($data);
         exit();
-    } else {
-        $insertComment = insertComment($inputData, $account_id);
     }
-    echo $insertComment;
-    exit();
-        }
-} catch (ExpiredException $e) {
-    $data = [
-        'status' => 401,
-        'message' => 'Unauthorized',
-    ];
-    header("HTTP/1.0 401 Unauthorized");
-    echo json_encode($data);
-    exit();
-}
-
 } else {
     $data = [
         'status' => 405,
@@ -74,20 +75,3 @@ if ($requestMethod == "POST") {
     header("HTTP/1.0 405 Method Not Allowed");
     echo json_encode($data);
 }
-
-
-    // if (empty($inputData)) {
-        // $insertComment = insertComment($_POST);
-    // } else {
-    //     $insertComment = insertComment($inputData);
-    // }
-    // echo $insertComment;
-    // exit();
-// } else {
-//     $data = [
-//         'status' => 405,
-//         'message' => $requestMethod . ' method not allowed'
-//     ];
-//     header("HTTP/1.0 405 Method Not Allowed");
-//     echo json_encode($data);
-// }

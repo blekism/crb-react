@@ -10,7 +10,6 @@ include('../function.php');
 $requestMethod = $_SERVER["REQUEST_METHOD"];
 
 if ($requestMethod == "OPTIONS") {
-    // Send a 200 OK response for preflight requests
     http_response_code(200);
     exit();
 }
