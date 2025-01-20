@@ -3,6 +3,7 @@ import "./PostView.css";
 import back from "../../assets/images/back.png";
 import InputTemplate from "../../user/loginSignupPage/InputTemplate";
 import CommentsTemplate from "./CommentsTemplate";
+import HomepageDropdown from "../../user/Homepage/HomepageDropdown";
 
 export default function PostView() {
   return (
@@ -92,21 +93,83 @@ export default function PostView() {
               </div>
             </div>
             <div className="PostView-Child-Left-Bottom">
-              <h3>Content</h3>
-              <textarea
-                className="form-control"
-                id="exampleFormControlTextarea1"
-                rows="3"
-                placeholder="Content"
-                style={{
-                  height: "40vh",
-                  maxHeight: "40vh",
-                  fontSize: "16px",
-                  backgroundColor: "rgba(19, 62, 135, 0.21)",
-                }}
-                //   value={postContents.content || ""}
-                //   onChange={onChange}
-              ></textarea>
+              <div className="PostView-Child-Left-Bottom-Top">
+                <div className="PostView-Child-Left-Bottom-Top-Left">
+                  <h3>Content</h3>
+                  <textarea
+                    className="form-control"
+                    id="exampleFormControlTextarea1"
+                    rows="3"
+                    placeholder="Content"
+                    style={{
+                      height: "40vh",
+                      maxHeight: "40vh",
+                      fontSize: "16px",
+                      backgroundColor: "rgba(19, 62, 135, 0.21)",
+                    }}
+                    //   value={postContents.content || ""}
+                    //   onChange={onChange}
+                  ></textarea>
+                </div>
+                {/* <div className="upload-options">
+                  <div className="upper-options">
+                    <HomepageDropdown
+                      type="Post Type"
+                      items={type}
+                      isGenre={false}
+                      onSelect={handleTypeChange}
+                      required
+                    />
+                    {items.map((item, index) => (
+                      <HomepageDropdown
+                        key={index}
+                        type={
+                          Postcontent.genre[index] &&
+                          Postcontent.genre[index].genre_id
+                            ? "Genre" ||
+                              genre.find(
+                                (g) =>
+                                  g.id === Postcontent.genre[index].genre_id
+                              )?.name
+                            : "Genre"
+                        }
+                        required
+                        items={getFilteredGenres(index)}
+                        remove={() => removeElement(index)}
+                        isGenre={true}
+                        onSelect={(selectedItem) =>
+                          handleGenreChange(selectedItem, index)
+                        }
+                      />
+                    ))}
+                  </div>
+                  <div
+                    className="lower-options"
+                    style={{
+                      display: "flex",
+                      justifyContent: "end",
+                      flexDirection: "column",
+                      alignItems: "end",
+                    }}
+                  >
+                    {!postID ? (
+                      <></>
+                    ) : (
+                      <p>
+                        Current optionsz will remain unchanged if this field is
+                        left blank.
+                      </p>
+                    )}
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={addElement}
+                    >
+                      New Genre Tag
+                    </button>
+                  </div>
+                </div> */}
+              </div>
               <div className="PostView-Child-Left-Bottom-Cont">
                 <div className="Date">
                   <div className="date1">

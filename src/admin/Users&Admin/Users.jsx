@@ -18,23 +18,6 @@ export default function Users() {
           <div className="Users-MainContent">
             <div className="Users-MainContent-header">
               <h3>USERS</h3>
-              <select
-                className="form-select mb-3"
-                aria-label="Default select example"
-                name="event_status"
-                // value={eventItem.event_status}
-                // onChange={handleChange}
-                style={{
-                  width: "fit-content",
-                  height: "40px",
-                  backgroundColor: "rgba(19, 62, 135, 0.81)",
-                  color: "white",
-                  border: "none",
-                }}
-              >
-                <option value="user">USER</option>
-                <option value="guest">GUEST</option>
-              </select>
             </div>
 
             <div className="Users-MainContent-Table">
@@ -161,7 +144,7 @@ export default function Users() {
                                         }}
                                       >
                                         <option value="user">User</option>
-                                        <option value="guest">Guest</option>
+                                        {/* change na to input and readOnly lang */}
                                       </select>
                                     </div>
                                   </div>

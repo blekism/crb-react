@@ -1221,7 +1221,6 @@ function updateProfile($userInput, $user_id)
     $password = $userInput['password'];
     $bio = $userInput['bio'];
 
-
     if (empty(trim($username))) {
         return error422('User ID is required');
     } else if (empty(trim($first_name))) {
@@ -2058,5 +2057,219 @@ function readTotalReviewDistribution()
         ];
         header("HTTP/1.0 404 Not Found");
         return json_encode($data);
+    }
+}
+
+function addAdmin($userInput)
+{
+    global $con;
+
+    if (isset($userInput['email']) && isset($userInput['password'])) {
+        $user_id = 'USER - ' . date('Y-d') . substr(uniqid(), -5);
+        $email = $userInput['email'];
+        $password = $userInput['password'];
+        $firstname = $userInput['first_name'];
+        $lastname = $userInput['last_name'];
+
+        $hashed = md5($password);
+
+        if (empty(trim($email))) {
+            return error422('Email is required');
+        } else if (empty(trim($password))) {
+            return error422('Password is required');
+        } else if (empty(trim($firstname))) {
+            return error422('First name is required');
+        } else if (empty(trim($lastname))) {
+            return error422('Last name is required');
+        } else {
+
+            $query = "INSERT INTO user_tbl (user_id, email, password, first_name, last_name, role, created_at) VALUES (?, ?, ?, ?, ?, 'admin', NOW())";
+            $stmt = $con->prepare($query);
+            $stmt->bind_param('sssss', $user_id, $email, $hashed, $firstname, $lastname);
+            $result = $stmt->execute();
+            $stmt->close();
+
+            if ($result) {
+                $data = [
+                    'status' => 201,
+                    'message' => 'Admin Inserted Successfully',
+                ];
+                header("HTTP/1.0 201 OK");
+                return json_encode($data);
+            } else {
+                $data = [
+                    "status" => 500,
+                    "message" => "Internal Server Error",
+                ];
+                header("HTTP/1.0 500 Internal Server Error");
+                return json_encode($data);
+            }
+        }
+    } else {
+        return error422('Email and Password are required');
+    }
+}
+
+function updateAdmin($userInput)
+{
+    global $con;
+
+    $user_id = $userInput['user_id'];
+    $first_name = $userInput['first_name'];
+    $last_name = $userInput['last_name'];
+    $email = $userInput['email'];
+    $password = $userInput['password'];
+
+    $hashed = md5($password);
+
+    if (empty(trim($first_name))) {
+        return error422('First name is required');
+    } else if (empty(trim($last_name))) {
+        return error422('Last name is required');
+    } else if (empty(trim($email))) {
+        return error422('Email is required');
+    } else if (empty(trim($password))) {
+        return error422('Password is required');
+    } else {
+        $query = "UPDATE user_tbl SET first_name = ?, last_name = ?, email = ?, password = ?, updated_at = NOW() WHERE user_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("sssss", $first_name, $last_name, $email, $hashed, $user_id);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        if ($result) {
+            $data = [
+                'status' => 200,
+                'message' => 'Admin Profile updated successfully',
+            ];
+            header("HTTP/1.0 200 OK");
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 500,
+                'message' => 'Internal Server Error',
+            ];
+            header("HTTP/1.0 500 Internal Server Error");
+            return json_encode($data);
+        }
+    }
+}
+
+function updateUser($userInput)
+{
+    global $con;
+
+    $user_id = $userInput['user_id'];
+    $username = $userInput['username'];
+    $first_name = $userInput['first_name'];
+    $last_name = $userInput['last_name'];
+    $email = $userInput['email'];
+    $password = $userInput['password'];
+    $bio = $userInput['bio'];
+
+    $hashed = md5($password);
+
+    if (empty(trim($username))) {
+        return error422('Username is required');
+    } else if (empty(trim($first_name))) {
+        return error422('First name is required');
+    } else if (empty(trim($last_name))) {
+        return error422('Last name is required');
+    } else if (empty(trim($email))) {
+        return error422('Email is required');
+    } else if (empty(trim($password))) {
+        return error422('Password is required');
+    } else if (empty(trim($bio))) {
+        return error422('Bio is required');
+    } else {
+        $query = "UPDATE user_tbl SET username = ?, first_name = ?, last_name = ?, email = ?, password = ?, bio = ?, updated_at = NOW() WHERE user_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("sssssss", $username, $first_name, $last_name, $email, $hashed, $bio, $user_id);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        if ($result) {
+            $data = [
+                'status' => 200,
+                'message' => 'User Profile updated successfully',
+            ];
+            header("HTTP/1.0 200 OK");
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 500,
+                'message' => 'Internal Server Error',
+            ];
+            header("HTTP/1.0 500 Internal Server Error");
+            return json_encode($data);
+        }
+    }
+}
+
+function updateReport($userInput)
+{
+    global $con;
+
+    $report_id = $userInput['report_id'];
+    $status = $userInput['status'];
+
+    if (empty(trim($status))) {
+        return error422('Status is required');
+    } else {
+        $query = "UPDATE reports_tbl SET status = ?, updated_at = NOW() WHERE report_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("ss", $status, $report_id);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        if ($result) {
+            $data = [
+                'status' => 200,
+                'message' => 'Report updated successfully',
+            ];
+            header("HTTP/1.0 200 OK");
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 500,
+                'message' => 'Internal Server Error',
+            ];
+            header("HTTP/1.0 500 Internal Server Error");
+            return json_encode($data);
+        }
+    }
+}
+
+function updatePost($userInput)
+{
+    global $con;
+
+    $report_id = $userInput['report_id'];
+    $status = $userInput['status'];
+
+    if (empty(trim($status))) {
+        return error422('Status is required');
+    } else {
+        $query = "UPDATE reports_tbl SET status = ?, updated_at = NOW() WHERE report_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("ss", $status, $report_id);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        if ($result) {
+            $data = [
+                'status' => 200,
+                'message' => 'Report updated successfully',
+            ];
+            header("HTTP/1.0 200 OK");
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 500,
+                'message' => 'Internal Server Error',
+            ];
+            header("HTTP/1.0 500 Internal Server Error");
+            return json_encode($data);
+        }
     }
 }

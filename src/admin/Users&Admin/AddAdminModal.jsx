@@ -5,6 +5,54 @@ import "./AddAdminModal.css";
 import InputTemplate from "../../user/loginSignupPage/InputTemplate";
 
 export default function AddAdminModal() {
+  const [InsertAdmin, setInsertAdmin] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    password: "",
+  });
+
+  const handleInputChange = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+
+    setInsertAdmin((values) => ({ ...values, [name]: value }));
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log(InsertAdmin);
+
+    axios
+      .post(
+        "http://localhost/crb-react/PHP/api/create/insertAdmin.php",
+        InsertAdmin,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response.data);
+        if (response.data.status === 201) {
+          console.log(response.data);
+          alert("Admin added successfully!");
+          setInsertAdmin({
+            first_name: "",
+            last_name: "",
+            email: "",
+            password: "",
+          });
+        } else {
+          alert("Error adding admin");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <>
       <div
@@ -28,83 +76,69 @@ export default function AddAdminModal() {
                 aria-label="Close"
               ></button>
             </div>
-            {/* <form onSubmit={handleSubmit}> */}
-            <div className="modal-body">
-              <div className="addAdminModalBody-rightTopContent">
-                <div className="addAdminModalBody-rightTopCont1">
-                  <div className="addAdminModalBody-rightTopContent1">
-                    <p>First Name:</p>
-                    <InputTemplate
-                      placeholder="First Name"
-                      name="first_name"
-                      // value={profileModalDetails.first_name}
-                      // onChange={handleInputChange}
-                      required
-                    />
+            <form onSubmit={handleSubmit}>
+              <div className="modal-body">
+                <div className="addAdminModalBody-rightTopContent">
+                  <div className="addAdminModalBody-rightTopCont1">
+                    <div className="addAdminModalBody-rightTopContent1">
+                      <p>First Name:</p>
+                      <InputTemplate
+                        placeholder="First Name"
+                        name="first_name"
+                        value={InsertAdmin.first_name}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+                    <div className="addAdminModalBody-rightTopContent2">
+                      <p>Last Name:</p>
+                      <InputTemplate
+                        placeholder="Last Name"
+                        name="last_name"
+                        value={InsertAdmin.last_name}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
                   </div>
-                  <div className="addAdminModalBody-rightTopContent2">
-                    <p>Last Name:</p>
-                    <InputTemplate
-                      placeholder="Last Name"
-                      name="last_name"
-                      // value={profileModalDetails.last_name}
-                      // onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                </div>
 
-                <div className="addAdminModalBody-rightBottomContent">
-                  <p>Role:</p>
-                  <select
-                    className="form-select mb-3"
-                    aria-label="Default select example"
-                    name="is_volunteer"
-                    // value={volunteerItem.is_volunteer}
-                    // onChange={handleChange}
-                    style={{
-                      backgroundColor: "rgba(19, 62, 135, 0.21)",
-                    }}
-                  >
-                    <option>Select a role</option>
-                    <option value="admin">Admin</option>
-                  </select>
-                  <p>Email:</p>
-                  <InputTemplate
-                    placeholder="Email"
-                    name="email"
-                    //   value={profileModalDetails.email}
-                    //   onChange={handleInputChange}
-                    required
-                  />
-                  <p>Password: </p>
-                  <InputTemplate
-                    placeholder="Password"
-                    name="password"
-                    //   value={profileModalDetails.username}
-                    //   onChange={handleInputChange}
-                    required
-                  />
+                  <div className="addAdminModalBody-rightBottomContent">
+                    <p>Email:</p>
+                    <InputTemplate
+                      placeholder="Email"
+                      name="email"
+                      value={InsertAdmin.email}
+                      onChange={handleInputChange}
+                      required
+                    />
+                    <p>Password: </p>
+                    <InputTemplate
+                      placeholder="Password"
+                      name="password"
+                      value={InsertAdmin.password}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="btn btn-primary"
-                data-bs-dismiss="modal"
-              >
-                Submit
-              </button>
-            </div>
-            {/* </form> */}
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  // data-bs-dismiss="modal"
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>

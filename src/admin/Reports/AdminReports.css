@@ -64,13 +64,13 @@
     text-align: center;
 }
 
-.Admin-Parent .AdminReports-Child .AdminReports-MainContent .AdminReports-MainContent-Table .table tbody{
+.AdminReports-Parent .AdminReports-Child .AdminReports-MainContent .AdminReports-MainContent-Table .table tbody{
     text-align: center;
     font-weight: 500;
 }
 
 /* modal */
-.modal .modal-dialog .modal-content .modal-body .adminModalBody-rightTopContent {
+.modal .modal-dialog .modal-content .modal-body .reportsModalBody-rightTopContent {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -80,7 +80,7 @@
     line-height: 5px;
   }
 
-  .modal .modal-dialog .modal-content .modal-body .adminModalBody-rightTopContent .adminModalBody-rightTopCont1, .adminModalBody-rightTopCont2 {
+  .modal .modal-dialog .modal-content .modal-body .reportsModalBody-rightTopContent .reportsModalBody-rightTopCont1, .reportsModalBody-rightTopCont2 {
     display: flex;
     flex-direction: row;
     column-gap: 10px;
@@ -89,15 +89,15 @@
     text-align: start;
   }
   
-  .modal .modal-dialog .modal-content .modal-body .adminModalBody-rightTopContent .adminModalBody-rightTopCont1
-  .adminModalBody-rightTopContent1, .adminModalBody-rightTopContent2 {
+  .modal .modal-dialog .modal-content .modal-body .reportsModalBody-rightTopContent .reportsModalBody-rightTopCont1
+  .reportsModalBody-rightTopContent1, .reportsModalBody-rightTopContent2 {
     display: flex;
     flex-direction: column;
     align-items: start;
     column-gap: 5px;
   }
   
-  .modal .modal-dialog .modal-content .modal-body .adminModalBody-rightBottomContent {
+  .modal .modal-dialog .modal-content .modal-body .reportsModalBody-rightBottomContent {
     display: flex;
     flex-direction: column;
     align-items: start;
