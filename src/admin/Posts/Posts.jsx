@@ -7,6 +7,7 @@ import Delete from "../../assets/images/delRed.svg";
 
 export default function Posts() {
   const [posts, setPosts] = useState([]);
+  // const [deletePosts,setDeletePosts] = useState([]);
 
   useEffect(() => {
     axios
@@ -21,6 +22,30 @@ export default function Posts() {
         console.log(error);
       });
   }, []);
+
+  const handleDeletePost = (postId) => {
+    console.log(postId, "postid");
+    try {
+      axios
+        .post("http://localhost/crb-react/PHP/api/delete/delete_post.php", {
+          post_id: postId,
+        })
+        .then((response) => {
+          if (response.data.status === 200) {
+            console.log(response.data);
+          } else {
+            console.log(response.data);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      // Handle success (e.g., update UI)
+    } catch (error) {
+      console.error("There was an error deleting the post:", error);
+    }
+  };
+
   return (
     <>
       <div className="Posts-Parent">
@@ -250,8 +275,9 @@ export default function Posts() {
                       <td>
                         <img
                           src={Delete}
-                          alt="Edit"
+                          alt="Delete"
                           className="DeleteIcon"
+                          onClick={() => handleDeletePost(post.post_id)}
                           style={{
                             width: "70px",
                             height: "40px",

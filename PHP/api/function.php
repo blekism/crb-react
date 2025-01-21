@@ -2855,3 +2855,177 @@ function searchBar($userInput)
         }
     }
 }
+
+function delete_userAdmin($userInput)
+{
+    global $con;
+
+    $user_id = $userInput['user_id'];
+
+    $query = "DELETE FROM genre_post_tbl WHERE post_id IN (SELECT post_id FROM posts_tbl WHERE user_id = ?)";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $user_id);
+    $stmt->execute();
+    $stmt->close();
+
+    // Delete from comments_tbl
+    $query = "DELETE FROM comments_tbl WHERE user_id = ?";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $user_id);
+    $stmt->execute();
+    // $stmt->close();
+
+    // Delete from bookrmarkss
+    $query = "DELETE FROM bookmarks_tbl WHERE user_id = ?";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $user_id);
+    $stmt->execute();
+
+    $query = "DELETE FROM reports_tbl WHERE user_id = ?";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $user_id);
+    $stmt->execute();
+
+    // Delete from posts_tbl
+    $query = "DELETE FROM posts_tbl WHERE user_id = ?";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $user_id);
+    $stmt->execute();   
+
+    $query = "DELETE FROM user_tbl WHERE user_id = ?";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $user_id);
+    $stmt->execute();
+
+    if ($stmt->affected_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'User deleted successfully',
+        ];
+        header("HTTP/1.0 200 OK");
+        $stmt->close();
+        return json_encode($data);
+    } else if ($stmt->affected_rows == 0) {
+        $data = [
+            'status' => 404,
+            'message' => 'no user found',
+        ];
+        header("HTTP/1.0 404 no such user found");
+        $stmt->close();
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 500,
+            'message' => 'Internal Server Error',
+        ];
+        header("HTTP/1.0 500 Internal Server Error");
+        $stmt->close();
+        return json_encode($data);
+    }
+}
+
+function delete_post($userInput)
+{
+    global $con;
+
+    $post_id = $userInput['post_id'];
+
+    try {
+        // Delete from genre_post_tbl
+        $query = "DELETE FROM genre_post_tbl WHERE post_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param('s', $post_id);
+        $stmt->execute();
+        $stmt->close();
+
+        // Delete from comments_tbl
+        $query = "DELETE FROM comments_tbl WHERE post_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param('s', $post_id);
+        $stmt->execute();
+        $stmt->close();
+
+        // Delete from bookrmarkss
+        $query = "DELETE FROM bookmarks_tbl WHERE post_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param('s', $post_id);
+        $stmt->execute();
+
+        // Delete from posts_tbl
+        $query = "DELETE FROM posts_tbl WHERE post_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param('s', $post_id);
+        $stmt->execute();
+
+        // $query = "DELETE FROM review_tbl WHERE post_id = ?";
+        // $stmt = $con->prepare($query);
+        // $stmt->bind_param('s', $post_id);
+        // $stmt->execute();
+
+        if ($stmt->affected_rows > 0) {
+            $data = [
+                'status' => 200,
+                'message' => 'Post deleted successfully',
+            ];
+            header("HTTP/1.0 200 OK");
+        } else if ($stmt->affected_rows == 0) {
+            $data = [
+                'status' => 404,
+                'message' => 'No post found',
+            ];
+            header("HTTP/1.0 404 No such post found");
+        } else {
+            $data = [
+                'status' => 500,
+                'message' => 'Internal Server Error',
+            ];
+            header("HTTP/1.0 500 Internal Server Error");
+        }
+
+        $stmt->close();
+        $con->commit();
+        return json_encode($data);
+    } catch (mysqli_sql_exception $exception) {
+        $con->rollback();
+        throw $exception;
+    }
+}
+
+function delete_reportAdmin($userInput)
+{
+    global $con;
+
+    $report_id = $userInput['report_id'];
+
+    $query = "DELETE FROM reports_tbl WHERE report_id = ?";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $report_id);
+    $stmt->execute();
+
+    if ($stmt->affected_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Report deleted successfully',
+        ];
+        header("HTTP/1.0 200 OK");
+        $stmt->close();
+        return json_encode($data);
+    } else if ($stmt->affected_rows == 0) {
+        $data = [
+            'status' => 404,
+            'message' => 'no report found',
+        ];
+        header("HTTP/1.0 404 no such report found");
+        $stmt->close();
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 500,
+            'message' => 'Internal Server Error',
+        ];
+        header("HTTP/1.0 500 Internal Server Error");
+        $stmt->close();
+        return json_encode($data);
+    }
+}
+

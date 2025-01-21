@@ -60,6 +60,32 @@ export default function Users() {
     setSingleReadUser((values) => ({ ...values, [name]: value }));
   };
 
+  const handleDeleteUsers = (userId) => {
+    console.log(userId, "user id");
+    try {
+      axios
+        .post(
+          "http://localhost/crb-react/PHP/api/delete/delete_userAdmin.php",
+          {
+            user_id: userId,
+          }
+        )
+        .then((response) => {
+          if (response.data.status === 200) {
+            console.log(response.data);
+          } else {
+            console.log(response.data);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      // Handle success (e.g., update UI)
+    } catch (error) {
+      console.error("There was an error deleting the user:", error);
+    }
+  };
+
   return (
     <>
       <div className="Users-Parent">
@@ -281,6 +307,7 @@ export default function Users() {
                           src={Delete}
                           alt="Edit"
                           className="DeleteIcon"
+                          onClick={() => handleDeleteUsers(user.user_id)}
                           style={{
                             width: "70px",
                             height: "40px",
