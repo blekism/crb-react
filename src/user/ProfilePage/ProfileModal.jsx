@@ -173,7 +173,11 @@ export default function ProfileModal() {
                   type="submit"
                   className="btn btn-primary"
                   data-bs-dismiss="modal"
-                  disabled={!profileModalDetails.bio.trim()}
+                  disabled={
+                    !Object.values(profileModalDetails).every((value) =>
+                      value.trim()
+                    )
+                  }
                 >
                   Save changes
                 </button>

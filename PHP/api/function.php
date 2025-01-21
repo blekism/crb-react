@@ -1100,7 +1100,7 @@ function updateComment($userInput)
     }
 }
 
-function deleteContent($userInput)
+function deleteContent($userInput, $userID)
 {
     global $con;
 
@@ -1109,18 +1109,38 @@ function deleteContent($userInput)
     if (empty(trim($post_id))) {
         return error422('Post ID is required');
     } else {
+        $query = "DELETE FROM bookmarks_tbl WHERE post_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("s", $post_id);
+        $result = $stmt->execute();
+
+        $query = "DELETE FROM comments_tbl WHERE post_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("s", $post_id);
+        $result = $stmt->execute();
+
+        $query = "DELETE FROM genre_post_tbl WHERE post_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("s", $post_id);
+        $result = $stmt->execute();
+
+        $query = "DELETE FROM reports_tbl WHERE post_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("s", $post_id);
+        $result = $stmt->execute();
+
         $query = "DELETE FROM posts_tbl WHERE post_id = ?";
         $stmt = $con->prepare($query);
         $stmt->bind_param("s", $post_id);
         $result = $stmt->execute();
-        $stmt->close();
 
-        if ($result) {
+        if ($stmt->affected_rows > 0) {
             $data = [
                 'status' => 200,
                 'message' => 'Post deleted successfully',
             ];
             header("HTTP/1.0 200 OK");
+            $stmt->close();
             return json_encode($data);
         } else {
             $data = [
@@ -1128,6 +1148,7 @@ function deleteContent($userInput)
                 'message' => 'Internal Server Error',
             ];
             header("HTTP/1.0 500 Internal Server Error");
+            $stmt->close();
             return json_encode($data);
         }
     }

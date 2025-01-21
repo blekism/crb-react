@@ -214,12 +214,12 @@ export default function UploadModal({ postID }) {
   return (
     <>
       {loading ? (
-        <div className="loadProgress" style={{ display: "none" }}>
-          {/* <ReactLoading type="bars" color="#133e87" height={100} width={100} /> */}
-          <video width="600" autoPlay controls>
+        <div className="loadProgress">
+          <ReactLoading type="bars" color="#133e87" height={100} width={100} />
+          {/* <video width="600" autoPlay controls>
             <source src={vid} type="video/mp4" />
             Your browser does not support the video element.
-          </video>
+          </video> */}
         </div>
       ) : (
         <></>
