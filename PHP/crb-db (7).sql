@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 20, 2025 at 02:46 AM
+-- Generation Time: Jan 21, 2025 at 01:36 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -98,6 +98,8 @@ INSERT INTO `comments_tbl` (`comment_id`, `post_id`, `user_id`, `content`, `crea
 ('COMMENT- 2025-166b30f', 'POST - 2024-09d619e', 'USER - 2024-08aa9ad', 'test comment', '2025-01-16 20:12:50', NULL),
 ('COMMENT- 2025-1731cc3', 'POST - 2025-1706999', 'USER - 2025-1790624', 'pwetan mo ko', '2025-01-18 01:38:43', NULL),
 ('COMMENT- 2025-1752119', 'POST - 2025-1706999', 'USER - 2025-1790624', 'putukan mo ko sa pwet', '2025-01-18 01:38:28', NULL),
+('COMMENT- 2025-2056aa0', 'POST - 2025-17ed55f', 'USER - 2024-08aa9ad', 'asasasas', '2025-01-20 18:05:15', NULL),
+('COMMENT- 2025-208ba43', 'POST - 2025-17ed55f', 'USER - 2024-08aa9ad', 'hehehe', '2025-01-20 18:04:17', NULL),
 ('test', 'POST - 2024-09d58ca', 'USER - 2024-08aa9ad', 'asdasdasdasdasdasds', '2024-12-12 12:39:28', NULL),
 ('test10', 'POST - 2024-12d6713', 'USER - 2024-08aa9ad', 'asdasdasdasd', '2024-12-12 12:39:29', NULL),
 ('test2', 'POST - 2024-12e6993', 'USER - 2024-086146e', 'asdasdasdasd', '2024-12-12 12:39:29', NULL),
@@ -181,6 +183,26 @@ INSERT INTO `genre_post_tbl` (`gp_id`, `post_id`, `tag_id`, `category_id`) VALUE
 ('GP - 2025-19b931a', 'POST - 2025-19294f6', '10', '5'),
 ('GP - 2025-19b93e1', 'POST - 2025-19294f6', '11', '5'),
 ('GP - 2025-19bcb5d', 'POST - 2025-199624d', '1', '2'),
+('GP - 2025-20052b0', 'POST - 2025-205a55f', '11', '1'),
+('GP - 2025-20070fa', 'POST - 2025-20141ca', '2', '2'),
+('GP - 2025-20191d3', 'POST - 2025-2063f5c', '10', '2'),
+('GP - 2025-201cb71', 'POST - 2025-2073fd1', '12', '3'),
+('GP - 2025-20266e4', 'POST - 2025-20861cd', '10', '2'),
+('GP - 2025-202bd73', 'POST - 2025-207c504', '11', '3'),
+('GP - 2025-202d790', 'POST - 2025-2021eab', '10', '3'),
+('GP - 2025-202fb7a', 'POST - 2025-2078092', '12', '4'),
+('GP - 2025-203ecee', 'POST - 2025-202cf16', '11', '2'),
+('GP - 2025-20598cb', 'POST - 2025-20a728e', '12', '4'),
+('GP - 2025-206b89d', 'POST - 2025-200da94', '12', '4'),
+('GP - 2025-208aa8d', 'POST - 2025-2082956', '12', '1'),
+('GP - 2025-2096c70', 'POST - 2025-20b1071', '11', '2'),
+('GP - 2025-20bec83', 'POST - 2025-2019290', '11', '2'),
+('GP - 2025-20cc0b2', 'POST - 2025-202c27a', '10', '1'),
+('GP - 2025-20e1e45', 'POST - 2025-20057e5', '2', '3'),
+('GP - 2025-2171d7a', 'POST - 2025-21b24cd', '11', '2'),
+('GP - 2025-2171ea1', 'POST - 2025-21b24cd', '2', '2'),
+('GP - 2025-2171ff3', 'POST - 2025-21b24cd', '9', '2'),
+('GP - 2025-21d2280', 'POST - 2025-21e75c7', '11', '3'),
 ('test_id1', 'POST - 2024-09d619e', '1', '2'),
 ('test_id2', 'POST - 2024-09d619e', '5', '2');
 
@@ -239,7 +261,6 @@ CREATE TABLE `posts_tbl` (
 INSERT INTO `posts_tbl` (`post_id`, `user_id`, `title`, `content`, `status`, `image`, `analysis_score`, `published_at`, `created_at`, `updated_at`) VALUES
 ('POST - 2024-09d58ca', 'USER - 2024-086146e', 'the buhay of yngwie serrano', 'we all hated yngwie serrano', 'for_review', 'https://storage.googleapis.com/crb-bucket/dababy.jpg', 'negative', NULL, '2024-12-09 18:43:24', '0000-00-00 00:00:00'),
 ('POST - 2024-09d619e', 'USER - 2024-086146e', 'birds of a feather', 'we all cared for yngwie serrano. we all cared for yngwie serrano. we all miss him so much. we wish that he comes back someday so we can all be together again!', 'posted', 'https://storage.googleapis.com/crb-bucket/db9d9808-45df-436d-94ea-9b16ddb8796c.jpg', 'positive', '2024-12-09 18:44:01', '2024-12-09 18:44:01', '2025-01-07 20:43:57'),
-('POST - 2024-10103a2', 'USER - 2024-08aa9ad', 'the paa of yngwie serrano', 'we all loved yngwie serrano', 'posted', 'https://storage.googleapis.com/crb-bucket/dababy.jpg', 'positive', '2024-12-10 17:35:06', '2024-12-10 17:35:06', '0000-00-00 00:00:00'),
 ('POST - 2024-101d6aa', 'USER - 2024-08aa9ad', 'the ass of yngwie serrano', 'we all hated yngwie serrano', 'for_review', 'https://storage.googleapis.com/crb-bucket/dababy.jpg', 'negative', NULL, '2024-12-10 18:20:36', '0000-00-00 00:00:00'),
 ('POST - 2024-1042b28', 'USER - 2024-08aa9ad', 'the betlog of yngwie serrano', 'we all loved yngwie serrano', 'posted', 'https://storage.googleapis.com/crb-bucket/dababy.jpg', 'positive', '2024-12-10 17:39:02', '2024-12-10 17:39:02', '0000-00-00 00:00:00'),
 ('POST - 2024-104d4d2', 'USER - 2024-08aa9ad', 'the pussy of yngwie serrano', 'we all loved yngwie serrano', 'posted', 'https://storage.googleapis.com/crb-bucket/dababy.jpg', 'positive', '2024-12-10 15:58:16', '2024-12-10 15:58:16', '0000-00-00 00:00:00'),
@@ -290,7 +311,25 @@ INSERT INTO `posts_tbl` (`post_id`, `user_id`, `title`, `content`, `status`, `im
 ('POST - 2025-17ee870', 'USER - 2024-08aa9ad', 'asdasd', 'witness is the best', 'posted', 'https://storage.googleapis.com/crb-bucket/witwiw.png', 'positive', '2025-01-18 00:18:38', '2025-01-18 00:18:38', NULL),
 ('POST - 2025-19294f6', 'USER - 2024-08aa9ad', 'carl testing update 1', 'i love carl very much ', 'posted', 'https://storage.googleapis.com/crb-bucket/witwiw.png', 'positive', '2025-01-19 19:55:53', '2025-01-19 19:55:53', '2025-01-19 20:09:49'),
 ('POST - 2025-1993366', 'USER - 2024-08aa9ad', 'carl testing', 'i love carl very much', 'posted', 'https://storage.googleapis.com/crb-bucket/witwiw.png', 'positive', '2025-01-19 19:55:40', '2025-01-19 19:55:40', NULL),
-('POST - 2025-199624d', 'USER - 2024-08aa9ad', 'carl', 'i love carl very much', 'posted', 'https://storage.googleapis.com/crb-bucket/witwiw.png', 'positive', '2025-01-19 19:21:12', '2025-01-19 19:21:12', NULL);
+('POST - 2025-199624d', 'USER - 2024-08aa9ad', 'carl', 'i love carl very much', 'posted', 'https://storage.googleapis.com/crb-bucket/witwiw.png', 'positive', '2025-01-19 19:21:12', '2025-01-19 19:21:12', NULL),
+('POST - 2025-20057e5', 'USER - 2024-08aa9ad', 'asdasd', 'carl is a big man', 'posted', 'https://storage.googleapis.com/crb-bucket/witwiw.png', 'neutral', '2025-01-20 17:46:48', '2025-01-20 17:46:48', NULL),
+('POST - 2025-200da94', 'USER - 2024-08aa9ad', 'asdasdas', 'carl is a good man', 'posted', 'https://storage.googleapis.com/crb-bucket/witwiw.png', 'positive', '2025-01-20 17:23:06', '2025-01-20 17:23:06', NULL),
+('POST - 2025-20141ca', 'USER - 2024-08aa9ad', 'asdasdas', 'carl is a good baby', 'posted', 'https://storage.googleapis.com/crb-bucket/witwiw.png', 'positive', '2025-01-20 17:46:15', '2025-01-20 17:46:15', NULL),
+('POST - 2025-2019290', 'USER - 2024-08aa9ad', 'asdas', 'carl is a good boy', 'posted', 'https://storage.googleapis.com/crb-bucket/witwiw.png', 'positive', '2025-01-20 17:37:08', '2025-01-20 17:37:08', NULL),
+('POST - 2025-2021eab', 'USER - 2024-08aa9ad', 'asdasd', 'carl is a good boy', 'posted', 'https://storage.googleapis.com/crb-bucket/witwiw.png', 'positive', '2025-01-20 17:36:38', '2025-01-20 17:36:38', NULL),
+('POST - 2025-202c27a', 'USER - 2024-08aa9ad', 'asdasd', 'i am a great guy', 'posted', 'https://storage.googleapis.com/crb-bucket/witwiw.png', 'positive', '2025-01-20 18:06:26', '2025-01-20 18:06:26', NULL),
+('POST - 2025-202cf16', 'USER - 2024-08aa9ad', 'asdasd', 'the birds are happily flying to the sunset', 'posted', 'https://storage.googleapis.com/crb-bucket/witwiw.png', 'positive', '2025-01-20 18:14:42', '2025-01-20 18:14:42', NULL),
+('POST - 2025-205a55f', 'USER - 2024-08aa9ad', 'asdasd', 'i love carl', 'posted', 'https://storage.googleapis.com/crb-bucket/witwiw.png', 'positive', '2025-01-20 18:28:22', '2025-01-20 18:28:22', NULL),
+('POST - 2025-2063f5c', 'USER - 2024-08aa9ad', 'asdasd', 'the birds are happily flying', 'posted', 'https://storage.googleapis.com/crb-bucket/witwiw.png', 'positive', '2025-01-20 18:16:27', '2025-01-20 18:16:27', NULL),
+('POST - 2025-2073fd1', 'USER - 2024-08aa9ad', 'asdasdaaa', 'the birds are flying happily', 'posted', 'https://storage.googleapis.com/crb-bucket/witwiw.png', 'positive', '2025-01-20 18:17:45', '2025-01-20 18:17:45', NULL),
+('POST - 2025-2078092', 'USER - 2024-08aa9ad', 'asdasdas', 'carl is a good man', 'posted', 'https://storage.googleapis.com/crb-bucket/witwiw.png', 'positive', '2025-01-20 17:29:41', '2025-01-20 17:29:41', NULL),
+('POST - 2025-207c504', 'USER - 2024-08aa9ad', 'asdas', 'carl is a good man', 'posted', 'https://storage.googleapis.com/crb-bucket/witwiw.png', 'positive', '2025-01-20 17:41:14', '2025-01-20 17:41:14', NULL),
+('POST - 2025-2082956', 'USER - 2024-08aa9ad', 'asdasd', 'carl is a good baby', 'posted', 'https://storage.googleapis.com/crb-bucket/witwiw.png', 'positive', '2025-01-20 17:45:41', '2025-01-20 17:45:41', NULL),
+('POST - 2025-20861cd', 'USER - 2024-08aa9ad', 'tite', 'i love yngwie very much', 'posted', 'https://storage.googleapis.com/crb-bucket/witwiw.png', 'positive', '2025-01-20 16:20:51', '2025-01-20 16:20:51', NULL),
+('POST - 2025-20a728e', 'USER - 2024-08aa9ad', 'asdasdas', 'carl is a good man', 'posted', 'https://storage.googleapis.com/crb-bucket/witwiw.png', 'positive', '2025-01-20 17:30:33', '2025-01-20 17:30:33', NULL),
+('POST - 2025-20b1071', 'USER - 2024-08aa9ad', 'tite', 'i hate yngwie very much', 'rejected', '', 'negative', NULL, '2025-01-20 16:19:43', NULL),
+('POST - 2025-21b24cd', 'USER - 2024-08aa9ad', 'yngwie lover 2.0', 'we hate yngwie serrano very much', 'for_review', 'https://storage.googleapis.com/crb-bucket/witwiw.png', 'negative', '2025-01-21 19:45:29', '2025-01-21 19:45:29', '2025-01-21 20:28:11'),
+('POST - 2025-21e75c7', 'USER - 2024-08aa9ad', 'yngwie lover', 'we hate yngwie serrano', 'for_review', 'https://storage.googleapis.com/crb-bucket/witwiw.png', 'negative', NULL, '2025-01-21 19:41:56', '2025-01-21 19:54:41');
 
 -- --------------------------------------------------------
 
@@ -326,37 +365,9 @@ CREATE TABLE `reports_tbl` (
 --
 
 INSERT INTO `reports_tbl` (`report_id`, `post_id`, `user_id`, `reason`, `status`, `created_at`, `updated_at`) VALUES
-('testReport1', 'POST - 2025-1993366', 'USER - 2024-08aa9ad', 'panget si carl', 'reported', '2025-01-20 02:38:54', NULL),
+('REPORT- 2025-20e5937', 'POST - 2025-17ed55f', 'USER - 2024-08aa9ad', 'rererere', 'reported', '2025-01-20 18:05:20', NULL),
+('testReport1', 'POST - 2025-1993366', 'USER - 2024-08aa9ad', 'panget si carl', 'closed', '2025-01-20 02:38:54', '2025-01-20 15:09:02'),
 ('testReport2', 'POST - 2025-1755081', 'USER - 2024-08aa9ad', 'panget si yngwie', 'reported', '2025-01-20 02:38:54', NULL);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `review_tbl`
---
-
-CREATE TABLE `review_tbl` (
-  `review_id` varchar(255) NOT NULL,
-  `post_id` varchar(255) NOT NULL,
-  `analysis_score` varchar(255) NOT NULL,
-  `status` enum('for_review','rejected','posted','reviewing') NOT NULL,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `review_tbl`
---
-
-INSERT INTO `review_tbl` (`review_id`, `post_id`, `analysis_score`, `status`, `created_at`, `updated_at`) VALUES
-('REJECT - 2024-09aca35', 'POST - 2024-09d58ca', 'negative', 'rejected', '2024-12-09 18:43:24', NULL),
-('REJECT - 2024-10aca63', 'POST - 2024-101d6aa', 'negative', 'rejected', '2024-12-10 18:20:36', NULL),
-('REJECT - 2024-121db98', 'POST - 2024-12a43ce', 'negative', 'rejected', '2024-12-12 23:55:45', NULL),
-('REJECT - 2024-123609a', 'POST - 2024-12c04f2', 'negative', 'rejected', '2024-12-12 14:57:23', NULL),
-('REJECT - 2024-12954fa', 'POST - 2024-12e6993', 'negative', 'rejected', '2024-12-12 14:53:24', NULL),
-('REJECT - 2025-040da4a', 'POST - 2025-04edff4', 'negative', 'rejected', '2025-01-04 17:47:26', NULL),
-('REJECT - 2025-121475b', 'POST - 2025-12195c4', 'negative', 'rejected', '2025-01-13 00:57:30', NULL),
-('REJECT - 2025-1220128', 'POST - 2025-1289677', 'negative', 'rejected', '2025-01-13 00:57:46', NULL);
 
 -- --------------------------------------------------------
 
@@ -385,9 +396,9 @@ CREATE TABLE `user_tbl` (
 --
 
 INSERT INTO `user_tbl` (`user_id`, `username`, `first_name`, `last_name`, `email`, `password`, `role`, `bio`, `verification_code`, `verified_at`, `verification_expiry`, `created_at`, `updated_at`) VALUES
-('USER - 2024-086146e', 'akosiblek', 'blake', 'laviano', 'reframing_ml@yahoo.com', '202cb962ac59075b964b07152d234b70', 'user', '', 142109, '2024-12-08 15:41:07', 1733660647, '2024-12-08 20:14:07', NULL),
-('USER - 2024-08aa9ad', 'akosiblek', 'blake', 'laviano', 'cristianpogi.laviano@gmail.com', '202cb962ac59075b964b07152d234b70', 'user', '', NULL, '2024-12-08 15:41:07', NULL, '2024-12-08 15:02:55', NULL),
-('USER - 2025-1790624', 'pogi', 'bleky', 'ako', 'cristianlaviano@gmail.com1', '202cb962ac59075b964b07152d234b70', 'user', 'ako ay isang bakal', NULL, '2025-01-17 21:21:02', NULL, '2025-01-17 20:51:52', '2025-01-17 21:24:53'),
+('USER - 2024-086146e', 'akosiblek', 'blake', 'laviano', 'reframing_ml@yahoo.com', '202cb962ac59075b964b07152d234b70', 'admin', '', 142109, '2024-12-08 15:41:07', 1733660647, '2024-12-08 20:14:07', NULL),
+('USER - 2024-08aa9ad', 'akosiblek', 'blake', 'laviano', 'cristianpogi.laviano@gmail.com', '202cb962ac59075b964b07152d234b70', 'user', 'ako ay isang bakal', NULL, '2024-12-08 15:41:07', NULL, '2024-12-08 15:02:55', '2025-01-20 18:09:08'),
+('USER - 2025-1790624', 'pogi', 'bleky', 'ako', 'cristianlaviano@gmail.com1', '202cb962ac59075b964b07152d234b70', 'admin', 'ako ay isang bakal', NULL, '2025-01-17 21:21:02', NULL, '2025-01-17 20:51:52', '2025-01-17 21:24:53'),
 ('USER - 2025-18ce3fd', 'cristianlaviano@gmail.com', 'blake', 'asdad', 'cristianlaviano@gmail.com', '202cb962ac59075b964b07152d234b70', 'user', '', NULL, '2025-01-18 20:59:06', NULL, '2025-01-18 20:51:21', NULL);
 
 --
@@ -455,13 +466,6 @@ ALTER TABLE `reports_tbl`
   ADD KEY `user_id` (`user_id`);
 
 --
--- Indexes for table `review_tbl`
---
-ALTER TABLE `review_tbl`
-  ADD PRIMARY KEY (`review_id`),
-  ADD KEY `post_id` (`post_id`);
-
---
 -- Indexes for table `user_tbl`
 --
 ALTER TABLE `user_tbl`
@@ -513,12 +517,6 @@ ALTER TABLE `post_views_tbl`
 ALTER TABLE `reports_tbl`
   ADD CONSTRAINT `reports_tbl_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `posts_tbl` (`post_id`),
   ADD CONSTRAINT `reports_tbl_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user_tbl` (`user_id`);
-
---
--- Constraints for table `review_tbl`
---
-ALTER TABLE `review_tbl`
-  ADD CONSTRAINT `review_tbl_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `posts_tbl` (`post_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
