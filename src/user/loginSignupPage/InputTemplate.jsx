@@ -8,6 +8,7 @@ export default function InputTemplate({
   onChange,
   value,
   name,
+  readOnly = false,
 }) {
   return (
     <div className="input-group mb-3">
@@ -20,6 +21,7 @@ export default function InputTemplate({
         onChange={onChange}
         value={value}
         name={name}
+        readOnly={readOnly}
         required
         style={{
           backgroundColor: "rgba(19, 62, 135, 0.21)",

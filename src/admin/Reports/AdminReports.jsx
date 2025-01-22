@@ -54,12 +54,18 @@ export default function AdminReports() {
         "http://localhost/crb-react/PHP/api/delete/delete_reportAdmin.php",
         {
           report_id: id,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
       )
       .then((response) => {
         if (response.data.status === 200) {
-          console.log(response.data.data);
-          setReports(response.data.data);
+          console.log(response.data);
+        } else {
+          console.log(response.data);
         }
       })
       .catch((error) => {
