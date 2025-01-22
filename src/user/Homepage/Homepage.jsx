@@ -7,11 +7,13 @@ import HomepageItem from "./HomepageItemTemplte.jsx";
 import OffcanvasHome from "./Offcanvas.jsx";
 import UploadModal from "./UploadModal.jsx";
 import axios from "axios";
+import { useCookies } from "react-cookie";
 
 export default function Homepage() {
   const [selectedItem, setSelectedItem] = useState(1);
   const [items, setItems] = useState([]);
-  const [bookmarkedItems, setBookmarkedItems] = useState([]);
+  const [viewedItems, setViewedItems] = useState([]);
+  const [cookies] = useCookies(["logged_user"]);
 
   useEffect(() => {
     axios
@@ -20,6 +22,25 @@ export default function Homepage() {
         if (response.data.status === 200) {
           console.log(response.data.data);
           setItems(response.data.data);
+          console.log("items retrieved");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    axios
+      .get("http://localhost/crb-react/PHP/api/read/getViewed.php", {
+        headers: {
+          Authorization: `Bearer ${cookies.logged_user}`,
+        },
+        withCredentials: true,
+      })
+      .then((response) => {
+        if (response.data.status === 200) {
+          console.log(response.data.data);
+          console.log("viewed items retrieved");
+          setViewedItems(response.data.data);
         }
       })
       .catch((error) => {
@@ -27,7 +48,7 @@ export default function Homepage() {
       });
   }, []);
 
-  console.log("items are", bookmarkedItems);
+  // console.log("items are", bookmarkedItems);
 
   const groupItems = (items, groupSize) => {
     const groups = [];
@@ -38,6 +59,7 @@ export default function Homepage() {
     return groups;
   };
   const groupedItems = groupItems(items, 6);
+  const itemsViewed = groupItems(viewedItems, 6);
 
   const handleItemClick = (item) => {
     setSelectedItem(item);
@@ -45,7 +67,7 @@ export default function Homepage() {
 
   return (
     <>
-      <Navbar searchItem={setItems} />
+      <Navbar searchItem={setItems} isHome={true} />
 
       <OffcanvasHome item={selectedItem} />
       <UploadModal />
@@ -69,27 +91,31 @@ export default function Homepage() {
           </button>
         </div>
         <div className="for-you-content">
-          <Carousel
-            showArrows={true}
-            infiniteLoop={true}
-            showThumbs={false}
-            showIndicators={false}
-            showStatus={false}
-          >
-            {groupedItems.map((group, index) => (
-              <div key={index} className="custom-slider">
-                {group.map((item, idx) => (
-                  <HomepageItem
-                    key={idx}
-                    image={item.image}
-                    title={item.title}
-                    author={item.username}
-                    onClick={() => handleItemClick(item)}
-                  />
-                ))}
-              </div>
-            ))}
-          </Carousel>
+          {items.length > 0 ? (
+            <Carousel
+              showArrows={true}
+              infiniteLoop={true}
+              showThumbs={false}
+              showIndicators={false}
+              showStatus={false}
+            >
+              {groupedItems.map((group, index) => (
+                <div key={index} className="custom-slider">
+                  {group.map((item, idx) => (
+                    <HomepageItem
+                      key={idx}
+                      image={item.image}
+                      title={item.title}
+                      author={item.username}
+                      onClick={() => handleItemClick(item)}
+                    />
+                  ))}
+                </div>
+              ))}
+            </Carousel>
+          ) : (
+            <p>No results found.</p>
+          )}
         </div>
 
         <div className="homepage-header">
@@ -103,14 +129,14 @@ export default function Homepage() {
             showIndicators={false}
             showStatus={false}
           >
-            {groupedItems.map((group, index) => (
+            {itemsViewed.map((group, index) => (
               <div key={index} className="custom-slider">
                 {group.map((item, idx) => (
                   <HomepageItem
                     image={item.image}
                     key={idx}
                     title={item.title}
-                    author={item.author}
+                    author={item.username}
                     onClick={() => handleItemClick(item)}
                   />
                 ))}

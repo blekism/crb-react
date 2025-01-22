@@ -233,7 +233,7 @@ export default function ProfilePage() {
   return (
     <>
       <div className="ProfilePageParent">
-        <Navbar />
+        <Navbar isHome={true} />
 
         <div className="ProfilePageTopCont">
           <div className="ProfilePageTopCont-left">

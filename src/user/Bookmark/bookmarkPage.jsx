@@ -56,7 +56,12 @@ export default function BookmarkPage() {
 
   return (
     <>
-      <Navbar searchItem={setItems} User={"bookmark"} />
+      <Navbar
+        searchItem={setItems}
+        User={"bookmark"}
+        isHome={false}
+        initialData={items}
+      />
 
       <OffcanvasBookmark item={selectedItem} />
       <div className="Titlecontent">

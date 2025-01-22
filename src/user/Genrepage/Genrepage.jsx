@@ -9,6 +9,7 @@ import axios from "axios";
 export default function Genre() {
   const [selectedItem, setSelectedItem] = useState(1);
   const [items, setItems] = useState([]);
+  const [backlog, setBacklog] = useState([]);
 
   useEffect(() => {
     axios
@@ -17,6 +18,7 @@ export default function Genre() {
         if (response.data.status === 200) {
           console.log(response.data.data);
           setItems(response.data.data);
+          setBacklog(response.data.data);
         }
       })
       .catch((error) => {
@@ -40,7 +42,7 @@ export default function Genre() {
 
   return (
     <>
-      <Navbar searchItem={setItems} />
+      <Navbar searchItem={setItems} isHome={false} initialData={backlog} />
       <OffcanvasGenre item={selectedItem} />
 
       <div className="genreTitle">

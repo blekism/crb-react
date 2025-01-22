@@ -2691,3 +2691,87 @@ function searchBar($userInput)
         }
     }
 }
+
+function viewedPost($userInput, $user_id)
+{
+    global $con;
+    $view_id = 'VIEW - ' . date('Y-d') . substr(uniqid(), -5);
+    $post_id = $userInput['post_id'];
+
+
+    $query = "SELECT view_id FROM post_views_tbl WHERE user_id = ? AND post_id = ?";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('ss', $user_id, $post_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows == 1) {
+        $data = [
+            'status' => 201,
+            'message' => 'Post already viewed',
+        ];
+        header("HTTP/1.0 201 OK");
+        return json_encode($data);
+    } else {
+        $query = "INSERT INTO post_views_tbl (view_id, post_id, user_id, viewed_at) VALUES (?, ?, ?, NOW())";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param('sss', $view_id, $post_id, $user_id);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        if ($result) {
+            $data = [
+                'status' => 200,
+                'message' => 'Post viewed successfully',
+            ];
+            header("HTTP/1.0 200 OK");
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 500,
+                'message' => 'Internal Server Error',
+            ];
+            header("HTTP/1.0 500 Internal Server Error");
+            return json_encode($data);
+        }
+    }
+}
+
+function getViewed($user_id)
+{
+    global $con;
+    $query = "SELECT 
+            user_tbl.username, 
+            posts_tbl.* 
+                FROM 
+            post_views_tbl 
+                INNER JOIN posts_tbl ON post_views_tbl.post_id = posts_tbl.post_id
+                INNER JOIN user_tbl ON posts_tbl.user_id = user_tbl.user_id
+                WHERE 
+            post_views_tbl.user_id = ? AND
+            posts_tbl.published_at IS NOT NULL AND 
+            posts_tbl.status = 'posted'";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Post viewed successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Post found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
