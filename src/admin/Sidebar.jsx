@@ -14,7 +14,6 @@ import Posts from "../assets/images/post.png";
 
 export default function Sidebar() {
   const [activeLink, setActiveLink] = useState("");
-  const location = useLocation();
 
   useEffect(() => {
     const path = location.pathname;

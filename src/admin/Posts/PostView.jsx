@@ -4,36 +4,173 @@ import back from "../../assets/images/back.png";
 import InputTemplate from "../../user/loginSignupPage/InputTemplate";
 import CommentsTemplate from "./CommentsTemplate";
 import HomepageDropdown from "../../user/Homepage/HomepageDropdown";
+import { useLocation } from "react-router-dom";
+import axios from "axios";
+import { useState, useEffect } from "react";
+import ReactLoading from "react-loading";
+import { useNavigate } from "react-router-dom";
 
 export default function PostView() {
+  const [loading, setLoading] = useState(false);
+  const location = useLocation();
+  const { post_id } = location.state || {};
+  console.log(post_id, "post id is: ");
+  const [postDeets, setPostDeets] = useState({});
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log("useEffect called");
+    axios
+      .post(
+        "http://localhost/crb-react/PHP/api/read/readSinglePost.php",
+        {
+          post_id: post_id,
+        },
+        {
+          headers: "Content-Type: application/json",
+        }
+      )
+      .then((response) => {
+        if (response.data.status === 200) {
+          console.log(response.data);
+          setPostDeets(response.data.data);
+        } else {
+          console.log("error");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  const handleInputChange = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+
+    setPostDeets((values) => ({ ...values, [name]: value }));
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setLoading(true);
+    axios
+      .put(
+        "http://localhost/crb-react/PHP/api/update/updatePost.php",
+        postDeets,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response.data);
+        alert("Post updated successfully!");
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log("There was an error submitting the form!", error);
+        alert("There was an error updating post details!");
+        setLoading(false);
+      });
+  };
+
+  const handleNavigate = () => {
+    navigate("/Posts");
+  };
+
   return (
     <>
       <div className="PostView-Parent">
         <div className="PostView-Header">
-          <img src={back} alt="Post" />
+          <img
+            src={back}
+            alt="Post"
+            onClick={handleNavigate}
+            style={{ cursor: "pointer" }}
+          />
           <h4
-            style={{ marginTop: "5px", paddingLeft: "10px", fontWeight: "400" }}
+            style={{
+              marginTop: "5px",
+              paddingLeft: "10px",
+              fontWeight: "400",
+            }}
           >
             Go Back
           </h4>
         </div>
-
-        <div className="PostView-Child">
-          <div className="PostView-Child-Left">
-            <div className="PostView-Child-Left-Top">
-              <div className="PostView-Child-Left-Top-Left">
-                <div className="Top">
-                  <div className="UserIdCont">
-                    <p>USER_ID:</p>
+        {loading ? (
+          <div className="loadProgress">
+            <ReactLoading
+              type="bars"
+              color="#133e87"
+              height={100}
+              width={100}
+            />
+          </div>
+        ) : (
+          <></>
+        )}
+        <form onSubmit={handleSubmit}>
+          <div className="PostView-Child">
+            <div className="PostView-Child-Left">
+              <div className="PostView-Child-Left-Top">
+                <div className="PostView-Child-Left-Top-Left">
+                  <div className="Top">
+                    <div className="UserIdCont">
+                      <p>USER_ID:</p>
+                      <input
+                        className="form-control"
+                        placeholder="USER ID"
+                        aria-label="Username"
+                        aria-describedby="basic-addon1"
+                        onChange={handleInputChange}
+                        value={postDeets.user_id}
+                        required
+                        name="user_id"
+                        style={{
+                          backgroundColor: "rgba(19, 62, 135, 0.21)",
+                          border: "none",
+                          height: "40px",
+                          width: "100%",
+                        }}
+                      />
+                    </div>
+                    <div className="PostStatusCont">
+                      <p>Status:</p>
+                      <select
+                        className="form-select mb-3"
+                        aria-label="Default select example"
+                        name="status"
+                        value={postDeets.status}
+                        onChange={handleInputChange}
+                        required
+                        style={{
+                          width: "fit-content",
+                          backgroundColor: "rgba(19, 62, 135, 0.81)",
+                          color: "white",
+                          border: "none",
+                          height: "40px",
+                        }}
+                      >
+                        <option value="for_review">FOR REVIEW</option>
+                        <option value="reviewing">REVIEWING</option>
+                        <option value="posted">POSTED</option>
+                        <option value="rejected">REJECTED</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="TitleCont">
+                    <p>Title:</p>
                     <input
                       className="form-control"
-                      placeholder="USER ID"
-                      aria-label="Username"
+                      placeholder="Title"
+                      aria-label="title"
                       aria-describedby="basic-addon1"
-                      //   onChange={onChange}
-                      //   value={value}
-                      //   name={name}
-                      readOnly
+                      name="title"
+                      required
+                      value={postDeets.title}
+                      onChange={handleInputChange}
                       style={{
                         backgroundColor: "rgba(19, 62, 135, 0.21)",
                         border: "none",
@@ -42,76 +179,36 @@ export default function PostView() {
                       }}
                     />
                   </div>
-                  <div className="PostStatusCont">
-                    <p>Status:</p>
-                    <select
-                      className="form-select mb-3"
-                      aria-label="Default select example"
-                      name="event_status"
-                      // value={eventItem.event_status}
-                      // onChange={handleChange}
-                      style={{
-                        width: "fit-content",
-                        backgroundColor: "rgba(19, 62, 135, 0.81)",
-                        color: "white",
-                        border: "none",
-                        height: "40px",
-                      }}
-                    >
-                      <option value="upcoming">FOR REVIEW</option>
-                      <option value="ongoing">REVIEWING</option>
-                      <option value="finished">APPROVED</option>
-                      <option value="closed">REJECTED</option>
-                    </select>
+                </div>
+                <div className="PostView-Child-Left-Top-Right">
+                  <p>Analysis Score: </p>
+                  <div className="ScoreResult">
+                    <p>{postDeets.analysis_score}</p>
                   </div>
                 </div>
-                <div className="TitleCont">
-                  <p>Title:</p>
-                  <input
-                    className="form-control"
-                    placeholder="Title"
-                    aria-label="Username"
-                    aria-describedby="basic-addon1"
-                    //   onChange={onChange}
-                    //   value={value}
-                    //   name={name}
-                    readOnly
-                    style={{
-                      backgroundColor: "rgba(19, 62, 135, 0.21)",
-                      border: "none",
-                      height: "40px",
-                      width: "100%",
-                    }}
-                  />
-                </div>
               </div>
-              <div className="PostView-Child-Left-Top-Right">
-                <p>Analysis Score: </p>
-                <div className="ScoreResult">
-                  <p>Negative</p>
-                </div>
-              </div>
-            </div>
-            <div className="PostView-Child-Left-Bottom">
-              <div className="PostView-Child-Left-Bottom-Top">
-                <div className="PostView-Child-Left-Bottom-Top-Left">
-                  <h3>Content</h3>
-                  <textarea
-                    className="form-control"
-                    id="exampleFormControlTextarea1"
-                    rows="3"
-                    placeholder="Content"
-                    style={{
-                      height: "40vh",
-                      maxHeight: "40vh",
-                      fontSize: "16px",
-                      backgroundColor: "rgba(19, 62, 135, 0.21)",
-                    }}
-                    //   value={postContents.content || ""}
-                    //   onChange={onChange}
-                  ></textarea>
-                </div>
-                {/* <div className="upload-options">
+              <div className="PostView-Child-Left-Bottom">
+                <div className="PostView-Child-Left-Bottom-Top">
+                  <div className="PostView-Child-Left-Bottom-Top-Left">
+                    <h3>Content</h3>
+                    <textarea
+                      className="form-control"
+                      id="exampleFormControlTextarea1"
+                      rows="3"
+                      placeholder="Content"
+                      name="content"
+                      style={{
+                        height: "40vh",
+                        maxHeight: "40vh",
+                        fontSize: "16px",
+                        backgroundColor: "rgba(19, 62, 135, 0.21)",
+                      }}
+                      value={postDeets.content || ""}
+                      onChange={handleInputChange}
+                      required
+                    ></textarea>
+                  </div>
+                  {/* <div className="upload-options">
                   <div className="upper-options">
                     <HomepageDropdown
                       type="Post Type"
@@ -169,84 +266,88 @@ export default function PostView() {
                     </button>
                   </div>
                 </div> */}
-              </div>
-              <div className="PostView-Child-Left-Bottom-Cont">
-                <div className="Date">
-                  <div className="date1">
-                    <p>Published Date:</p>
-                    <InputTemplate
-                      placeholder="Published Date"
-                      name="analysis_score"
-                      // value={profileModalDetails.first_name}
-                      // onChange={handleInputChange}
-                      readOnly
-                    />
+                </div>
+                <div className="PostView-Child-Left-Bottom-Cont">
+                  <div className="Date">
+                    <div className="date1">
+                      <p>Published Date:</p>
+                      <InputTemplate
+                        placeholder="Published Date"
+                        name="published_at"
+                        value={postDeets.published_at}
+                        onChange={handleInputChange}
+                        readOnly
+                      />
+                    </div>
+                    <div className="date2">
+                      <p>Created Date:</p>
+                      <InputTemplate
+                        placeholder="Created Date"
+                        name="created_at"
+                        value={postDeets.created_at}
+                        onChange={handleInputChange}
+                        readOnly
+                      />
+                    </div>
                   </div>
-                  <div className="date2">
-                    <p>Created Date:</p>
-                    <InputTemplate
-                      placeholder="Published Date"
-                      name="published_at"
-                      //   value={profileModalDetails.username}
-                      //   onChange={handleInputChange}
-                      readOnly
-                    />
+                  <div className="SaveButton">
+                    <button type="submit" className="btn btn-primary">
+                      Save Changes
+                    </button>
                   </div>
                 </div>
-                <div className="SaveButton">
-                  <button className="btn btn-primary">Save Changes</button>
+              </div>
+            </div>
+
+            <div className="PostView-Child-Right">
+              <div className="PostView-Child-Right-Content">
+                <p style={{ fontSize: "30px", fontWeight: "550" }}>Comments</p>
+                <div className="PostView-Child-Right-Comments">
+                  <CommentsTemplate
+                    title="user1"
+                    datePosted="01-17-2024"
+                    commentContent="this article is very helpful"
+                  />
+                  <CommentsTemplate
+                    title="user1"
+                    datePosted="01-17-2024"
+                    commentContent="this article is very helpful"
+                  />
+                  <CommentsTemplate
+                    title="user1"
+                    datePosted="01-17-2024"
+                    commentContent="this article is very helpful"
+                  />
+                  <CommentsTemplate
+                    title="user1"
+                    datePosted="01-17-2024"
+                    commentContent="this article is very helpful"
+                  />
+                  <CommentsTemplate
+                    title="user1"
+                    datePosted="01-17-2024"
+                    commentContent="this article is very helpful"
+                  />
+                  <CommentsTemplate
+                    title="user1"
+                    datePosted="01-17-2024"
+                    commentContent="this article is very helpful"
+                  />
+                  <CommentsTemplate
+                    title="user1"
+                    datePosted="01-17-2024"
+                    commentContent="this article is very helpful"
+                  />
+                  <CommentsTemplate
+                    title="user1"
+                    datePosted="01-17-2024"
+                    commentContent="this article is very helpful"
+                  />
                 </div>
               </div>
             </div>
           </div>
-          <div className="PostView-Child-Right">
-            <div className="PostView-Child-Right-Content">
-              <p style={{ fontSize: "30px", fontWeight: "550" }}>Comments</p>
-              <div className="PostView-Child-Right-Comments">
-                <CommentsTemplate
-                  title="user1"
-                  datePosted="01-17-2024"
-                  commentContent="this article is very helpful"
-                />
-                <CommentsTemplate
-                  title="user1"
-                  datePosted="01-17-2024"
-                  commentContent="this article is very helpful"
-                />
-                <CommentsTemplate
-                  title="user1"
-                  datePosted="01-17-2024"
-                  commentContent="this article is very helpful"
-                />
-                <CommentsTemplate
-                  title="user1"
-                  datePosted="01-17-2024"
-                  commentContent="this article is very helpful"
-                />
-                <CommentsTemplate
-                  title="user1"
-                  datePosted="01-17-2024"
-                  commentContent="this article is very helpful"
-                />
-                <CommentsTemplate
-                  title="user1"
-                  datePosted="01-17-2024"
-                  commentContent="this article is very helpful"
-                />
-                <CommentsTemplate
-                  title="user1"
-                  datePosted="01-17-2024"
-                  commentContent="this article is very helpful"
-                />
-                <CommentsTemplate
-                  title="user1"
-                  datePosted="01-17-2024"
-                  commentContent="this article is very helpful"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+        </form>
       </div>
     </>
   );

@@ -4,12 +4,19 @@ import axios from "axios";
 import Sidebar from "../Sidebar";
 import InputTemplate from "../../user/loginSignupPage/InputTemplate";
 import Delete from "../../assets/images/delRed.svg";
+import { useNavigate } from "react-router-dom";
 
 export default function Posts() {
   const [posts, setPosts] = useState([]);
+  const navigate = useNavigate();
+  const [postType, setPostType] = useState("posted");
+
+  const handleNavigate = (id) => {
+    navigate("/PostView", { state: { post_id: id } });
+  };
 
   useEffect(() => {
-    axios
+    axios //gawing post para makapag pasa ka ng kung anong page yung pinapasa
       .get("http://localhost/crb-react/PHP/api/read/readPosts.php")
       .then((response) => {
         if (response.data.status === 200) {
@@ -20,7 +27,11 @@ export default function Posts() {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [postType]);
+
+  const handleTypeChange = (event) => {
+    setPostType(event.target.value);
+  };
   return (
     <>
       <div className="Posts-Parent">
@@ -38,7 +49,7 @@ export default function Posts() {
                 aria-label="Default select example"
                 name="event_status"
                 // value={eventItem.event_status}
-                // onChange={handleChange}
+                onChange={handleTypeChange}
                 style={{
                   width: "fit-content",
                   height: "40px",
@@ -49,7 +60,7 @@ export default function Posts() {
               >
                 <option value="upcoming">FOR REVIEW</option>
                 <option value="ongoing">REVIEWING</option>
-                <option value="finished">APPROVED</option>
+                <option value="posted">POSTED</option>
                 <option value="closed">REJECTED</option>
               </select>
             </div>
@@ -78,11 +89,7 @@ export default function Posts() {
                           <button
                             type="button"
                             className="btn"
-                            data-bs-toggle="modal"
-                            // data-bs-target="#viewItemsModalToggle"
-                            //   onClick={() =>
-                            //     handleButtonClick(donation.donation_id)
-                            //   }
+                            onClick={() => handleNavigate(post.post_id)}
                             style={{
                               backgroundColor: "#354290",
                               color: "#ffffff",

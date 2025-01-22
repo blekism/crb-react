@@ -135,7 +135,12 @@ export default function AdminDashboard({
               {/* line and bar charts end */}
             </div>
             <div className="AdminDashboard-MainContent-Right">
-              <PieChart />
+              <div className="AdminDashboard-MainContent-Right-Pie">
+                <PieChart />
+              </div>
+              <div className="AdminDashboard-MainContent-Right-Recent">
+                <p>Top 5 Recent Posts</p>
+              </div>
             </div>
           </div>
         </div>

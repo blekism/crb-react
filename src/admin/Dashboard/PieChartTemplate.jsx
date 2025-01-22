@@ -70,7 +70,7 @@ export default function BarChartTemplate({
           style={{
             backgroundColor: "rgba(101, 138, 189, 0.5)",
             width: "100%",
-            height: "45vh",
+            height: "fit-content",
             borderRadius: "0 5px 5px 5px",
             color: "black",
             fontWeight: "600",

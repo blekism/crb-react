@@ -1,0 +1,24 @@
+{
+  "users": [
+    {
+      "post_id": 1,
+      "name": "John Doe"
+    },
+    {
+      "post_id": 2,
+      "name": "Jane Doe"
+    },
+    {
+      "id": 3,
+      "name": "Juan Dela Cruz"
+    },
+    {
+      "id": 4,
+      "name": "Pedro Penduko"
+    },
+    {
+      "id": 5,
+      "name": "Maria Clara"
+    }
+  ]
+}

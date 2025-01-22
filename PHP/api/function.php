@@ -2257,7 +2257,8 @@ function readSinglePost($user_input)
         category_id.category_id AS category,
         posts_tbl.status,
         posts_tbl.published_at,
-        posts_tbl.created_at
+        posts_tbl.created_at,
+        posts_tbl.analysis_score
     FROM 
         genre_post_tbl
     INNER JOIN posts_tbl ON genre_post_tbl.post_id = posts_tbl.post_id
@@ -2851,6 +2852,56 @@ function searchBar($userInput)
                 'message' => 'Invalid output'
             ];
             header("HTTP/1.0 201 no output");
+            return json_encode($data);
+        }
+    }
+}
+
+function updatePost($userInput)
+{
+    global $con;
+
+    $post_id = $userInput['post_id'];
+    $title = $userInput['title'];
+    $content = $userInput['content'];
+    $status = $userInput['status'];
+
+
+    if (empty(trim($title))) {
+        return error422('Title is required');
+    } else if (empty(trim($content))) {
+        return error422('Content is required');
+    } else if (empty(trim($status))) {
+        return error422('Status is required');
+    } else {
+        $query = "UPDATE posts_tbl SET title = ?, content = ?, status = ?,  updated_at = NOW() WHERE post_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("ssss", $title, $content, $status, $post_id);
+        $stmt->execute();
+
+        if ($stmt->affected_rows > 0) {
+            $data = [
+                'status' => 200,
+                'message' => 'Post updated successfully',
+            ];
+            header("HTTP/1.0 200 OK");
+            $stmt->close();
+            return json_encode($data);
+        } else if ($stmt->affected_rows == 0) {
+            $data = [
+                'status' => 404,
+                'message' => 'no post found',
+            ];
+            header("HTTP/1.0 404 no such post found");
+            $stmt->close();
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 500,
+                'message' => 'Internal Server Error',
+            ];
+            header("HTTP/1.0 500 Internal Server Error");
+            $stmt->close();
             return json_encode($data);
         }
     }
