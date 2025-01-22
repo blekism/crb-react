@@ -16,6 +16,7 @@ export default function PostView() {
   const { post_id } = location.state || {};
   console.log(post_id, "post id is: ");
   const [postDeets, setPostDeets] = useState({});
+  const [comments, setComments] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -78,6 +79,31 @@ export default function PostView() {
   const handleNavigate = () => {
     navigate("/Posts");
   };
+
+  useEffect(() => {
+    console.log("useEffect called");
+    axios
+      .post(
+        "http://localhost/crb-react/PHP/api/read/readCommentTbl.php",
+        {
+          post_id: post_id,
+        },
+        {
+          headers: "Content-Type: application/json",
+        }
+      )
+      .then((response) => {
+        if (response.data.status === 200) {
+          console.log(response.data);
+          setComments(response.data.data);
+        } else {
+          console.log("error");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   return (
     <>
@@ -303,46 +329,28 @@ export default function PostView() {
               <div className="PostView-Child-Right-Content">
                 <p style={{ fontSize: "30px", fontWeight: "550" }}>Comments</p>
                 <div className="PostView-Child-Right-Comments">
-                  <CommentsTemplate
-                    title="user1"
-                    datePosted="01-17-2024"
-                    commentContent="this article is very helpful"
-                  />
-                  <CommentsTemplate
-                    title="user1"
-                    datePosted="01-17-2024"
-                    commentContent="this article is very helpful"
-                  />
-                  <CommentsTemplate
-                    title="user1"
-                    datePosted="01-17-2024"
-                    commentContent="this article is very helpful"
-                  />
-                  <CommentsTemplate
-                    title="user1"
-                    datePosted="01-17-2024"
-                    commentContent="this article is very helpful"
-                  />
-                  <CommentsTemplate
-                    title="user1"
-                    datePosted="01-17-2024"
-                    commentContent="this article is very helpful"
-                  />
-                  <CommentsTemplate
-                    title="user1"
-                    datePosted="01-17-2024"
-                    commentContent="this article is very helpful"
-                  />
-                  <CommentsTemplate
-                    title="user1"
-                    datePosted="01-17-2024"
-                    commentContent="this article is very helpful"
-                  />
-                  <CommentsTemplate
-                    title="user1"
-                    datePosted="01-17-2024"
-                    commentContent="this article is very helpful"
-                  />
+                  {comments.length > 0 ? (
+                    comments.map((comment, key) => (
+                      <CommentsTemplate
+                        key={key}
+                        title={comment.comment_id}
+                        datePosted={comment.created_at}
+                        commentContent={comment.content}
+                      />
+                    ))
+                  ) : (
+                    <p
+                      style={{
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "20px",
+                        fontWeight: "550",
+                        color: "grey",
+                      }}
+                    >
+                      No comments available.
+                    </p>
+                  )}
                 </div>
               </div>
             </div>

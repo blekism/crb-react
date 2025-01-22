@@ -9,6 +9,7 @@ import ReactLoading from "react-loading";
 export default function AdminReports() {
   const [loading, setLoading] = useState(false);
   const [reports, setReports] = useState([]);
+  const [reportType, setReportType] = useState("reported");
   const [singleReadReport, setSingleReadReport] = useState({
     report_id: "",
     post_id: "",
@@ -18,17 +19,26 @@ export default function AdminReports() {
 
   useEffect(() => {
     axios
-      .get("http://localhost/crb-react/PHP/api/read/readReports.php")
+      .post("http://localhost/crb-react/PHP/api/read/readReports.php", {
+        status: reportType,
+      })
       .then((response) => {
-        if (response.data.status === 200) {
+        if (response.data.status === 200 && response.data.data.length > 0) {
           console.log(response.data.data);
           setReports(response.data.data);
+        } else {
+          setPosts([]);
         }
       })
       .catch((error) => {
         console.log(error);
+        setPosts([]);
       });
-  }, []);
+  }, [reportType]);
+
+  const handleTypeChange = (event) => {
+    setReportType(event.target.value);
+  };
 
   const handleButtonClick = async (id) => {
     console.log("Item clicked: ", id);
@@ -95,9 +105,8 @@ export default function AdminReports() {
               <select
                 className="form-select mb-3"
                 aria-label="Default select example"
-                name="event_status"
-                // value={eventItem.event_status}
-                // onChange={handleChange}
+                name="status"
+                onChange={handleTypeChange}
                 style={{
                   width: "fit-content",
                   height: "40px",

@@ -1684,22 +1684,26 @@ function readTotalPosts()
     }
 }
 
-function readPosts()
+function readPosts($userInput)
 {
 
     global $con;
+
+    $status = $userInput['status'];
+
     $query = "SELECT 
-        posts_tbl.post_id,
-        posts_tbl.user_id,
-        posts_tbl.title,
-        posts_tbl.content,
-        posts_tbl.status,
-        posts_tbl.published_at,
-        posts_tbl.created_at
+        post_id,
+        user_id,
+        title,
+        content,
+        status,
+        published_at,
+        created_at
     FROM
         posts_tbl
-    WHERE status = 'posted'";
+    WHERE status = ?";
     $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $status);
     $stmt->execute();
     $result = $stmt->get_result();
     $stmt->close();
@@ -1778,12 +1782,16 @@ function readTotalComments()
     }
 }
 
-function readReports()
+function readReports($userInput)
 {
 
     global $con;
-    $query = "SELECT * FROM reports_tbl";
+
+    $status = $userInput['status'];
+
+    $query = "SELECT * FROM reports_tbl WHERE status = ?";
     $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $status);
     $stmt->execute();
     $result = $stmt->get_result();
     $stmt->close();
@@ -2904,5 +2912,42 @@ function updatePost($userInput)
             $stmt->close();
             return json_encode($data);
         }
+    }
+}
+
+function readCommentsTbl($userInput)
+{
+
+    global $con;
+
+    $post_id = $userInput['post_id'];
+
+    $query = "SELECT posts_tbl.post_id, 
+                     comments_tbl.* 
+                FROM comments_tbl 
+                INNER JOIN posts_tbl ON comments_tbl.post_id = posts_tbl.post_id  
+                WHERE posts_tbl.post_id = ?";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $post_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'comments retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Comments found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
     }
 }

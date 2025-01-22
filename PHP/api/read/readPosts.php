@@ -2,7 +2,7 @@
 
 header('Access-Control-Allow-Origin:*');
 header('Content-Type: application/json');
-header('Access-Control-Allow-Methods: GET, OPTIONS');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Request-With');
 
 include('../function.php');
@@ -15,10 +15,17 @@ if ($requestMethod == "OPTIONS") {
     exit();
 }
 
-if ($requestMethod == "GET") {
+if ($requestMethod == "POST") {
 
-    $readPosts = readPosts();
+    $inputData = json_decode(file_get_contents("php://input"), true);
+
+    if (empty($inputData)) {
+        $readPosts = readPosts($_POST);
+    } else {
+        $readPosts = readPosts($inputData);
+    }
     echo $readPosts;
+
     exit();
 } else {
     $data = [
