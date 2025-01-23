@@ -86,9 +86,9 @@ export default function Users() {
     } catch (error) {
       console.error("There was an error deleting the user:", error);
     }
+  };
 
-    
-    const handleSubmit = (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
     setLoading(true);
     axios

@@ -33,7 +33,7 @@ export default function Posts() {
         console.log(error);
         setPosts([]);
       });
-  }, []);
+  }, [postType]);
 
   const handleDeletePost = (postId) => {
     console.log(postId, "postid");
@@ -56,7 +56,7 @@ export default function Posts() {
     } catch (error) {
       console.error("There was an error deleting the post:", error);
     }
-  }, [postType]);
+  };
 
   const handleTypeChange = (event) => {
     setPostType(event.target.value);
