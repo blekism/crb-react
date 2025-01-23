@@ -2,18 +2,20 @@ import React, { useEffect, useState } from "react";
 import "./Sidebar.css";
 import { Link, useLocation } from "react-router-dom";
 import Blakey from "../assets/images/blakey.png";
-import DashIcon from "../assets/images/Dashboard.svg";
+import DashIcon from "../assets/images/dashboard.png";
 import Dashboard from "../assets/images/dashboard2.png";
-import ReportsIcon from "../assets/images/Reports.svg";
-import ContRevIcon from "../assets/images/ContRev.svg";
-import Comment from "../assets/images/comments.png";
-import Bookmark from "../assets/images/bookmarks.png";
+import Report from "../assets/images/report.png";
+import Report2 from "../assets/images/reportBlue.png";
+import Admin2 from "../assets/images/adminBlue.png";
+import User2 from "../assets/images/personBlue.png";
 import User from "../assets/images/user.png";
 import Admin from "../assets/images/admin.png";
 import Posts from "../assets/images/post.png";
+import Posts2 from "../assets/images/postBlue.png";
 
 export default function Sidebar() {
   const [activeLink, setActiveLink] = useState("");
+  const location = useLocation();
 
   useEffect(() => {
     const path = location.pathname;
@@ -25,14 +27,14 @@ export default function Sidebar() {
       setActiveLink("admin");
     } else if (path.includes("Posts")) {
       setActiveLink("posts");
-      // } else if (path.includes("Comments")) {
-      //   setActiveLink("comments");
     } else if (path.includes("Reports")) {
       setActiveLink("reports");
-      // } else if (path.includes("Bookmark")) {
-      //   setActiveLink("contentreview");
     }
   }, [location]);
+
+  const handleLinkClick = (link) => {
+    setActiveLink(link);
+  };
 
   return (
     <>
@@ -42,7 +44,10 @@ export default function Sidebar() {
         </div>
         <div className="AdminSideBar-TopCont">
           <div className="AdminSideBar-TopCont-Dashboard">
-            <img src={Dashboard} alt="Dashboard Icon" />
+            <img
+              src={activeLink === "dashboard" ? DashIcon : Dashboard}
+              alt="Dashboard Icon"
+            />
             <Link
               to="/AdminDashboard"
               className={`AdminSideBar-TopCont-link ${
@@ -54,7 +59,10 @@ export default function Sidebar() {
             </Link>
           </div>
           <div className="AdminSideBar-TopCont-Reports">
-            <img src={User} alt="Dashboard Icon" />
+            <img
+              src={activeLink === "users" ? User2 : User}
+              alt="Dashboard Icon"
+            />
             <Link
               to="/Users"
               className={`AdminSideBar-TopCont-link ${
@@ -66,7 +74,10 @@ export default function Sidebar() {
             </Link>
           </div>
           <div className="AdminSideBar-TopCont-Reports">
-            <img src={Admin} alt="Dashboard Icon" />
+            <img
+              src={activeLink === "admin" ? Admin2 : Admin}
+              alt="Dashboard Icon"
+            />
             <Link
               to="/Admin"
               className={`AdminSideBar-TopCont-link ${
@@ -78,7 +89,10 @@ export default function Sidebar() {
             </Link>
           </div>
           <div className="AdminSideBar-TopCont-Reports">
-            <img src={Posts} alt="Dashboard Icon" />
+            <img
+              src={activeLink === "posts" ? Posts2 : Posts}
+              alt="Dashboard Icon"
+            />
             <Link
               to="/Posts"
               className={`AdminSideBar-TopCont-link ${
@@ -89,20 +103,11 @@ export default function Sidebar() {
               Posts
             </Link>
           </div>
-          {/* <div className="AdminSideBar-TopCont-Reports">
-            <img src={Comment} alt="Dashboard Icon" />
-            <Link
-              to="/Comments"
-              className={`AdminSideBar-TopCont-link ${
-                activeLink === "comments" ? "active" : ""
-              }`}
-              onClick={() => handleLinkClick("comments")}
-            >
-              Comments
-            </Link>
-          </div> */}
           <div className="AdminSideBar-TopCont-Reports">
-            <img src={ReportsIcon} alt="Dashboard Icon" />
+            <img
+              src={activeLink === "reports" ? Report2 : Report}
+              alt="Dashboard Icon"
+            />
             <Link
               to="/Reports"
               className={`AdminSideBar-TopCont-link ${
