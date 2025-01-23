@@ -59,6 +59,32 @@ export default function AdminReports() {
     }
   };
 
+  const handleDeleteReports = (id) => {
+    console.log("Item clicked: ", id);
+    axios
+      .post(
+        "http://localhost/crb-react/PHP/api/delete/delete_reportAdmin.php",
+        {
+          report_id: id,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((response) => {
+        if (response.data.status === 200) {
+          console.log(response.data);
+        } else {
+          console.log(response.data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const handleInputChange = (event) => {
     const name = event.target.name;
     const value = event.target.value;
@@ -305,6 +331,7 @@ export default function AdminReports() {
                           src={Delete}
                           alt="Edit"
                           className="DeleteIcon"
+                          onClick={() => handleDeleteReports(report.report_id)}
                           style={{
                             width: "70px",
                             height: "40px",

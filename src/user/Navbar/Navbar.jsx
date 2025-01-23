@@ -6,7 +6,7 @@ import Pomasin from "../../assets/images/lheopomasin.jpg";
 import { useCookies } from "react-cookie";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
-import Hub from "../../assets/images/hubs.mp4";
+import Hub from "../../assets/images/pantopikoCut.mp4";
 
 export default function Navbar({ searchItem, User, isHome, initialData }) {
   const [cookies, setCookie, removeCookie] = useCookies(["logged_user"]);

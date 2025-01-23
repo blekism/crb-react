@@ -4,6 +4,7 @@ import HomepageDropdown from "./HomepageDropdown.jsx";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import ReactLoading from "react-loading";
+import vid from "../../assets/images/nananaCut.mp4";
 import { useNavigate } from "react-router-dom";
 import vid from "../../assets/images/ugh.mp4";
 
