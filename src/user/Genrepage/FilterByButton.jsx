@@ -146,7 +146,7 @@ export default function FilterByButton({ showNewContent, PageType }) {
         aria-labelledby="staticBackdropLabel"
         aria-hidden="true"
       >
-        <div className="modal-dialog">
+        <div className="modal-dialog modal-sm ">
           <div className="modal-content">
             <div className="modal-header">
               <h1 className="modal-title fs-5" id="staticBackdropLabel">
@@ -160,7 +160,15 @@ export default function FilterByButton({ showNewContent, PageType }) {
               ></button>
             </div>
             <form onSubmit={handleContentSubmit}>
-              <div className="modal-body">
+              <div
+                className="modal-body"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
+                  alignItems: "start",
+                }}
+              >
                 {/* First Dropdown */}
                 <Filter
                   type="Post Type"

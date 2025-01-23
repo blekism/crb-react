@@ -4,9 +4,11 @@ import HomepageDropdown from "./HomepageDropdown.jsx";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import ReactLoading from "react-loading";
+import { useNavigate } from "react-router-dom";
 import vid from "../../assets/images/ugh.mp4";
 
 export default function UploadModal({ postID }) {
+  const navigate = useNavigate();
   const [genre, setGenre] = useState([]);
   const [type, setType] = useState([]);
   const [cookies] = useCookies(["logged_user"]);
@@ -116,10 +118,16 @@ export default function UploadModal({ postID }) {
         } else if (response.data.status === 422) {
           console.log(response.data);
           setLoading(false);
-          window.location.reload();
           alert(
             "Your post was flagged and rejected due to inappropriate content."
           );
+
+          if (postID) {
+            navigate("/Homepage");
+            window.location.reload();
+          } else {
+            window.location.reload();
+          }
         } else {
           console.log(response.data);
           setLoading(false);
@@ -214,12 +222,12 @@ export default function UploadModal({ postID }) {
   return (
     <>
       {loading ? (
-        <div className="loadProgress" style={{ display: "none" }}>
-          {/* <ReactLoading type="bars" color="#133e87" height={100} width={100} /> */}
-          <video width="600" autoPlay controls>
+        <div className="loadProgress">
+          <ReactLoading type="bars" color="#133e87" height={100} width={100} />
+          {/* <video width="600" autoPlay controls>
             <source src={vid} type="video/mp4" />
             Your browser does not support the video element.
-          </video>
+          </video> */}
         </div>
       ) : (
         <></>

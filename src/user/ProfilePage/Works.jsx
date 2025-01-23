@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import "./Works.css";
 import Delete from "../../assets/images/Delete.svg";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useCookies } from "react-cookie";
 
 export default function Works({
   workImage,
@@ -14,9 +16,44 @@ export default function Works({
   owner,
 }) {
   const navigate = useNavigate();
+  const [cookies] = useCookies(["logged_user"]);
 
   const handleReadNow = () => {
     navigate("/Contentpage", { state: { post_id: work, owner: owner } });
+  };
+
+  const handleDelete = (jakol) => {
+    axios
+      .post(
+        "http://localhost/crb-react/PHP/api/delete/delete_content.php",
+        {
+          post_id: jakol,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + cookies.logged_user,
+          },
+          validateStatus: (status) => {
+            return status >= 200 && status < 500;
+          },
+          withCredentials: true,
+        }
+      )
+      .then((response) => {
+        if (response.data.status === 200) {
+          console.log(response.data);
+          alert("Content Deleted");
+          window.location.reload();
+        } else {
+          console.log(response.data);
+          alert("Content not Deleted");
+          window.location.reload();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
   return (
     <>
@@ -37,7 +74,12 @@ export default function Works({
         >
           View
         </button>
-        <img src={Delete} alt="Edit" className="DeleteIcon" />
+        <img
+          src={Delete}
+          alt="Edit"
+          className="DeleteIcon"
+          onClick={() => handleDelete(work)}
+        />
       </div>
 
       <hr />

@@ -56,7 +56,12 @@ export default function BookmarkPage() {
 
   return (
     <>
-      <Navbar searchItem={setItems} User={"bookmark"} />
+      <Navbar
+        searchItem={setItems}
+        User={"bookmark"}
+        isHome={false}
+        initialData={items}
+      />
 
       <OffcanvasBookmark item={selectedItem} />
       <div className="Titlecontent">
@@ -71,21 +76,25 @@ export default function BookmarkPage() {
         showIndicators={false}
         showStatus={false}
       >
-        {groupedItems.map((group, index) => (
-          <div key={index} className="custom-slider-bookmark">
-            <div className="grid-container">
-              {group.map((item, idx) => (
-                <Bookmarkitem
-                  key={idx}
-                  image={item.image}
-                  title={item.title}
-                  author={item.username}
-                  onClick={() => handleItemClick(item)}
-                />
-              ))}
+        {items.length > 0 ? (
+          groupedItems.map((group, index) => (
+            <div key={index} className="custom-slider-bookmark">
+              <div className="grid-container">
+                {group.map((item, idx) => (
+                  <Genreitem
+                    key={idx}
+                    image={item.image}
+                    title={item.title}
+                    author={item.author}
+                    onClick={() => handleItemClick(item)}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p className="noPost">No Bookmarks Found</p>
+        )}
       </Carousel>
     </>
   );
