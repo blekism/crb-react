@@ -50,21 +50,27 @@ export default function Genre() {
         <FilterButton showNewContent={setItems} />
       </div>
 
-      {groupedItems.map((group, index) => (
-        <div key={index} className="custom-slider-bookmark">
-          <div className="grid-container">
-            {group.map((item, idx) => (
-              <Genreitem
-                key={idx}
-                image={item.image}
-                title={item.title}
-                author={item.author}
-                onClick={() => handleItemClick(item)}
-              />
-            ))}
+      {items.length > 0 ? (
+        groupedItems.map((group, index) => (
+          <div key={index} className="custom-slider-bookmark">
+            <div className="grid-container">
+              {group.map((item, idx) => (
+                <Genreitem
+                  key={idx}
+                  image={item.image}
+                  title={item.title}
+                  author={item.author}
+                  onClick={() => handleItemClick(item)}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        ))
+      ) : (
+        <p className="noPost" style={{ marginLeft: "30px" }}>
+          No Posts Found
+        </p>
+      )}
     </>
   );
 }

@@ -11,6 +11,7 @@ import Hub from "../../assets/images/hubs.mp4";
 export default function Navbar({ searchItem, User, isHome, initialData }) {
   const [cookies, setCookie, removeCookie] = useCookies(["logged_user"]);
   const jwt = cookies.logged_user;
+  const [profileDetails, setProfileDetails] = useState({});
 
   const [userSearch, setUserSearch] = useState({
     search: "",
@@ -79,6 +80,23 @@ export default function Navbar({ searchItem, User, isHome, initialData }) {
         }
       }
     }
+
+    axios
+      .post(
+        "http://localhost/crb-react/PHP/api/read/singleRead_profile.php",
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + cookies.logged_user,
+          },
+          withCredentials: true,
+        }
+      )
+      .then(function (response) {
+        console.log(response.data);
+        setProfileDetails(response.data.data);
+      });
   }, []);
 
   return (
@@ -155,8 +173,14 @@ export default function Navbar({ searchItem, User, isHome, initialData }) {
         <div className="profileLogo">
           <Link to={"/Profile"}>
             <img
-              src={Pomasin}
-              style={{ height: "80px", width: "80px", padding: "10px" }}
+              src={profileDetails.image}
+              style={{
+                height: "80px",
+                width: "80px",
+                padding: "10px",
+                objectFit: "cover",
+                borderRadius: "15px",
+              }}
             />
           </Link>
         </div>

@@ -237,7 +237,16 @@ export default function ProfilePage() {
 
         <div className="ProfilePageTopCont">
           <div className="ProfilePageTopCont-left">
-            <img src={Circle} alt="Profile" />
+            <img
+              src={profileDetails.image}
+              alt="Profile"
+              style={{
+                objectFit: "cover",
+                width: "200px",
+                height: "200px",
+                borderRadius: "50%",
+              }}
+            />
             <h1>@{profileDetails.username}</h1>
           </div>
           <div className="ProfilePageTopCont-right">

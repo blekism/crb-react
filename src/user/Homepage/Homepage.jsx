@@ -114,7 +114,7 @@ export default function Homepage() {
               ))}
             </Carousel>
           ) : (
-            <p>No results found.</p>
+            <p className="noPost">No Posts found.</p>
           )}
         </div>
 
@@ -129,19 +129,25 @@ export default function Homepage() {
             showIndicators={false}
             showStatus={false}
           >
-            {itemsViewed.map((group, index) => (
-              <div key={index} className="custom-slider">
-                {group.map((item, idx) => (
-                  <HomepageItem
-                    image={item.image}
-                    key={idx}
-                    title={item.title}
-                    author={item.username}
-                    onClick={() => handleItemClick(item)}
-                  />
-                ))}
-              </div>
-            ))}
+            {items && viewedItems.length > 0 ? (
+              itemsViewed.map((group, index) => (
+                <div key={index} className="custom-slider">
+                  {group.map((item, idx) => (
+                    <HomepageItem
+                      image={item.image}
+                      key={idx}
+                      title={item.title}
+                      author={item.username}
+                      onClick={() => handleItemClick(item)}
+                    />
+                  ))}
+                </div>
+              ))
+            ) : (
+              <>
+                <p className="noPost">No Posts found. Start Reading Now</p>
+              </>
+            )}
           </Carousel>
         </div>
       </div>

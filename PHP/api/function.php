@@ -1040,7 +1040,7 @@ function singleReadProfile($user_id)
 
     global $con;
 
-    $query = "SELECT user_id, username, first_name, last_name, email, password, bio FROM user_tbl WHERE user_id = ?";
+    $query = "SELECT user_id, username, first_name, last_name, email, password, bio, image FROM user_tbl WHERE user_id = ?";
     $stmt = $con->prepare($query);
     $stmt->bind_param('s', $user_id);
     $stmt->execute();

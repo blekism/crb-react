@@ -76,21 +76,25 @@ export default function BookmarkPage() {
         showIndicators={false}
         showStatus={false}
       >
-        {groupedItems.map((group, index) => (
-          <div key={index} className="custom-slider-bookmark">
-            <div className="grid-container">
-              {group.map((item, idx) => (
-                <Bookmarkitem
-                  key={idx}
-                  image={item.image}
-                  title={item.title}
-                  author={item.username}
-                  onClick={() => handleItemClick(item)}
-                />
-              ))}
+        {items.length > 0 ? (
+          groupedItems.map((group, index) => (
+            <div key={index} className="custom-slider-bookmark">
+              <div className="grid-container">
+                {group.map((item, idx) => (
+                  <Genreitem
+                    key={idx}
+                    image={item.image}
+                    title={item.title}
+                    author={item.author}
+                    onClick={() => handleItemClick(item)}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p className="noPost">No Bookmarks Found</p>
+        )}
       </Carousel>
     </>
   );
