@@ -233,11 +233,20 @@ export default function ProfilePage() {
   return (
     <>
       <div className="ProfilePageParent">
-        <Navbar />
+        <Navbar isHome={true} />
 
         <div className="ProfilePageTopCont">
           <div className="ProfilePageTopCont-left">
-            <img src={Circle} alt="Profile" />
+            <img
+              src={profileDetails.image}
+              alt="Profile"
+              style={{
+                objectFit: "cover",
+                width: "200px",
+                height: "200px",
+                borderRadius: "50%",
+              }}
+            />
             <h1>@{profileDetails.username}</h1>
           </div>
           <div className="ProfilePageTopCont-right">

@@ -5,6 +5,7 @@ import StatisticsTemplate from "./AdminStatisticsTemplate";
 import StatsChart from "./AdminLineAndBarChart";
 import PieChart from "./AdminPieCharts";
 import axios from "axios";
+import ViewsTemplate from "./MostViewedTemplate";
 
 export default function AdminDashboard({
   statsTitle,
@@ -14,9 +15,12 @@ export default function AdminDashboard({
   const [TotalCountPosts, setTotalCountPosts] = useState({});
   const [TotalCountUsers, setTotalCountUsers] = useState({});
   const [TotalCountComments, setTotalCountComments] = useState({});
+  const [TotalCountReports, setTotalCountReports] = useState({});
   const [PostIncrease, setPostIncrease] = useState({});
   const [CommentIncrease, setCommentIncrease] = useState({});
   const [UserIncrease, setUserIncrease] = useState({});
+  const [ReportIncrease, setReportIncrease] = useState({});
+  const [MostViewed, setMostViewed] = useState([]);
 
   useEffect(() => {
     axios
@@ -90,6 +94,42 @@ export default function AdminDashboard({
       .catch((error) => {
         console.log(error);
       });
+
+    axios
+      .get("http://localhost/crb-react/PHP/api/read/readTotalReports.php")
+      .then((response) => {
+        if (response.data.status === 200) {
+          console.log(response.data.data);
+          setTotalCountReports(response.data.data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    axios
+      .get("http://localhost/crb-react/PHP/api/read/readReportsIncrease.php")
+      .then((response) => {
+        if (response.data.status === 200) {
+          console.log(response.data.data);
+          setReportIncrease(response.data.data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    axios
+      .get("http://localhost/crb-react/PHP/api/read/readMostViewed.php")
+      .then((response) => {
+        if (response.data.status === 200) {
+          console.log(response.data.data);
+          setMostViewed(response.data.data);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, []);
 
   return (
@@ -116,9 +156,9 @@ export default function AdminDashboard({
                   statsIncrease={`+${UserIncrease.Today_Users || 0}`}
                 ></StatisticsTemplate>
                 <StatisticsTemplate
-                  statsTitle="Active Users"
-                  statsValue="100"
-                  statsIncrease="+10"
+                  statsTitle="Total Reports"
+                  statsValue={TotalCountReports.Total_Reports || 0}
+                  statsIncrease={`+${ReportIncrease.Today_Reports || 0}`}
                 ></StatisticsTemplate>
                 <StatisticsTemplate
                   statsTitle="Total Comments"
@@ -135,7 +175,19 @@ export default function AdminDashboard({
               {/* line and bar charts end */}
             </div>
             <div className="AdminDashboard-MainContent-Right">
-              <PieChart />
+              <div className="AdminDashboard-MainContent-Right-Pie">
+                <PieChart />
+              </div>
+              <div className="AdminDashboard-MainContent-Right-Recent">
+                <p className="pTitle">Top 5 Most Viewed Posts</p>
+                {MostViewed.map((comment, key) => (
+                  <ViewsTemplate
+                    key={key}
+                    title={comment.title}
+                    datePosted={comment.published_at}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>

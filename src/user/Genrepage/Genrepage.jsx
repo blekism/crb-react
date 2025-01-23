@@ -9,6 +9,7 @@ import axios from "axios";
 export default function Genre() {
   const [selectedItem, setSelectedItem] = useState(1);
   const [items, setItems] = useState([]);
+  const [backlog, setBacklog] = useState([]);
 
   useEffect(() => {
     axios
@@ -17,6 +18,7 @@ export default function Genre() {
         if (response.data.status === 200) {
           console.log(response.data.data);
           setItems(response.data.data);
+          setBacklog(response.data.data);
         }
       })
       .catch((error) => {
@@ -40,7 +42,7 @@ export default function Genre() {
 
   return (
     <>
-      <Navbar searchItem={setItems} />
+      <Navbar searchItem={setItems} isHome={false} initialData={backlog} />
       <OffcanvasGenre item={selectedItem} />
 
       <div className="genreTitle">
@@ -48,21 +50,27 @@ export default function Genre() {
         <FilterButton showNewContent={setItems} />
       </div>
 
-      {groupedItems.map((group, index) => (
-        <div key={index} className="custom-slider-bookmark">
-          <div className="grid-container">
-            {group.map((item, idx) => (
-              <Genreitem
-                key={idx}
-                image={item.image}
-                title={item.title}
-                author={item.author}
-                onClick={() => handleItemClick(item)}
-              />
-            ))}
+      {items.length > 0 ? (
+        groupedItems.map((group, index) => (
+          <div key={index} className="custom-slider-bookmark">
+            <div className="grid-container">
+              {group.map((item, idx) => (
+                <Genreitem
+                  key={idx}
+                  image={item.image}
+                  title={item.title}
+                  author={item.author}
+                  onClick={() => handleItemClick(item)}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        ))
+      ) : (
+        <p className="noPost" style={{ marginLeft: "30px" }}>
+          No Posts Found
+        </p>
+      )}
     </>
   );
 }

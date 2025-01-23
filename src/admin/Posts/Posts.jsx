@@ -4,22 +4,34 @@ import axios from "axios";
 import Sidebar from "../Sidebar";
 import InputTemplate from "../../user/loginSignupPage/InputTemplate";
 import Delete from "../../assets/images/delRed.svg";
+import { useNavigate } from "react-router-dom";
 
 export default function Posts() {
   const [posts, setPosts] = useState([]);
-  // const [deletePosts,setDeletePosts] = useState([]);
+
+  const navigate = useNavigate();
+  const [postType, setPostType] = useState("for_review");
+
+  const handleNavigate = (id) => {
+    navigate("/PostView", { state: { post_id: id } });
+  };
 
   useEffect(() => {
-    axios
-      .get("http://localhost/crb-react/PHP/api/read/readPosts.php")
+    axios //gawing post para makapag pasa ka ng kung anong page yung pinapasa
+      .post("http://localhost/crb-react/PHP/api/read/readPosts.php", {
+        status: postType,
+      })
       .then((response) => {
-        if (response.data.status === 200) {
+        if (response.data.status === 200 && response.data.data.length > 0) {
           console.log(response.data.data);
           setPosts(response.data.data);
+        } else {
+          setPosts([]);
         }
       })
       .catch((error) => {
         console.log(error);
+        setPosts([]);
       });
   }, []);
 
@@ -44,6 +56,10 @@ export default function Posts() {
     } catch (error) {
       console.error("There was an error deleting the post:", error);
     }
+  }, [postType]);
+
+  const handleTypeChange = (event) => {
+    setPostType(event.target.value);
   };
 
   return (
@@ -61,9 +77,8 @@ export default function Posts() {
               <select
                 className="form-select mb-3"
                 aria-label="Default select example"
-                name="event_status"
-                // value={eventItem.event_status}
-                // onChange={handleChange}
+                name="status"
+                onChange={handleTypeChange}
                 style={{
                   width: "fit-content",
                   height: "40px",
@@ -72,10 +87,10 @@ export default function Posts() {
                   border: "none",
                 }}
               >
-                <option value="upcoming">FOR REVIEW</option>
-                <option value="ongoing">REVIEWING</option>
-                <option value="finished">APPROVED</option>
-                <option value="closed">REJECTED</option>
+                <option value="for_review">FOR REVIEW</option>
+                <option value="reviewing">REVIEWING</option>
+                <option value="posted">POSTED</option>
+                <option value="rejected">REJECTED</option>
               </select>
             </div>
 
@@ -103,11 +118,7 @@ export default function Posts() {
                           <button
                             type="button"
                             className="btn"
-                            data-bs-toggle="modal"
-                            // data-bs-target="#viewItemsModalToggle"
-                            //   onClick={() =>
-                            //     handleButtonClick(donation.donation_id)
-                            //   }
+                            onClick={() => handleNavigate(post.post_id)}
                             style={{
                               backgroundColor: "#354290",
                               color: "#ffffff",

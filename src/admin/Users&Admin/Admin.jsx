@@ -5,8 +5,10 @@ import Sidebar from "../Sidebar";
 import InputTemplate from "../../user/loginSignupPage/InputTemplate";
 import AddAdminModal from "./AddAdminModal";
 import Delete from "../../assets/images/delRed.svg";
+import ReactLoading from "react-loading";
 
 export default function Admin() {
+  const [loading, setLoading] = useState(false);
   const [admins, setAdmins] = useState([]);
   const [singleReadAdmin, setSingleReadAdmin] = useState({
     user_id: "",
@@ -81,8 +83,35 @@ export default function Admin() {
       })
       .catch((error) => {
         console.log(error);
+        });
+  };
+      
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setLoading(true);
+    axios
+      .put(
+        "http://localhost/crb-react/PHP/api/update/updateAdmin.php",
+        singleReadAdmin,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response.data);
+        alert("Admin Profile updated successfully!");
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log("There was an error submitting the form!", error);
+        alert("There was an error updating user profile!");
+        setLoading(false);
       });
   };
+  
+
 
   return (
     <>
@@ -152,7 +181,18 @@ export default function Admin() {
                           >
                             View
                           </button>
-
+                          {loading ? (
+                            <div className="loadProgress">
+                              <ReactLoading
+                                type="bars"
+                                color="#133e87"
+                                height={100}
+                                width={100}
+                              />
+                            </div>
+                          ) : (
+                            <></>
+                          )}
                           <div
                             className="modal fade"
                             id="viewAdminModalToggle"
@@ -182,92 +222,92 @@ export default function Admin() {
                                   ></button>
                                 </div>
 
-                                {/* <form onSubmit={handleSubmit}> */}
-                                <div className="modal-body">
-                                  <div className="adminModalBody-rightTopContent">
-                                    <div className="adminModalBody-rightTopCont1">
-                                      <div className="adminModalBody-rightTopContent1">
-                                        <p>First Name:</p>
+                                <form onSubmit={handleSubmit}>
+                                  <div className="modal-body">
+                                    <div className="adminModalBody-rightTopContent">
+                                      <div className="adminModalBody-rightTopCont1">
+                                        <div className="adminModalBody-rightTopContent1">
+                                          <p>First Name:</p>
+                                          <InputTemplate
+                                            placeholder="First Name"
+                                            name="first_name"
+                                            value={singleReadAdmin.first_name}
+                                            onChange={handleInputChange}
+                                            required
+                                          />
+                                        </div>
+                                        <div className="adminModalBody-rightTopContent2">
+                                          <p>Last Name:</p>
+                                          <InputTemplate
+                                            placeholder="Last Name"
+                                            name="last_name"
+                                            value={singleReadAdmin.last_name}
+                                            onChange={handleInputChange}
+                                            required
+                                          />
+                                        </div>
+                                      </div>
+
+                                      <div className="adminModalBody-rightTopCont2">
+                                        <div className="adminModalBody-rightTopContent1">
+                                          <p>Date Added:</p>
+                                          <InputTemplate
+                                            placeholder="Date Added"
+                                            name="created_at"
+                                            value={singleReadAdmin.created_at}
+                                            // onChange={handleInputChange}
+                                            readOnly
+                                          />
+                                        </div>
+                                        <div className="adminModalBody-rightTopContent2">
+                                          <p>Role:</p>
+                                          <InputTemplate
+                                            placeholder="Role"
+                                            name="role"
+                                            value={singleReadAdmin.role}
+                                            // onChange={handleInputChange}
+                                            readOnly
+                                          />
+                                        </div>
+                                      </div>
+
+                                      <div className="adminModalBody-rightBottomContent">
+                                        <p>Password: </p>
                                         <InputTemplate
-                                          placeholder="First Name"
-                                          name="first_name"
-                                          value={singleReadAdmin.first_name}
+                                          placeholder="Password"
+                                          name="password"
+                                          value={singleReadAdmin.password}
+                                          onChange={handleInputChange}
+                                          required
+                                        />
+                                        <p>Email:</p>
+                                        <InputTemplate
+                                          placeholder="Email"
+                                          name="email"
+                                          value={singleReadAdmin.email}
                                           onChange={handleInputChange}
                                           required
                                         />
                                       </div>
-                                      <div className="adminModalBody-rightTopContent2">
-                                        <p>Last Name:</p>
-                                        <InputTemplate
-                                          placeholder="Last Name"
-                                          name="last_name"
-                                          value={singleReadAdmin.last_name}
-                                          onChange={handleInputChange}
-                                          required
-                                        />
-                                      </div>
-                                    </div>
-
-                                    <div className="adminModalBody-rightTopCont2">
-                                      <div className="adminModalBody-rightTopContent1">
-                                        <p>Date Added:</p>
-                                        <InputTemplate
-                                          placeholder="Date Added"
-                                          name="created_at"
-                                          value={singleReadAdmin.created_at}
-                                          // onChange={handleInputChange}
-                                          readOnly
-                                        />
-                                      </div>
-                                      <div className="adminModalBody-rightTopContent2">
-                                        <p>Role:</p>
-                                        <InputTemplate
-                                          placeholder="Role"
-                                          name="role"
-                                          value={singleReadAdmin.role}
-                                          // onChange={handleInputChange}
-                                          readOnly
-                                        />
-                                      </div>
-                                    </div>
-
-                                    <div className="adminModalBody-rightBottomContent">
-                                      <p>Password: </p>
-                                      <InputTemplate
-                                        placeholder="Password"
-                                        name="password"
-                                        value={singleReadAdmin.password}
-                                        onChange={handleInputChange}
-                                        required
-                                      />
-                                      <p>Email:</p>
-                                      <InputTemplate
-                                        placeholder="Email"
-                                        name="email"
-                                        value={singleReadAdmin.email}
-                                        onChange={handleInputChange}
-                                        required
-                                      />
                                     </div>
                                   </div>
-                                </div>
-                                <div className="modal-footer">
-                                  <button
-                                    type="button"
-                                    className="btn btn-secondary"
-                                    data-bs-dismiss="modal"
-                                  >
-                                    Cancel
-                                  </button>
-                                  <button
-                                    type="submit"
-                                    className="btn btn-primary"
-                                    data-bs-dismiss="modal"
-                                  >
-                                    Save changes
-                                  </button>
-                                </div>
-                                {/* </form> */}
+                                  <div className="modal-footer">
+                                    <button
+                                      type="button"
+                                      className="btn btn-secondary"
+                                      data-bs-dismiss="modal"
+                                    >
+                                      Cancel
+                                    </button>
+                                    <button
+                                      type="submit"
+                                      className="btn btn-primary"
+                                      data-bs-dismiss="modal"
+                                    >
+                                      Save changes
+                                    </button>
+                                  </div>
+                                </form>
                               </div>
                             </div>
                           </div>

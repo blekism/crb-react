@@ -4,9 +4,12 @@ import axios from "axios";
 import Sidebar from "../Sidebar";
 import Delete from "../../assets/images/delRed.svg";
 import InputTemplate from "../../user/loginSignupPage/InputTemplate";
+import ReactLoading from "react-loading";
 
 export default function AdminReports() {
+  const [loading, setLoading] = useState(false);
   const [reports, setReports] = useState([]);
+  const [reportType, setReportType] = useState("reported");
   const [singleReadReport, setSingleReadReport] = useState({
     report_id: "",
     post_id: "",
@@ -16,17 +19,26 @@ export default function AdminReports() {
 
   useEffect(() => {
     axios
-      .get("http://localhost/crb-react/PHP/api/read/readReports.php")
+      .post("http://localhost/crb-react/PHP/api/read/readReports.php", {
+        status: reportType,
+      })
       .then((response) => {
-        if (response.data.status === 200) {
+        if (response.data.status === 200 && response.data.data.length > 0) {
           console.log(response.data.data);
           setReports(response.data.data);
+        } else {
+          setPosts([]);
         }
       })
       .catch((error) => {
         console.log(error);
+        setPosts([]);
       });
-  }, []);
+  }, [reportType]);
+
+  const handleTypeChange = (event) => {
+    setReportType(event.target.value);
+  };
 
   const handleButtonClick = async (id) => {
     console.log("Item clicked: ", id);
@@ -79,6 +91,31 @@ export default function AdminReports() {
 
     setSingleReadReport((values) => ({ ...values, [name]: value }));
   };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setLoading(true);
+    axios
+      .put(
+        "http://localhost/crb-react/PHP/api/update/updateReport.php",
+        singleReadReport,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response.data);
+        alert("Report Status updated successfully!");
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log("There was an error submitting the form!", error);
+        alert("There was an error updating report status!");
+        setLoading(false);
+      });
+  };
   return (
     <>
       <div className="AdminReports-Parent">
@@ -94,9 +131,8 @@ export default function AdminReports() {
               <select
                 className="form-select mb-3"
                 aria-label="Default select example"
-                name="event_status"
-                // value={eventItem.event_status}
-                // onChange={handleChange}
+                name="status"
+                onChange={handleTypeChange}
                 style={{
                   width: "fit-content",
                   height: "40px",
@@ -145,6 +181,18 @@ export default function AdminReports() {
                             View
                           </button>
 
+                          {loading ? (
+                            <div className="loadProgress">
+                              <ReactLoading
+                                type="bars"
+                                color="#133e87"
+                                height={100}
+                                width={100}
+                              />
+                            </div>
+                          ) : (
+                            <></>
+                          )}
                           <div
                             className="modal fade"
                             id="viewItemsModalToggle"
@@ -174,103 +222,105 @@ export default function AdminReports() {
                                   ></button>
                                 </div>
 
-                                {/* <form onSubmit={handleSubmit}> */}
-                                <div className="modal-body">
-                                  <div className="reportsModalBody-rightTopContent">
-                                    <div className="reportsModalBody-rightTopCont1">
-                                      <div className="reportsModalBody-rightTopContent1">
-                                        <p>Report ID:</p>
-                                        <InputTemplate
-                                          placeholder="Report ID"
-                                          name="report_id"
-                                          value={singleReadReport.report_id}
-                                          // onChange={handleInputChange}
-                                          readOnly
-                                        />
+                                <form onSubmit={handleSubmit}>
+                                  <div className="modal-body">
+                                    <div className="reportsModalBody-rightTopContent">
+                                      <div className="reportsModalBody-rightTopCont1">
+                                        <div className="reportsModalBody-rightTopContent1">
+                                          <p>Report ID:</p>
+                                          <InputTemplate
+                                            placeholder="Report ID"
+                                            name="report_id"
+                                            value={singleReadReport.report_id}
+                                            // onChange={handleInputChange}
+                                            readOnly
+                                          />
+                                        </div>
+                                        <div className="reportsModalBody-rightTopContent2">
+                                          <p>Post ID:</p>
+                                          <InputTemplate
+                                            placeholder="Post ID"
+                                            name="post_id"
+                                            value={singleReadReport.post_id}
+                                            // onChange={handleInputChange}
+                                            readOnly
+                                          />
+                                        </div>
                                       </div>
-                                      <div className="reportsModalBody-rightTopContent2">
-                                        <p>Post ID:</p>
-                                        <InputTemplate
-                                          placeholder="Post ID"
-                                          name="post_id"
-                                          value={singleReadReport.post_id}
-                                          // onChange={handleInputChange}
-                                          readOnly
-                                        />
-                                      </div>
-                                    </div>
 
-                                    <div className="reportsModalBody-rightTopCont2">
-                                      <div className="reportsModalBody-rightTopContent1">
-                                        <p>Status:</p>
-                                        <select
-                                          className="form-select mb-3"
-                                          aria-label="Default select example"
-                                          name="status"
-                                          value={singleReadReport.status}
-                                          onChange={handleInputChange}
+                                      <div className="reportsModalBody-rightTopCont2">
+                                        <div className="reportsModalBody-rightTopContent1">
+                                          <p>Status:</p>
+                                          <select
+                                            className="form-select mb-3"
+                                            aria-label="Default select example"
+                                            name="status"
+                                            value={singleReadReport.status}
+                                            onChange={handleInputChange}
+                                            style={{
+                                              width: "210px",
+                                              backgroundColor:
+                                                "rgba(19, 62, 135, 0.21)",
+                                            }}
+                                          >
+                                            <option value="reported">
+                                              Reported
+                                            </option>
+                                            <option value="closed">
+                                              Closed
+                                            </option>
+                                          </select>
+                                        </div>
+                                        <div className="reportsModalBody-rightTopContent2">
+                                          <p>Created Date:</p>
+                                          <InputTemplate
+                                            placeholder="Created Date"
+                                            name="created_at"
+                                            value={singleReadReport.created_at}
+                                            // onChange={handleInputChange}
+                                            readOnly
+                                          />
+                                        </div>
+                                      </div>
+
+                                      <div className="reportsModalBody-rightBottomContent">
+                                        <p>Reason: </p>
+                                        <textarea
+                                          className="form-control"
+                                          id="exampleFormControlTextarea1"
+                                          rows="3"
+                                          placeholder="Reason"
                                           style={{
-                                            width: "210px",
+                                            height: "20vh",
+                                            maxHeight: "20vh",
+                                            fontSize: "16px",
                                             backgroundColor:
                                               "rgba(19, 62, 135, 0.21)",
                                           }}
-                                        >
-                                          <option value="reported">
-                                            Reported
-                                          </option>
-                                          <option value="closed">Closed</option>
-                                        </select>
-                                      </div>
-                                      <div className="reportsModalBody-rightTopContent2">
-                                        <p>Created Date:</p>
-                                        <InputTemplate
-                                          placeholder="Created Date"
-                                          name="created_at"
-                                          value={singleReadReport.created_at}
+                                          value={singleReadReport.reason || ""}
                                           // onChange={handleInputChange}
                                           readOnly
-                                        />
+                                        ></textarea>
                                       </div>
                                     </div>
-
-                                    <div className="reportsModalBody-rightBottomContent">
-                                      <p>Reason: </p>
-                                      <textarea
-                                        className="form-control"
-                                        id="exampleFormControlTextarea1"
-                                        rows="3"
-                                        placeholder="Reason"
-                                        style={{
-                                          height: "20vh",
-                                          maxHeight: "20vh",
-                                          fontSize: "16px",
-                                          backgroundColor:
-                                            "rgba(19, 62, 135, 0.21)",
-                                        }}
-                                        value={singleReadReport.reason || ""}
-                                        // onChange={handleInputChange}
-                                        readOnly
-                                      ></textarea>
-                                    </div>
                                   </div>
-                                </div>
-                                <div className="modal-footer">
-                                  <button
-                                    type="button"
-                                    className="btn btn-secondary"
-                                    data-bs-dismiss="modal"
-                                  >
-                                    Cancel
-                                  </button>
-                                  <button
-                                    type="submit"
-                                    className="btn btn-primary"
-                                    data-bs-dismiss="modal"
-                                  >
-                                    Save changes
-                                  </button>
-                                </div>
-                                {/* </form> */}
+                                  <div className="modal-footer">
+                                    <button
+                                      type="button"
+                                      className="btn btn-secondary"
+                                      data-bs-dismiss="modal"
+                                    >
+                                      Cancel
+                                    </button>
+                                    <button
+                                      type="submit"
+                                      className="btn btn-primary"
+                                      data-bs-dismiss="modal"
+                                    >
+                                      Save changes
+                                    </button>
+                                  </div>
+                                </form>
                               </div>
                             </div>
                           </div>
