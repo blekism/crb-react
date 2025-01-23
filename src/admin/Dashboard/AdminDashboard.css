@@ -89,7 +89,7 @@
   background-color: rgba(101, 138, 189, 0.5);
   border-radius: 6px;
   padding: 20px;
-  row-gap: 20px;
+  row-gap: 10px;
 }
 
 .AdminDashboard-Parent
@@ -97,7 +97,7 @@
   .AdminDashboard-MainContent
   .AdminDashboard-MainContent-Right
   .AdminDashboard-MainContent-Right-Recent
-  p {
-  font-size: 20px;
+  .pTitle {
+  font-size: 25px;
   font-weight: 600;
 }

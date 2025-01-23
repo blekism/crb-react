@@ -32,7 +32,7 @@
     height: 85vh;
     display: flex;
     flex-direction: column;
-    background-color: #b3e7cb;
+    background-color: #d4e0eb;
     padding: 20px;
     /* row-gap: 20px; */
 }
@@ -57,7 +57,7 @@
 
 .Users-Parent .Users-Child .Users-MainContent .Users-MainContent-Table{
     overflow: auto;
-   height: 65vh;
+   height: 70vh;
 }
 
 .Users-Parent .Users-Child .Users-MainContent .Users-MainContent-Table .table thead{

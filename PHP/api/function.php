@@ -2951,3 +2951,101 @@ function readCommentsTbl($userInput)
         return json_encode($data);
     }
 }
+
+function readTotalReports()
+{
+    global $con;
+
+    $query = "SELECT COUNT(*) AS Total_Reports FROM reports_tbl WHERE reports_tbl.status = 'reported';";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Reports retrieved successfully',
+            'data' => $result->fetch_assoc()
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Reports found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+
+function readReportsIncrease()
+{
+    global $con;
+
+    $query = "SELECT COUNT(*) AS Today_Reports
+                FROM reports_tbl
+                WHERE DATE(created_at) = CURDATE() AND status = 'reported';";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Report Increase retrieved successfully',
+            'data' => $result->fetch_assoc()
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Reports found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+
+function readMostViewedPost()
+{
+    global $con;
+
+    $query = "SELECT 
+                    posts_tbl.title,
+                    posts_tbl.published_at,
+                    COUNT(post_views_tbl.post_id) AS total_views
+                FROM 
+                    post_views_tbl
+                JOIN 
+                    posts_tbl ON post_views_tbl.post_id = posts_tbl.post_id
+                GROUP BY 
+                    posts_tbl.post_id, posts_tbl.title, posts_tbl.published_at
+                ORDER BY 
+                    total_views DESC
+                LIMIT 5;";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Most Viewed Post retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Posts found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
