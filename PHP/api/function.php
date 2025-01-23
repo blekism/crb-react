@@ -2735,7 +2735,7 @@ function delete_userAdmin($userInput)
     $query = "DELETE FROM posts_tbl WHERE user_id = ?";
     $stmt = $con->prepare($query);
     $stmt->bind_param('s', $user_id);
-    $stmt->execute();   
+    $stmt->execute();
 
     $query = "DELETE FROM user_tbl WHERE user_id = ?";
     $stmt = $con->prepare($query);
@@ -2766,9 +2766,9 @@ function delete_userAdmin($userInput)
         header("HTTP/1.0 500 Internal Server Error");
         $stmt->close();
         return json_encode($data);
-        }
     }
-}      
+}
+
 
 
 function updatePost($userInput)
@@ -2812,8 +2812,8 @@ function updatePost($userInput)
         }
     }
 }
-          
-          
+
+
 function viewedPost($userInput, $user_id)
 {
     global $con;
@@ -2859,9 +2859,9 @@ function viewedPost($userInput, $user_id)
         }
     }
 }
-          
 
-  
+
+
 
 function readCommentsTbl($userInput)
 {
@@ -3032,7 +3032,7 @@ function delete_reportAdmin($userInput)
         return json_encode($data);
     }
 }
-      
+
 function readReportsIncrease()
 {
     global $con;
@@ -3085,7 +3085,7 @@ function readMostViewedPost()
     $stmt->execute();
     $result = $stmt->get_result();
     $stmt->close();
-  
+
     if ($result->num_rows > 0) {
         $data = [
             'status' => 200,
@@ -3104,7 +3104,7 @@ function readMostViewedPost()
         return json_encode($data);
     }
 }
-  
+
 function getViewed($user_id)
 {
     global $con;
@@ -3137,9 +3137,8 @@ function getViewed($user_id)
         $data = [
             'status' => 404,
             'message' => 'No Post found'
-            ];
+        ];
         header("HTTP/1.0 404 Not Found");
         return json_encode($data);
     }
 }
-
