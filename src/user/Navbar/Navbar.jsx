@@ -8,9 +8,10 @@ import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import Hub from "../../assets/images/hubs.mp4";
 
-export default function Navbar({ searchItem, User }) {
+export default function Navbar({ searchItem, User, isHome, initialData }) {
   const [cookies, setCookie, removeCookie] = useCookies(["logged_user"]);
   const jwt = cookies.logged_user;
+  const [profileDetails, setProfileDetails] = useState({});
 
   const [userSearch, setUserSearch] = useState({
     search: "",
@@ -21,6 +22,12 @@ export default function Navbar({ searchItem, User }) {
     const value = event.target.value;
 
     setUserSearch((values) => ({ ...values, [name]: value }));
+    console.log(initialData, "initial data");
+
+    if (!value.trim()) {
+      console.log("search reveresed");
+      searchItem([...initialData]);
+    }
   };
 
   const handleSubmitSearch = (event) => {
@@ -34,7 +41,7 @@ export default function Navbar({ searchItem, User }) {
       .then((response) => {
         if (response.data.status === 200) {
           console.log(response.data);
-          searchItem(response.data.data);
+          searchItem([...response.data.data]);
         } else if (response.data.status === 201) {
           console.log(response.data);
           searchItem([]);
@@ -73,17 +80,34 @@ export default function Navbar({ searchItem, User }) {
         }
       }
     }
+
+    axios
+      .post(
+        "http://localhost/crb-react/PHP/api/read/singleRead_profile.php",
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + cookies.logged_user,
+          },
+          withCredentials: true,
+        }
+      )
+      .then(function (response) {
+        console.log(response.data);
+        setProfileDetails(response.data.data);
+      });
   }, []);
 
   return (
     <div className="navbar-parent">
       {/* ---------------- */}
-      <div className="audios" style={{ display: "none" }}>
+      {/* <div className="audios" style={{ display: "none" }}>
         <video width="600" autoPlay controls>
           <source src={Hub} type="video/mp4" />
           Your browser does not support the video element.
         </video>
-      </div>
+      </div> */}
       {/* ---------------- */}
       <div className="nav-buttons">
         <p className="navbtn">
@@ -122,29 +146,41 @@ export default function Navbar({ searchItem, User }) {
             marginTop: "1%",
           }}
         >
-          <span className="input-group-text" id="basic-addon1">
-            <img
-              src={Search}
-              className="search-icon"
-              style={{ height: "20px", width: "20px" }}
-            />
-          </span>
-          <input
-            name="search"
-            type="text"
-            className="form-control"
-            placeholder="start looking..."
-            aria-label="Username"
-            aria-describedby="basic-addon1"
-            onChange={handleSearchLog}
-            onKeyDown={handleKeyDown}
-          />
+          {isHome ? (
+            <></>
+          ) : (
+            <>
+              <span className="input-group-text" id="basic-addon1">
+                <img
+                  src={Search}
+                  className="search-icon"
+                  style={{ height: "20px", width: "20px" }}
+                />
+              </span>
+              <input
+                name="search"
+                type="text"
+                className="form-control"
+                placeholder="start looking..."
+                aria-label="Username"
+                aria-describedby="basic-addon1"
+                onChange={handleSearchLog}
+                onKeyDown={handleKeyDown}
+              />
+            </>
+          )}
         </div>
         <div className="profileLogo">
           <Link to={"/Profile"}>
             <img
-              src={Pomasin}
-              style={{ height: "80px", width: "80px", padding: "10px" }}
+              src={profileDetails.image}
+              style={{
+                height: "80px",
+                width: "80px",
+                padding: "10px",
+                objectFit: "cover",
+                borderRadius: "15px",
+              }}
             />
           </Link>
         </div>

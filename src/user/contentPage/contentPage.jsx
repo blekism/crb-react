@@ -37,9 +37,6 @@ export default function Contentpage() {
     post_id: post_id,
   });
 
-  console.log("owner", owner || "no owner");
-  console.log("post_id", post_id);
-
   useEffect(() => {
     if (post_id) {
       axios
@@ -55,6 +52,7 @@ export default function Contentpage() {
         .then((response) => {
           if (response.data.status === 200) {
             console.log(response.data.data);
+
             setPostContent(response.data.data);
           } else {
             console.log("No data found hehe");
@@ -102,11 +100,7 @@ export default function Contentpage() {
         .catch((error) => {
           console.log(error);
         });
-    }
-  }, []);
 
-  useEffect(() => {
-    if (post_id) {
       axios
         .post(
           "http://localhost/crb-react/PHP/api/read/read_comment.php",
@@ -130,7 +124,37 @@ export default function Contentpage() {
           console.log(error);
         });
     }
-  }, [post_id]);
+
+    axios
+      .post(
+        "http://localhost/crb-react/PHP/api/create/newread.php",
+        {
+          post_id: post_id,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + cookies.logged_user,
+          },
+          validateStatus: function (status) {
+            return status >= 200 && status < 500;
+          },
+          withCredentials: true,
+        }
+      )
+      .then((response) => {
+        if (response.data.status === 200) {
+          console.log(response.data);
+          console.log("Successfully added to views");
+        } else if (response.data.status === 201) {
+          console.log(response.data);
+          console.log("post already viewed");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   const handleBookmark = () => {
     if (!isBookmarked) {

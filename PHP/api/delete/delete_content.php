@@ -2,7 +2,7 @@
 header('Access-Control-Allow-Origin: http://localhost:5173');
 header('Access-Control-Allow-Credentials: true');
 header('Content-Type: application/json');
-header('Access-Control-Allow-Methods: DELETE, OPTIONS');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Request-With');
 
 include('../function.php');
@@ -23,7 +23,11 @@ if ($requestMethod == "OPTIONS") {
     exit();
 }
 
-if ($requestMethod == "DELETE") {
+
+
+
+
+if ($requestMethod == "POST") {
     $session = $_COOKIE['logged_user'] ?? '';
 
     try {
@@ -51,7 +55,7 @@ if ($requestMethod == "DELETE") {
                 echo json_encode($data);
                 exit();
             } else {
-                $deleteContent = deleteContent($inputData);
+                $deleteContent = deleteContent($inputData, $account_id);
             }
             echo $deleteContent;
             exit();
