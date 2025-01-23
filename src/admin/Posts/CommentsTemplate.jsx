@@ -3,7 +3,7 @@ import "./CommentsTemplate.css";
 import Delete from "../../assets/images/delBlue.svg";
 import { Link, useNavigate } from "react-router-dom";
 
-export default function Works({
+export default function CommentsTemplate({
   workImage,
   title,
   datePosted,

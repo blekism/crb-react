@@ -1520,22 +1520,26 @@ function readTotalPosts()
     }
 }
 
-function readPosts()
+function readPosts($userInput)
 {
 
     global $con;
+
+    $status = $userInput['status'];
+
     $query = "SELECT 
-        posts_tbl.post_id,
-        posts_tbl.user_id,
-        posts_tbl.title,
-        posts_tbl.content,
-        posts_tbl.status,
-        posts_tbl.published_at,
-        posts_tbl.created_at
+        post_id,
+        user_id,
+        title,
+        content,
+        status,
+        published_at,
+        created_at
     FROM
         posts_tbl
-    WHERE status = 'posted'";
+    WHERE status = ?";
     $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $status);
     $stmt->execute();
     $result = $stmt->get_result();
     $stmt->close();
@@ -1614,12 +1618,16 @@ function readTotalComments()
     }
 }
 
-function readReports()
+function readReports($userInput)
 {
 
     global $con;
-    $query = "SELECT * FROM reports_tbl";
+
+    $status = $userInput['status'];
+
+    $query = "SELECT * FROM reports_tbl WHERE status = ?";
     $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $status);
     $stmt->execute();
     $result = $stmt->get_result();
     $stmt->close();
@@ -2093,7 +2101,8 @@ function readSinglePost($user_input)
         category_id.category_id AS category,
         posts_tbl.status,
         posts_tbl.published_at,
-        posts_tbl.created_at
+        posts_tbl.created_at,
+        posts_tbl.analysis_score
     FROM 
         genre_post_tbl
     INNER JOIN posts_tbl ON genre_post_tbl.post_id = posts_tbl.post_id
@@ -2692,6 +2701,49 @@ function searchBar($userInput)
     }
 }
 
+function updatePost($userInput)
+{
+    global $con;
+
+    $post_id = $userInput['post_id'];
+    $title = $userInput['title'];
+    $content = $userInput['content'];
+    $status = $userInput['status'];
+
+
+    if (empty(trim($title))) {
+        return error422('Title is required');
+    } else if (empty(trim($content))) {
+        return error422('Content is required');
+    } else if (empty(trim($status))) {
+        return error422('Status is required');
+    } else {
+        $query = "UPDATE posts_tbl SET title = ?, content = ?, status = ?,  updated_at = NOW() WHERE post_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("ssss", $title, $content, $status, $post_id);
+        $stmt->execute();
+
+        if ($stmt->affected_rows > 0) {
+            $data = [
+                'status' => 200,
+                'message' => 'Post updated successfully',
+            ];
+            header("HTTP/1.0 200 OK");
+            $stmt->close();
+            return json_encode($data);
+        } else if ($stmt->affected_rows == 0) {
+            $data = [
+                'status' => 404,
+                'message' => 'no post found',
+            ];
+            header("HTTP/1.0 404 no such post found");
+            $stmt->close();
+            return json_encode($data);
+        }
+    }
+}
+          
+          
 function viewedPost($userInput, $user_id)
 {
     global $con;
@@ -2737,7 +2789,150 @@ function viewedPost($userInput, $user_id)
         }
     }
 }
+          
 
+            return json_encode($data);
+        }
+    }
+}
+
+function readCommentsTbl($userInput)
+{
+
+    global $con;
+
+    $post_id = $userInput['post_id'];
+
+    $query = "SELECT posts_tbl.post_id, 
+                     comments_tbl.* 
+                FROM comments_tbl 
+                INNER JOIN posts_tbl ON comments_tbl.post_id = posts_tbl.post_id  
+                WHERE posts_tbl.post_id = ?";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $post_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'comments retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Comments found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+
+function readTotalReports()
+{
+    global $con;
+
+    $query = "SELECT COUNT(*) AS Total_Reports FROM reports_tbl WHERE reports_tbl.status = 'reported';";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Reports retrieved successfully',
+            'data' => $result->fetch_assoc()
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Reports found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+
+function readReportsIncrease()
+{
+    global $con;
+
+    $query = "SELECT COUNT(*) AS Today_Reports
+                FROM reports_tbl
+                WHERE DATE(created_at) = CURDATE() AND status = 'reported';";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Report Increase retrieved successfully',
+            'data' => $result->fetch_assoc()
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Reports found'
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+
+
+function readMostViewedPost()
+{
+    global $con;
+
+    $query = "SELECT 
+                    posts_tbl.title,
+                    posts_tbl.published_at,
+                    COUNT(post_views_tbl.post_id) AS total_views
+                FROM 
+                    post_views_tbl
+                JOIN 
+                    posts_tbl ON post_views_tbl.post_id = posts_tbl.post_id
+                GROUP BY 
+                    posts_tbl.post_id, posts_tbl.title, posts_tbl.published_at
+                ORDER BY 
+                    total_views DESC
+                LIMIT 5;";
+    $stmt = $con->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+  
+    if ($result->num_rows > 0) {
+        $data = [
+            'status' => 200,
+            'message' => 'Total Count of Most Viewed Post retrieved successfully',
+            'data' => $result->fetch_all(MYSQLI_ASSOC)
+        ];
+        header("HTTP/1.0 200 OK");
+        return json_encode($data);
+    } else {
+        $data = [
+            'status' => 404,
+            'message' => 'No Posts found'
+
+        ];
+        header("HTTP/1.0 404 Not Found");
+        return json_encode($data);
+    }
+}
+  
 function getViewed($user_id)
 {
     global $con;
@@ -2770,8 +2965,9 @@ function getViewed($user_id)
         $data = [
             'status' => 404,
             'message' => 'No Post found'
-        ];
+            ];
         header("HTTP/1.0 404 Not Found");
         return json_encode($data);
     }
 }
+

@@ -147,7 +147,8 @@
 }
 
 .PostView-Parent .PostView-Child .PostView-Child-Left .PostView-Child-Left-Bottom .PostView-Child-Left-Bottom-Top .PostView-Child-Left-Bottom-Top-Left{
-    width: 80%;
+    width: 100%;
+    height: fit-content;
     display: flex;
     flex-direction: column;
     row-gap: 10px;
