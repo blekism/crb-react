@@ -336,6 +336,7 @@ export default function PostView() {
                         title={comment.comment_id}
                         datePosted={comment.created_at}
                         commentContent={comment.content}
+                        comment_id={comment.comment_id}
                       />
                     ))
                   ) : (

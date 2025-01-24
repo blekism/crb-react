@@ -981,22 +981,23 @@ function deleteComment($userInput)
         $query = "DELETE FROM comments_tbl WHERE comment_id = ?";
         $stmt = $con->prepare($query);
         $stmt->bind_param("s", $comment_id);
-        $result = $stmt->execute();
-        $stmt->close();
+        $stmt->execute();
 
-        if ($result) {
+        if ($stmt->affected_rows > 0) {
             $data = [
                 'status' => 200,
                 'message' => 'Comment deleted successfully',
             ];
             header("HTTP/1.0 200 OK");
+            $stmt->close();
             return json_encode($data);
         } else {
             $data = [
-                'status' => 500,
-                'message' => 'Internal Server Error',
+                'status' => 404,
+                'message' => 'Comment not found',
             ];
-            header("HTTP/1.0 500 Internal Server Error");
+            header("HTTP/1.0 404 not found");
+            $stmt->close();
             return json_encode($data);
         }
     }
