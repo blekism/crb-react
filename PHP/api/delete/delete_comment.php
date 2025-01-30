@@ -2,7 +2,7 @@
 header('Access-Control-Allow-Origin: http://localhost:5173');
 header('Access-Control-Allow-Credentials: true');
 header('Content-Type: application/json');
-header('Access-Control-Allow-Methods: DELETE, OPTIONS');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Request-With');
 
 include('../function.php');
@@ -23,23 +23,8 @@ if ($requestMethod == "OPTIONS") {
     exit();
 }
 
-if ($requestMethod == "DELETE") {
-    $session = $_COOKIE['logged_user'] ?? '';
-
-    try {
-        $decoded = JWT::decode($session, new Key($secret_key, 'HS256'));
-        $account_id = $decoded->user_id;
-        $expiry = $decoded->exp;
-
-        if (time() > $expiry) {
-            $data = [
-                'status' => 401,
-                'message' => 'Unauthorized',
-            ];
-            header("HTTP/1.0 401 Unauthorized");
-            echo json_encode($data);
-            exit();
-        } else {
+if ($requestMethod == "POST") {
+    
             $inputData = json_decode(file_get_contents("php://input"), true);
 
             if (empty($inputData)) {
@@ -55,16 +40,7 @@ if ($requestMethod == "DELETE") {
             }
             echo $deleteComment;
             exit();
-        }
-    } catch (ExpiredException $e) {
-        $data = [
-            'status' => 401,
-            'message' => 'Unauthorized',
-        ];
-        header("HTTP/1.0 401 Unauthorized");
-        echo json_encode($data);
-        exit();
-    }
+
 } else {
     $data = [
         'status' => 405,
