@@ -3,8 +3,10 @@ import axios from "axios";
 import { useCookies } from "react-cookie";
 import "./AddAdminModal.css";
 import InputTemplate from "../../user/loginSignupPage/InputTemplate";
+import ReactLoading from "react-loading";
 
 export default function AddAdminModal() {
+  const [loading, setLoading] = useState(false);
   const [InsertAdmin, setInsertAdmin] = useState({
     first_name: "",
     last_name: "",
@@ -22,7 +24,7 @@ export default function AddAdminModal() {
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log(InsertAdmin);
-
+    setLoading(true);
     axios
       .post(
         "http://localhost/crb-react/PHP/api/create/insertAdmin.php",
@@ -30,6 +32,9 @@ export default function AddAdminModal() {
         {
           headers: {
             "Content-Type": "application/json",
+          },
+          validateStatus: function (status) {
+            return status >= 200 && status < 500;
           },
         }
       )
@@ -44,17 +49,30 @@ export default function AddAdminModal() {
             email: "",
             password: "",
           });
+          setLoading(false);
+          window.location.reload();
         } else {
-          alert("Error adding admin");
+          console.log(response.data);
+          setLoading(false);
+          alert("There was an error adding admin. Please try again.");
         }
       })
       .catch((error) => {
         console.log(error);
+        alert("An unexpected error occurred. Please try again later.");
+        setLoading(false);
       });
   };
 
   return (
     <>
+      {loading ? (
+        <div className="loadProgress">
+          <ReactLoading type="bars" color="#133e87" height={100} width={100} />
+        </div>
+      ) : (
+        <></>
+      )}
       <div
         className="modal fade"
         id="addAdminModal"

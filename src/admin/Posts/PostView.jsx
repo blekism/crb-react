@@ -62,16 +62,28 @@ export default function PostView() {
           headers: {
             "Content-Type": "application/json",
           },
+          validateStatus: function (status) {
+            return status >= 200 && status < 500;
+          },
         }
       )
       .then((response) => {
-        console.log(response.data);
-        alert("Post updated successfully!");
-        setLoading(false);
+        if (response.data.status === 200) {
+          console.log(response.data);
+          alert("Post details updated successfully!");
+          setLoading(false);
+          window.location.reload();
+        } else {
+          console.log(response.data);
+          setLoading(false);
+          alert(
+            "There was an error updating the post details. Please try again."
+          );
+        }
       })
       .catch((error) => {
-        console.log("There was an error submitting the form!", error);
-        alert("There was an error updating post details!");
+        console.log(error);
+        alert("An unexpected error occurred. Please try again later.");
         setLoading(false);
       });
   };
