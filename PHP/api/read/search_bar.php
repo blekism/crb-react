@@ -4,6 +4,9 @@ header('Access-Control-Allow-Credentials: true');
 header('Content-Type: application/json');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Request-With');
+header("X-Content-Type-Options: nosniff");
+header("X-Frame-Options: DENY");
+header_remove("X-Powered-By");
 
 include('../function.php');
 require(__DIR__ . '../../creds.php');
@@ -27,11 +30,10 @@ if ($requestMethod == "POST") {
     $inputData = json_decode(file_get_contents("php://input"), true); // Retrieve and decode input data
 
 
-            $searchBar = searchBar($inputData);
+    $searchBar = searchBar($inputData);
 
-            echo $searchBar;
-            exit();
-  
+    echo $searchBar;
+    exit();
 } else {
     $data = [
         'status' => 405,

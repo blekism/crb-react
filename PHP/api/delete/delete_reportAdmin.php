@@ -1,9 +1,12 @@
 <?php
-header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Origin: http://localhost:5173');
 header('Access-Control-Allow-Credentials: true');
 header('Content-Type: application/json');
 header('Access-Control-Allow-Methods: DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Request-With');
+header("X-Content-Type-Options: nosniff");
+header("X-Frame-Options: DENY");
+header_remove("X-Powered-By");
 
 include('../function.php');
 require(__DIR__ . '../../creds.php');
@@ -25,21 +28,21 @@ if ($requestMethod == "OPTIONS") {
 
 if ($requestMethod == "POST") {
     // 
-            $inputData = json_decode(file_get_contents("php://input"), true);
+    $inputData = json_decode(file_get_contents("php://input"), true);
 
-            if (empty($inputData)) {
-                $data = [
-                    'status' => 400,
-                    'message' => 'Bad Request',
-                ];
-                header("HTTP/1.0 400 Bad Request");
-                echo json_encode($data);
-                exit();
-            } else {
-                $deleteContent = delete_reportAdmin($inputData);
-            }
-            echo $deleteContent;
-            exit();
+    if (empty($inputData)) {
+        $data = [
+            'status' => 400,
+            'message' => 'Bad Request',
+        ];
+        header("HTTP/1.0 400 Bad Request");
+        echo json_encode($data);
+        exit();
+    } else {
+        $deleteContent = delete_reportAdmin($inputData);
+    }
+    echo $deleteContent;
+    exit();
 } else {
     $data = [
         'status' => 405,

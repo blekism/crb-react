@@ -1,9 +1,13 @@
 <?php
 
-header('Access-Control-Allow-Origin:*');
+header('Access-Control-Allow-Origin: http://localhost:5173');
+
 header('Content-Type: application/json');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Request-With');
+header("X-Content-Type-Options: nosniff");
+header("X-Frame-Options: DENY");
+header_remove("X-Powered-By");
 
 include('../function.php');
 
@@ -15,7 +19,7 @@ if ($requestMethod == "OPTIONS") {
     exit();
 }
 
-if($requestMethod == "POST"){
+if ($requestMethod == "POST") {
 
     $inputData = json_decode(file_get_contents("php://input"), true);
 
@@ -26,14 +30,11 @@ if($requestMethod == "POST"){
     }
     echo $readSinglePost;
     exit();
-
 } else {
     $data = [
-'status' => 405,
-'message' => $requestMethod. 'Method Not Allowed',
+        'status' => 405,
+        'message' => $requestMethod . 'Method Not Allowed',
     ];
     header('HTTP/1.0 405 Method Not Allowed');
     echo json_encode($data);
 }
-
-?>

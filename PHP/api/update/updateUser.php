@@ -1,9 +1,11 @@
 <?php
-
-header('Access-Control-Allow-Origin:*');
+header('Access-Control-Allow-Origin: http://localhost:5173');
 header('Content-Type: application/json');
 header('Access-Control-Allow-Methods: PUT, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Request-With');
+header("X-Content-Type-Options: nosniff");
+header("X-Frame-Options: DENY");
+header_remove("X-Powered-By");
 
 include('../function.php');
 

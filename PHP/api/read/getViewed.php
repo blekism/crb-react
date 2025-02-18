@@ -4,6 +4,9 @@ header('Access-Control-Allow-Credentials: true');
 header('Content-Type: multipart/form-data');
 header('Access-Control-Allow-Methods: GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Request-With');
+header("X-Content-Type-Options: nosniff");
+header("X-Frame-Options: DENY");
+header_remove("X-Powered-By");
 
 
 include('../function.php');
