@@ -440,6 +440,9 @@ export default function Contentpage() {
               name={postComment.username}
               date={postComment.created_at}
               comment={postComment.content}
+              user_id={postComment.user_id}
+              loggedInUserId={decoded.user_id}
+              comment_id={postComment.comment_id}
             />
           ))}
         </div>

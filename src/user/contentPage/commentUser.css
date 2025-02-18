@@ -1,0 +1,27 @@
+.commentContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  /* background-color: blueviolet; */
+  /* margin-top: 20px; */
+}
+
+.commentContent {
+  display: flex;
+  flex-direction: column;
+  /* margin-top: 20px; */
+}
+
+.deleteButton {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  /* flex-direction: row; */
+}
+
+.deleteButton img {
+  width: 40px; /* Adjust the width as needed */
+  height: 40px; /* Adjust the height as needed */
+  cursor: pointer; /* Optional: change cursor to pointer */
+}

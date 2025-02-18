@@ -207,6 +207,7 @@ export default function LoginSignup() {
                   name="password"
                   onChange={handleChangeLog}
                 />
+                <a href="/Adminlogin">Login as admin</a>
 
                 <div
                   className="btnContainer"
