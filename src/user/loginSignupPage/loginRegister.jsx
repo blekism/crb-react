@@ -113,6 +113,10 @@ export default function LoginSignup() {
             email: "",
             password: "",
           });
+        } else if (response.data.status === "locked") {
+          alert(
+            "Your account has been locked. Please try again in a few hours"
+          );
         } else {
           alert("error");
         }
