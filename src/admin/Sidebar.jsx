@@ -12,10 +12,12 @@ import User from "../assets/images/user.png";
 import Admin from "../assets/images/admin.png";
 import Posts from "../assets/images/post.png";
 import Posts2 from "../assets/images/postBlue.png";
+import { useCookies } from "react-cookie";
 
 export default function Sidebar() {
   const [activeLink, setActiveLink] = useState("");
   const location = useLocation();
+  const [cookies, removeCookie] = useCookies(["logged_user"]);
 
   useEffect(() => {
     const path = location.pathname;
@@ -117,6 +119,27 @@ export default function Sidebar() {
             >
               Reports
             </Link>
+          </div>
+          <div className="AdminSideBar-TopCont-Reports">
+            <img
+              src={activeLink === "reports" ? Report2 : Report}
+              alt="Dashboard Icon"
+            />
+            <button
+              style={{
+                color: "white",
+                paddingLeft: "20px",
+                paddingRight: "20px",
+                fontWeight: "400",
+                height: "45px",
+              }}
+              className="btn btn-danger"
+              onClick={() => {
+                removeCookie("logged_user");
+              }}
+            >
+              Logout
+            </button>
           </div>
           {/* <div className="AdminSideBar-TopCont-ContRev">
             <img src={ContRevIcon} alt="Dashboard Icon" />

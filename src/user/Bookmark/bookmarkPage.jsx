@@ -10,6 +10,7 @@ import axios from "axios";
 import { useCookies } from "react-cookie";
 import Filtering from "../Homepage/UploadModal.jsx";
 import { jwtDecode } from "jwt-decode";
+import Genreitem from "../Bookmark/bookmarkItemTemplate.jsx";
 
 export default function BookmarkPage() {
   const [selectedItem, setSelectedItem] = useState(1);

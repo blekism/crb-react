@@ -31,18 +31,24 @@ export default function Navbar({ searchItem, User, isHome, initialData }) {
   };
 
   const handleSubmitSearch = (event) => {
-    console.log(userSearch, "search CARL");
-
     axios
       .post(
         "http://localhost/crb-react/PHP/api/read/search_bar.php",
-        userSearch
+        userSearch,
+        {
+          validateStatus: function (status) {
+            return status >= 200 && status < 500;
+          },
+        }
       )
       .then((response) => {
         if (response.data.status === 200) {
           console.log(response.data);
           searchItem([...response.data.data]);
         } else if (response.data.status === 201) {
+          console.log(response.data);
+          searchItem([]);
+        } else if (response.data.status === 404) {
           console.log(response.data);
           searchItem([]);
         }
