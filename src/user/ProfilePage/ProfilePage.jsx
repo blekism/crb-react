@@ -26,7 +26,7 @@ import {
 export default function ProfilePage() {
   const [profileDetails, setProfileDetails] = useState({});
   const [postContents, setPostContents] = useState([]);
-  const [cookies] = useCookies(["logged_user"]);
+  const [cookies, removeCookie] = useCookies(["logged_user"]);
   const [postsData, setPostsData] = useState([]);
   const [totalCommentsData, setTotalCommentsData] = useState([]);
   const [totalBookmarksData, setTotalBookmarksData] = useState([]);
@@ -263,6 +263,21 @@ export default function ProfilePage() {
                     data-bs-target="#profileModal"
                   />
                   <ProfileModal />
+                  <button
+                    style={{
+                      color: "white",
+                      paddingLeft: "20px",
+                      paddingRight: "20px",
+                      fontWeight: "400",
+                      height: "45px",
+                    }}
+                    className="btn btn-danger"
+                    onClick={() => {
+                      removeCookie("logged_user");
+                    }}
+                  >
+                    Logout
+                  </button>
                 </div>
                 <p className="p2">First Name:</p>
                 <p className="p3">{profileDetails.first_name}</p>

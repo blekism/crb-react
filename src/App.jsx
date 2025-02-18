@@ -4,7 +4,13 @@ import Homepage from "./user/Homepage/Homepage.jsx";
 import Login from "./user/loginSignupPage/loginRegister.jsx";
 import Contentpage from "./user/contentPage/contentPage.jsx";
 import Profile from "./user/ProfilePage/ProfilePage.jsx";
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Outlet,
+  Navigate,
+} from "react-router-dom";
 import Bookmark from "./user/Bookmark/bookmarkPage.jsx";
 import Genre from "./user/Genrepage/Genrepage.jsx";
 import AdminSideBar from "./admin/Sidebar.jsx";
@@ -15,6 +21,15 @@ import Admin from "./admin/Users&Admin/Admin.jsx";
 import PostsTable from "./admin/Posts/Posts.jsx";
 import PostView from "./admin/Posts/PostView.jsx";
 import AdminLogin from "./user/loginSignupPage/LoginAdmin.jsx";
+import useAuth from "./useAuth.jsx";
+
+const ProtectedRoute = () => {
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) return <div>Loading...</div>;
+
+  return isAuthenticated ? <Outlet /> : <Navigate to="/" />;
+};
 
 function App() {
   return (
@@ -22,19 +37,22 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="/Homepage" element={<Homepage />} />
-          <Route path="/Contentpage" element={<Contentpage />} />
-          <Route path="/Bookmark" element={<Bookmark />} />
-          <Route path="/Genre" element={<Genre />} />
-          <Route path="/Profile" element={<Profile />} />
-          <Route path="/AdminSideBar" element={<AdminSideBar />} />
-          <Route path="/AdminDashboard" element={<AdminDashboard />} />
-          <Route path="/Reports" element={<AdminReports />} />
-          <Route path="/Users" element={<Users />} />
-          <Route path="/Admin" element={<Admin />} />
-          <Route path="/Posts" element={<PostsTable />} />
-          <Route path="/PostView" element={<PostView />} />
           <Route path="/AdminLogin" element={<AdminLogin />} />
+
+          <Route element={<ProtectedRoute />}>
+            <Route path="/Homepage" element={<Homepage />} />
+            <Route path="/Contentpage" element={<Contentpage />} />
+            <Route path="/Bookmark" element={<Bookmark />} />
+            <Route path="/Genre" element={<Genre />} />
+            <Route path="/Profile" element={<Profile />} />
+            <Route path="/AdminSideBar" element={<AdminSideBar />} />
+            <Route path="/AdminDashboard" element={<AdminDashboard />} />
+            <Route path="/Reports" element={<AdminReports />} />
+            <Route path="/Users" element={<Users />} />
+            <Route path="/Admin" element={<Admin />} />
+            <Route path="/Posts" element={<PostsTable />} />
+            <Route path="/PostView" element={<PostView />} />
+          </Route>
         </Routes>
       </Router>
     </>

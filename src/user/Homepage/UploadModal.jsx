@@ -79,12 +79,14 @@ export default function UploadModal({ postID }) {
     // Check if Postcontent.type is selected
     if (!Postcontent.type) {
       alert("Please select a post type.");
+      setLoading(false);
       return;
     }
 
     // Check if all genres are selected
     if (Postcontent.genre.length === 0) {
       alert("Please select a genre for each tag.");
+      setLoading(false);
       return;
     }
     formData.append("file", SelectedFile);
