@@ -232,91 +232,150 @@ function accountVerify($userInput)
     }
 }
 
+function checkLoginAttempts($email)
+{
+    global $con;
+
+    $query = "SELECT login_attempts, lockout_expiration FROM user_tbl WHERE email = ?";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows == 1) {
+        $res = $result->fetch_assoc();
+        $login_attempts = $res['login_attempts'];
+        $lockout_expiration = $res['lockout_expiration'];
+
+        // Check if user is currently locked out
+        if ($login_attempts >= 3 && time() < $lockout_expiration) {
+            return json_encode([
+                'status' => 'locked',
+                'message' => 'Too many failed attempts. Try again later.'
+            ]);
+        }
+
+        return json_encode([
+            'status' => 'unlocked',
+            'login_attempts' => $login_attempts
+        ]);
+    }
+
+    return json_encode(['status' => 'unlocked', 'login_attempts' => 0]);
+}
+
+function incrementLoginAttempts($email)
+{
+    global $con;
+
+    $query = "SELECT login_attempts FROM user_tbl WHERE email = ?";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('s', $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    // $stmt->close();
+
+    if ($result->num_rows == 1) {
+        $res = $result->fetch_assoc();
+        $login_attempts = $res['login_attempts'] + 1;
+
+        if ($login_attempts >= 3) {
+            $lockoutTime = time() + (5 * 60 * 60); // 5 hours
+            $stmt = $con->prepare("UPDATE user_tbl SET login_attempts = ?, lockout_expiration = ? WHERE email = ?");
+            $stmt->bind_param('iis', $login_attempts, $lockoutTime, $email);
+        } else {
+            $stmt = $con->prepare("UPDATE user_tbl SET login_attempts = ? WHERE email = ?");
+            $stmt->bind_param('is', $login_attempts, $email);
+        }
+        $stmt->execute();
+        $stmt->close();
+    }
+}
+
 function login($userInput)
 {
     global $con;
     $secret_key = "cutiesiserrano";
 
-    if (isset($userInput['email']) && isset($userInput['password'])) {
+    if (!isset($userInput['email']) || !isset($userInput['password'])) {
+        return error422('Email and Password are required');
+    }
 
-        $email = $userInput['email'];
-        $password = $userInput['password'];
+    $email = trim($userInput['email']);
+    $password = trim($userInput['password']);
+    $hashed = md5($password);
 
-        $hashed = md5($password);
+    if (empty($email)) return error422('Email is required');
+    if (empty($password)) return error422('Password is required');
 
-        if (empty(trim($email))) {
-            return error422('Email is required');
-        } else if (empty(trim($password))) {
-            return error422('Password is required');
+    // Check lockout status
+    $attemptsCheck = checkLoginAttempts($email);
+    $decodedCheck = json_decode($attemptsCheck, true);
+
+    if ($decodedCheck['status'] === 'locked') {
+        return $attemptsCheck;
+    }
+
+    mysqli_begin_transaction($con);
+
+    $query = "SELECT user_id, verified_at, role FROM user_tbl WHERE email = ? AND password = ? AND role = 'user'";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param('ss', $email, $hashed);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result && $result->num_rows === 1) {
+        $res = $result->fetch_assoc();
+
+        if ($res['verified_at'] != null) {
+            $user_id = $res['user_id'];
+            $role = $res['role'];
+            $issuedAt = time();
+            $expirationTime = $issuedAt + (24 * 60 * 60);
+
+            $payload = [
+                'iss' => 'localhost',
+                'iat' => $issuedAt,
+                'exp' => $expirationTime,
+                'user_id' => $user_id,
+                'role' => $role
+            ];
+
+            $jwt = JWT::encode($payload, $secret_key, 'HS256');
+            setcookie('logged_user', $jwt, [
+                'expires' => $expirationTime,
+                'path' => '/',
+                'httpOnly' => true,
+                'secure' => true,
+                'samesite' => 'Strict'
+            ]);
+
+            // Reset login attempts after successful login
+            $resetQuery = "UPDATE user_tbl SET login_attempts = 0, lockout_expiration = NULL WHERE email = ?";
+            $resetStmt = $con->prepare($resetQuery);
+            $resetStmt->bind_param('s', $email);
+            $resetStmt->execute();
+            $resetStmt->close();
+
+            return json_encode([
+                'status' => 200,
+                'message' => 'Login Successful',
+                'token' => $jwt
+            ]);
         } else {
-            $query = "SELECT user_id, verified_at, role FROM user_tbl WHERE email = ? AND password = ? AND role = 'user'";
-            $stmt = $con->prepare($query);
-            $stmt->bind_param('ss', $email, $hashed);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $stmt->close();
-
-            if ($result) {
-                if ($result->num_rows == 1) {
-                    $res = $result->fetch_assoc();
-                    if ($res['verified_at'] != null) {
-                        $user_id = $res['user_id'];
-                        $role = $res['role'];
-                        $issuedAt = time();
-                        $expirationTime = $issuedAt + (24 * 60 * 60);
-
-                        $payload = [
-                            'iss' => 'localhost',
-                            'iat' => $issuedAt,
-                            'exp' => $expirationTime,
-                            'user_id' => $user_id,
-                            'role' => $role
-                        ];
-
-                        $jwt = JWT::encode($payload, $secret_key, 'HS256');
-                        setcookie('logged_user', $jwt, [
-                            'expires' => $expirationTime,
-                            'path' => '/',
-                            'httpOnly' => true,
-                            'secure' => true,
-                            'samesite' => 'Strict'
-                        ]);
-
-                        $data = [
-                            'status' => 200,
-                            'message' => 'Login Successful',
-                            'token' => $jwt
-                        ];
-                        header("HTTP/1.0 200 OK");
-                        return json_encode($data);
-                        //dito
-                    } else {
-                        $data = [
-                            'status' => 201,
-                            'message' => 'unverified',
-                        ];
-                        header("HTTP/1.0 201 Unauthorized");
-                        return json_encode($data);
-                    }
-                } else {
-                    $data = [
-                        'status' => 404,
-                        'message' => 'Invalid Email or Password',
-                    ];
-                    header("HTTP/1.0 401 Unauthorized");
-                    return json_encode($data);
-                }
-            } else {
-                $data = [
-                    'status' => 500,
-                    'message' => 'Internal Server Error',
-                ];
-                header("HTTP/1.0 500 Internal Server Error");
-                return json_encode($data);
-            }
+            return json_encode(['status' => 201, 'message' => 'unverified']);
         }
+    } else {
+        // Failed login - Increment login attempts
+        // var_dump($email);
+        incrementLoginAttempts($email);
+        mysqli_commit($con);
+        return json_encode(['status' => 401, 'message' => 'Invalid ka or Password']);
     }
 }
+
 
 function adminlogin($userInput){
     global $con;
