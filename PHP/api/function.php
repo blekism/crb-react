@@ -318,6 +318,91 @@ function login($userInput)
     }
 }
 
+function adminlogin($userInput){
+    global $con;
+    $secret_key = "cutiesiserrano";
+
+    if (isset($userInput['email']) && isset($userInput['password'])) {
+
+        $email = $userInput['email'];
+        $password = $userInput['password'];
+
+        $hashed = md5($password);
+
+        if (empty(trim($email))) {
+            return error422('Email is required');
+        } else if (empty(trim($password))) {
+            return error422('Password is required');
+        } else {
+            $query = "SELECT user_id, verified_at, role FROM user_tbl WHERE email = ? AND password = ? AND role = 'admin'";
+            $stmt = $con->prepare($query);
+            $stmt->bind_param('ss', $email, $hashed);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $stmt->close();
+
+            if ($result) {
+                if ($result->num_rows == 1) {
+                    $res = $result->fetch_assoc();
+                    if ($res['verified_at'] != null) {
+                        $user_id = $res['user_id'];
+                        $role = $res['role'];
+                        $issuedAt = time();
+                        $expirationTime = $issuedAt + (24 * 60 * 60);
+
+                        $payload = [
+                            'iss' => 'localhost',
+                            'iat' => $issuedAt,
+                            'exp' => $expirationTime,
+                            'user_id' => $user_id,
+                            'role' => $role
+                        ];
+
+                        $jwt = JWT::encode($payload, $secret_key, 'HS256');
+                        setcookie('logged_user', $jwt, [
+                            'expires' => $expirationTime,
+                            'path' => '/',
+                            'httpOnly' => true,
+                            'secure' => true,
+                            'samesite' => 'Strict'
+                        ]);
+
+                        $data = [
+                            'status' => 200,
+                            'message' => 'Login Successful',
+                            'token' => $jwt
+                        ];
+                        header("HTTP/1.0 200 OK");
+                        return json_encode($data);
+                        //dito
+                    } else {
+                        $data = [
+                            'status' => 201,
+                            'message' => 'unverified',
+                        ];
+                        header("HTTP/1.0 201 Unauthorized");
+                        return json_encode($data);
+                    }
+                } else {
+                    $data = [
+                        'status' => 404,
+                        'message' => 'Invalid Email or Password',
+                    ];
+                    header("HTTP/1.0 401 Unauthorized");
+                    return json_encode($data);
+                }
+            } else {
+                $data = [
+                    'status' => 500,
+                    'message' => 'Internal Server Error',
+                ];
+                header("HTTP/1.0 500 Internal Server Error");
+                return json_encode($data);
+            }
+        }
+    }
+}
+
 function continueAsGuest()
 {
     global $secret_key;
@@ -588,7 +673,7 @@ function readComment($data)
 {
     global $con;
 
-    $query = "SELECT u.username, c.created_at, c.content 
+    $query = "SELECT u.username, c.created_at, c.content, u.user_id, c.comment_id
               FROM comments_tbl c
             INNER JOIN user_tbl u ON c.user_id = u.user_id
             WHERE post_id = ?";
@@ -997,6 +1082,40 @@ function deleteComment($userInput)
                 'message' => 'Comment not found',
             ];
             header("HTTP/1.0 404 not found");
+            $stmt->close();
+            return json_encode($data);
+        }
+    }
+}
+
+function deleteOwnComment($userInput)
+{
+    global $con;
+
+    $comment_id = $userInput['comment_id'];
+
+    if (empty(trim($comment_id))) {
+        return error422('Comment ID is required');
+    } else {
+        $query = "DELETE FROM comments_tbl WHERE comment_id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("s", $comment_id );
+        $stmt->execute();
+
+        if ($stmt->affected_rows > 0) {
+            $data = [
+                'status' => 200,
+                'message' => 'Comment deleted successfully',
+            ];
+            header("HTTP/1.0 200 OK");
+            $stmt->close();
+            return json_encode($data);
+        } else {
+            $data = [
+                'status' => 404,
+                'message' => 'Comment not found or you do not have permission to delete this comment',
+            ];
+            header("HTTP/1.0 404 Not Found");
             $stmt->close();
             return json_encode($data);
         }
@@ -3143,3 +3262,4 @@ function getViewed($user_id)
         return json_encode($data);
     }
 }
+

@@ -14,6 +14,7 @@ import Users from "./admin/Users&Admin/Users.jsx";
 import Admin from "./admin/Users&Admin/Admin.jsx";
 import PostsTable from "./admin/Posts/Posts.jsx";
 import PostView from "./admin/Posts/PostView.jsx";
+import AdminLogin from "./user/loginSignupPage/LoginAdmin.jsx";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path="/Admin" element={<Admin />} />
           <Route path="/Posts" element={<PostsTable />} />
           <Route path="/PostView" element={<PostView />} />
+          <Route path="/AdminLogin" element={<AdminLogin />} />
         </Routes>
       </Router>
     </>

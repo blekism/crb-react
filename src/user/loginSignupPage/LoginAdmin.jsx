@@ -1,0 +1,276 @@
+import React, { useState } from "react";
+import "./loginRegister.css";
+import InputTemplate from "./InputTemplate";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useCookies } from "react-cookie";
+import VerificationModal from "./verificationModal.jsx";
+
+export default function LoginSignup() {
+  const navigate = useNavigate();
+  const [cookies, setCookie] = useCookies(["logged_user"]);
+  const [isRightPanelActive, setIsRightPanelActive] = useState(false);
+  const [modalVerify, setModalVerify] = useState(false);
+  const [accountRegistered, setAccountRegistered] = useState(false);
+  const [userReg, setUserReg] = useState({
+    firstName: "",
+    lastName: "",
+    username: "",
+    email: "",
+    password: "",
+  });
+  const [userLog, setUserLog] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleModalClose = () => {
+    setModalVerify(false);
+  };
+
+  const getJwtExpiry = (token) => {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload.exp ? new Date(payload.exp * 1000) : null;
+  };
+
+  const handleChangeReg = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+
+    setUserReg((values) => ({ ...values, [name]: value }));
+  };
+  const handleChangeLog = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+
+    setUserLog((values) => ({ ...values, [name]: value }));
+  };
+
+  const handleSubmitReg = (event) => {
+    event.preventDefault();
+    console.log(userReg);
+
+    axios
+      .post("http://localhost/crb-react/PHP/api/create/register.php", userReg, {
+        validateStatus: function (status) {
+          return status >= 200 && status <= 500;
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+        if (response.data.status === 200) {
+          console.log("Signup successful!");
+          setModalVerify(true);
+          // mag open ng popup na may message na check mo email mo
+        } else if (response.data.status === 422) {
+          alert("Something went wrong. Please try again.");
+          //error bobo baka wala kang internet kase
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        alert("An unexpected error occurred. Please try again later.");
+      });
+  };
+
+  const handleSubmitLog = (event) => {
+    event.preventDefault();
+    console.log(userLog);
+
+    axios
+      .post("http://localhost/crb-react/PHP/api/read/adminlogin.php", userLog, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        validateStatus: function (status) {
+          return status >= 200 && status < 410;
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+        if (response.data.status === 200) {
+          // login successful
+          console.log(response.data);
+          setCookie("logged_user", response.data.token, {
+            path: "/",
+            expires: getJwtExpiry(response.data.token),
+            secure: true,
+            sameSite: "strict",
+            // httpOnly: true,
+          });
+          navigate("/AdminDashboard");
+          setUserLog({
+            email: "",
+            password: "",
+          });
+        } else if (response.data.status === 201) {
+          //account not verified
+          setAccountRegistered(true);
+        } else if (response.data.status === 404) {
+          // wrong credentials
+          alert("Invalid credentials");
+          setUserLog({
+            email: "",
+            password: "",
+          });
+        } else {
+          alert("error");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  return (
+    <>
+      <div
+        className={`loginSignupParentCont ${
+          isRightPanelActive ? "right-panel-active" : ""
+        }`}
+        id="main"
+      >
+        <div className="loginSignupChildCont">
+          {/* Right Panel */}
+          <form onSubmit={handleSubmitReg}>
+            <div className="loginSignupChildCont-right">
+              <h1>Get Started!</h1>
+              <p className="p2">Register in your account to get started.</p>
+
+              <div className="loginSignupChildCont-rightTopContent">
+                <div className="loginSignupChildCont-rightTopContent1">
+                  <p>First Name:</p>
+                  <InputTemplate
+                    placeholder="First Name"
+                    name="firstName"
+                    onChange={handleChangeReg}
+                  />
+                  <p>Username: </p>
+                  <InputTemplate
+                    placeholder="Username"
+                    name="username"
+                    onChange={handleChangeReg}
+                  />
+                </div>
+                <div className="loginSignupChildCont-rightTopContent2">
+                  <p>Last Name:</p>
+                  <InputTemplate
+                    placeholder="Last Name"
+                    name="lastName"
+                    onChange={handleChangeReg}
+                  />
+                </div>
+              </div>
+
+              <div className="loginSignupChildCont-rightBottomContent">
+                <p>Email:</p>
+                <InputTemplate
+                  placeholder="Email"
+                  name="email"
+                  onChange={handleChangeReg}
+                />
+                <p>Password: </p>
+                <InputTemplate
+                  type="password"
+                  placeholder="Password"
+                  name="password"
+                  onChange={handleChangeReg}
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="loginSignupChildCont-rightButton"
+              >
+                <p>Sign Up</p>
+              </button>
+            </div>
+          </form>
+
+          {/* Left Panel */}
+          <div className="loginSignupChildCont-left">
+            <div className="contentCont">
+              <h1>Sign in Your Account</h1>
+              <p>
+                Sign in your account <br />
+                to continue.
+              </p>
+              <form onSubmit={handleSubmitLog}>
+                <InputTemplate
+                  placeholder="Enter your email"
+                  name="email"
+                  onChange={handleChangeLog}
+                />
+                <InputTemplate
+                  type="password"
+                  placeholder="Enter your password"
+                  name="password"
+                  onChange={handleChangeLog}
+                />
+
+                <div
+                  className="btnContainer"
+                  style={{ display: "flex", flexDirection: "column" }}
+                >
+                  <button
+                    className="loginSignupChildCont-leftButton"
+                    type="submit"
+                  >
+                    <p>Log in</p>
+                  </button>
+                  {accountRegistered && (
+                    <button
+                      type="button"
+                      onClick={() => setModalVerify(true)}
+                      style={{
+                        color: "red",
+                        fontSize: "12px",
+                        textDecoration: "underline",
+                        background: "none",
+                        border: "none",
+                        padding: 0,
+                        cursor: "pointer",
+                        marginTop: "10px",
+                      }}
+                    >
+                      Verify your account first!
+                    </button>
+                  )}
+                </div>
+              </form>
+            </div>
+          </div>
+
+          {/* Overlay */}
+          <div className="loginSignUpOverlay-parent">
+            <div className="loginSignUpOverlay-child">
+              <div className="loginSignupChildCont-leftOverlay">
+                <p className="p1">Welcome!</p>
+                <p className="p2">
+                  Please provide the information to register your account.
+                </p>
+                <p className="p3">Already have an account?</p>
+                <button
+                  className="leftOverlayButton"
+                  onClick={() => setIsRightPanelActive(false)}
+                >
+                  <p>Log In</p>
+                </button>
+              </div>
+
+              <div className="loginSignupChildCont-rightOverlay">
+                <p className="p1">Welcome Back Admin!</p>
+                <p className="p2">
+                  Please sign to your account with the given details to
+                  continue.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {modalVerify && <VerificationModal onClose={handleModalClose} />}
+        {/* <VerificationModal /> */}
+      </div>
+    </>
+  );
+}
